@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Students &amp; Probability: Live Survey Data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f7f8fb;
+    --ink: #13203b;
+    --ink-soft: #57647f;
+    --rule: #d7deea;
+    --grid: rgba(19,32,59,0.055);
+    --accent: #404485;
+    --accent-soft: #e8e8f0;
+    --warn: #b3261e;
+    --warn-soft: #fbe8e6;
+    --panel: #ffffff;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: border-box;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --paper: #0c1220;
+      --ink: #eef1f7;
+      --ink-soft: #9aa7c2;
+      --rule: #253449;
+      --grid: rgba(238,241,247,0.05);
+      --accent: #9598bb;
+      --accent-soft: #23284d;
+      --warn: #f0897c;
+      --warn-soft: #3a201d;
+      --panel: #101a2c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0c1220; --ink: #eef1f7; --ink-soft: #9aa7c2; --rule: #253449;
+    --grid: rgba(238,241,247,0.05); --accent: #9598bb; --accent-soft: #23284d;
+    --warn: #f0897c; --warn-soft: #3a201d; --panel: #101a2c;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+      var(--paper);
+    background-size: 26px 26px, 26px 26px, auto;
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, sans-serif;
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 48px 28px 90px; }
+
+  header { margin-bottom: 8px; }
+  h1 {
+    font-family: "Source Serif 4", Georgia, serif;
+    font-weight: 700;
+    font-size: clamp(1.9rem, 6vw, 2.6rem);
+    line-height: 1.16;
+    margin: 0 0 18px;
+    letter-spacing: -0.01em;
+  }
+  header .lede {
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 22px;
+  }
+  header .lede b { color: var(--ink); font-weight: 600; font-family: "IBM Plex Mono", monospace; }
+
+  .cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+  .cta {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    font-size: 0.96rem;
+    text-decoration: none;
+    padding: 12px 22px;
+    border: 2px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--accent);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .cta:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--accent); }
+  .cta:active { transform: translate(0,0); box-shadow: 2px 2px 0 var(--accent); }
+
+  .status { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.8rem; color: var(--ink-soft); font-family: "IBM Plex Mono", monospace; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .dot.stale { background: var(--warn); }
+  .status button { border: none; background: none; color: var(--accent); text-decoration: underline; font-family: inherit; font-size: inherit; cursor: pointer; padding: 0; }
+
+  section { padding: 34px 0; border-top: 1px solid var(--rule); }
+  section:first-of-type { border-top: none; padding-top: 30px; }
+  section h2 {
+    font-family: "Source Serif 4", Georgia, serif;
+    font-weight: 600;
+    font-size: 1.35rem;
+    margin: 0 0 6px;
+  }
+  section > p.lead { color: var(--ink-soft); font-size: 0.96rem; margin: 0 0 18px; max-width: 64ch; }
+
+  .formula {
+    font-family: "IBM Plex Mono", monospace;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink);
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    margin: 10px 0 16px;
+    display: inline-block;
+  }
+
+  .controls { display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; }
+  .row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  label.field-label { font-size: 0.86rem; color: var(--ink-soft); min-width: 150px; }
+  input[type="range"] { flex: 1; min-width: 140px; accent-color: var(--accent); height: 4px; }
+  .val { font-family: "IBM Plex Mono", monospace; font-weight: 600; min-width: 64px; text-align: right; }
+
+  .segmented { display: flex; gap: 20px; flex-wrap: wrap; border-bottom: 1px solid var(--rule); padding-bottom: 0; }
+  .segmented button {
+    border: none; background: none; color: var(--ink-soft);
+    padding: 6px 0; font-size: 0.9rem; font-family: "IBM Plex Sans", sans-serif;
+    cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  .segmented button.active { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+  .segmented button:focus-visible, input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .out {
+    background: transparent;
+    border: 2px dashed var(--accent);
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin: 16px 0;
+  }
+  .out .big { font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 1.35rem; color: var(--accent); }
+  .out .small { color: var(--ink-soft); font-size: 0.85rem; margin-top: 4px; }
+
+  .bars { display: flex; align-items: flex-end; gap: 3px; height: 150px; padding-top: 8px; overflow-x: auto; }
+  .bars .col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-width: 20px; flex: 1; height: 100%; position: relative; }
+  .bars .bar { width: 100%; max-width: 26px; background: var(--accent); border-radius: 0; }
+  .bars .bar.b2 { background: var(--warn); }
+  .bars .k { font-size: 0.66rem; color: var(--ink-soft); margin-top: 4px; font-family: "IBM Plex Mono", monospace; }
+  .legend { display: flex; gap: 16px; font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 6px; font-family: "IBM Plex Mono", monospace; }
+  .legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 6px; vertical-align: -1px; }
+  .legend .l1::before { background: var(--accent); }
+  .legend .l2::before { background: var(--warn); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  table caption { text-align: left; color: var(--ink-soft); font-size: 0.8rem; margin-bottom: 8px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--rule); }
+  th { color: var(--ink-soft); font-weight: 600; font-size: 0.8rem; }
+  td.num, th.num { text-align: right; font-family: "IBM Plex Mono", monospace; }
+
+  .waiting { color: var(--ink-soft); font-size: 0.92rem; }
+
+  .scatter-wrap { overflow-x: auto; }
+  svg.scatter { width: 100%; min-width: 460px; height: auto; }
+  svg.scatter .pt { fill: var(--accent); opacity: 0.8; }
+  svg.scatter .line { stroke: var(--warn); stroke-width: 2; fill: none; }
+  svg.scatter .axis { stroke: var(--rule); stroke-width: 1; }
+  svg.scatter text { fill: var(--ink-soft); font-size: 11px; font-family: "IBM Plex Mono", monospace; }
+
+  .note {
+    font-family: "Caveat", cursive;
+    font-size: 1.25rem;
+    color: var(--warn);
+    display: inline-block;
+    transform: rotate(-2deg);
+  }
+
+  footer { color: var(--ink-soft); font-size: 0.85rem; padding-top: 22px; margin-top: 4px; }
+  footer p { max-width: 66ch; }
+  footer .cta { margin-top: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>What raises the odds of a debt-free exam session?</h1>
+  <p class="lede">Across <b id="statN">—</b> students surveyed, <b id="statPass">—</b> passed the exam session with no retakes, sleeping <b id="statSleep">—</b> a night on average and arriving late <b id="statLate">—</b> times a week. Five formulas from probability theory test which of these habits actually move that number — move the controls below to see each one for yourself.</p>
+  <div class="cta-row">
+    <a class="cta" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener">Take the survey</a>
+    <div class="status">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">Connecting to the live survey…</span>
+      <button id="refreshBtn" type="button">Refresh</button>
+    </div>
+  </div>
+</header>
+
+<section>
+  <h2>The problem and the question</h2>
+  <p class="lead">Students juggle sleep, commuting, side jobs, and screen time, and it's easy to assume any one of these decides whether a session goes well. This project doesn't test a single cause. It asks: <strong>of the habits we can measure, which ones actually shift the odds of finishing the session without a retake — and by how much?</strong> Five formulas from probability theory each answer a slice of that question: conditional probability and Bayes' rule test individual habits and housing situation, the binomial model asks what a whole study group looks like, Poisson models a rare event (lateness), the normal model checks whether sleep, commute, and study time follow a predictable pattern, and — once enough students report a score — correlation and regression test sleep against exam performance directly.</p>
+</section>
+
+<section>
+  <h2>Descriptive statistics</h2>
+  <p class="lead">Before testing any probability model, here is what the raw survey answers look like. This table updates every time the page loads new responses.</p>
+  <table>
+    <thead><tr><th>Measure</th><th class="num">Mean</th><th class="num">Median</th><th class="num">Min</th><th class="num">Max</th><th class="num">Std. dev.</th></tr></thead>
+    <tbody>
+      <tr><td>Sleep, hours</td><td class="num" id="dsSleepMean">—</td><td class="num" id="dsSleepMed">—</td><td class="num" id="dsSleepMin">—</td><td class="num" id="dsSleepMax">—</td><td class="num" id="dsSleepSd">—</td></tr>
+      <tr><td>Commute, minutes</td><td class="num" id="dsCommuteMean">—</td><td class="num" id="dsCommuteMed">—</td><td class="num" id="dsCommuteMin">—</td><td class="num" id="dsCommuteMax">—</td><td class="num" id="dsCommuteSd">—</td></tr>
+      <tr><td>Independent study, hrs/day</td><td class="num" id="dsStudyMean">—</td><td class="num" id="dsStudyMed">—</td><td class="num" id="dsStudyMin">—</td><td class="num" id="dsStudyMax">—</td><td class="num" id="dsStudySd">—</td></tr>
+      <tr><td>Late arrivals / week</td><td class="num" id="dsLateMean">—</td><td class="num" id="dsLateMed">—</td><td class="num" id="dsLateMin">—</td><td class="num" id="dsLateMax">—</td><td class="num" id="dsLateSd">—</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Conditional probability</h2>
+  <p class="formula">P(A | B) = P(A and B) / P(B)</p>
+  <p class="lead">A = "passed exams with no retakes." Pick a factor B and compare the odds of passing between students who have it and students who don't.</p>
+  <div class="segmented" id="factorButtons"></div>
+  <div class="out" style="margin-top:16px">
+    <div class="big" id="condText">—</div>
+    <div class="small" id="condSub">—</div>
+  </div>
+  <div class="legend"><span class="l1">with factor</span><span class="l2">without factor</span></div>
+  <div class="bars" id="condBars"></div>
+</section>
+
+<section>
+  <h2>Binomial distribution</h2>
+  <p class="formula">P(X = k) = C(n, k) · pᵏ · (1 − p)ⁿ⁻ᵏ</p>
+  <p class="lead" id="binLead">Model: p = the current pass rate from the survey. Move the group size n and the page recalculates how many people out of that group are likely to pass without retakes.</p>
+  <div class="controls">
+    <div class="row">
+      <label class="field-label" for="binN">Group size n</label>
+      <input type="range" id="binN" min="5" max="40" step="1" value="25">
+      <span class="val" id="binNVal">25</span>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="binText">—</div>
+    <div class="small" id="binSub">—</div>
+  </div>
+  <div class="bars" id="binBars"></div>
+</section>
+
+<section>
+  <h2>Poisson distribution</h2>
+  <p class="formula">P(X = k) = λᵏ · e⁻λ / k!</p>
+  <p class="lead" id="poisLead">By the survey, students are late an average of λ times a week (see above). Move λ to see how the chance of zero late arrivals changes.</p>
+  <div class="controls">
+    <div class="row">
+      <label class="field-label" for="lambdaR">Average late arrivals λ</label>
+      <input type="range" id="lambdaR" min="0.2" max="4" step="0.1" value="1.16">
+      <span class="val" id="lambdaVal">1.16</span>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="poisText">—</div>
+    <div class="small" id="poisSub">—</div>
+  </div>
+  <div class="bars" id="poisBars"></div>
+</section>
+
+<section>
+  <h2>Normal distribution</h2>
+  <p class="formula">P(X ≤ x) = Φ((x − μ) / σ)</p>
+  <p class="lead">μ and σ come straight from the survey. Pick a measure and a threshold x to see the share of students below it.</p>
+  <div class="controls">
+    <div class="segmented" id="measureButtons"></div>
+    <div class="row">
+      <label class="field-label" for="threshR">Threshold x</label>
+      <input type="range" id="threshR" min="0" max="1" step="0.1" value="0.5">
+      <span class="val" id="threshVal">—</span>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="normText">—</div>
+    <div class="small" id="normSub">—</div>
+  </div>
+  <table>
+    <caption>μ, σ, and the 68–95 rule for this measure</caption>
+    <thead><tr><th>μ (mean)</th><th>σ (std. dev.)</th><th class="num">within μ ± σ</th><th class="num">within μ ± 2σ</th></tr></thead>
+    <tbody><tr id="normRow"><td>—</td><td>—</td><td class="num">—</td><td class="num">—</td></tr></tbody>
+  </table>
+</section>
+
+<section id="corrSection">
+  <h2>Correlation &amp; regression: sleep and exam score</h2>
+  <p class="formula">r = Σ(xᵢ−x̄)(yᵢ−ȳ) / √(Σ(xᵢ−x̄)² · Σ(yᵢ−ȳ)²) &nbsp;&nbsp; Score = a + b·Sleep</p>
+  <p class="lead" id="corrLead">Waiting for enough students to answer the score question…</p>
+  <div id="corrBody" style="display:none">
+    <div class="out">
+      <div class="big" id="corrText">—</div>
+      <div class="small" id="corrSub">—</div>
+    </div>
+    <div class="scatter-wrap">
+      <svg class="scatter" id="scatterSvg" viewBox="0 0 700 320"></svg>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Conclusions</h2>
+  <p class="lead">Answering the question habit by habit, using the tools above (updates automatically with new responses):</p>
+  <table>
+    <thead><tr><th>Habit / factor</th><th>What the data shows</th></tr></thead>
+    <tbody>
+      <tr><td>Phone use in class</td><td id="ccPhone">—</td></tr>
+      <tr><td>Part-time job</td><td id="ccJob">—</td></tr>
+      <tr><td>Coffee / energy drinks</td><td id="ccCoffee">—</td></tr>
+      <tr><td>Housing situation</td><td id="ccHousing">—</td></tr>
+      <tr><td>Lateness (Poisson)</td><td id="ccLate">—</td></tr>
+      <tr><td>Sleep, commute, study (normal)</td><td id="ccNormal">—</td></tr>
+      <tr id="ccCorrRow" style="display:none"><td>Sleep vs. exam score</td><td id="ccCorr">—</td></tr>
+    </tbody>
+  </table>
+  <p class="lead" style="margin-top:14px" id="ccSummary">—</p>
+</section>
+
+<footer>
+  <p id="footerNote">Data: a live, anonymous survey of students collected for this project — this page fetches the latest responses from Google Sheets on every load. The sample is small and self-selected, so differences between groups may be due to chance — correlation isn't causation here.</p>
+  <a class="cta" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener">Take the survey</a>
+</footer>
+
+</div>
+
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRLsyOwkmUOHJqrol0ZSQgJX--O-ZLD6v3-tSeGjzia6y17LNwOv80QH3qvgDDXGAterQsXoGoDfPA/pub?gid=1819341040&single=true&output=csv";
+const FALLBACK_CSV = `Timestamp,На каком вы курсе?,Где вы живёте?,Сколько минут вы добираетесь до вуза в одну сторону?,Сколько часов вы обычно спите в учебные дни?,"Сколько часов в день вы в среднем занимаетесь самостоятельно (домашка, чтение, проекты)?",Сколько раз за последние 7 дней вы опоздали на пары?,Пользуетесь ли вы телефоном на парах не по учебе?,Вы работаете или подрабатываете?,Пьёте ли вы кофе или энергетики каждый день?,Вы сдали последнюю сессию без долгов?,"Средний балл за последнюю сессию или оценка за последний тест (в процентах, от 0 до 100)"
+9/21/2026 16:44:22,2,В общежитии,15,5,2.5,1,Нет,Нет,Да,Да,
+9/21/2026 16:46:43,2,Снимаю жильё,5,7.5,2,1,Да,Нет,Да,Да,98
+9/21/2026 16:52:16,1,С родителями,25,8,3,2,Да,Да,Нет,Да,65
+9/21/2026 16:52:40,3,С родителями,75,6,2,1,Да,Да,Нет,Да,80
+9/21/2026 16:52:55,3,В общежитии,15,6,1,4,Да,Да,Да,Нет,74
+9/21/2026 16:53:22,1,В общежитии,10,10,4,0,Да,Нет,Нет,Нет,57
+9/21/2026 16:53:54,4 и выше,Снимаю жильё,45,8.5,1.5,2,Да,Да,Да,Нет,89
+9/21/2026 17:04:43,2,С родителями,60,6.5,0.5,0,Нет,Да,Нет,Да,67
+9/21/2026 17:09:24,2,Снимаю жильё,7,7,2.5,0,Да,Нет,Нет,Да,82
+9/21/2026 17:26:50,1,В общежитии,10,5,3,0,Да,Нет,Нет,Да,70
+9/21/2026 17:32:34,1,С родителями,40,4,2.5,0,Да,Нет,Нет,Нет,73
+9/21/2026 17:34:44,1,С родителями,60,7,1.5,1,Нет,Нет,Нет,Нет,75
+9/21/2026 17:39:22,1,Снимаю жильё,100,7,3,0,Нет,Нет,Нет,Нет,76
+9/21/2026 17:41:32,1,Снимаю жильё,40,7,4,5,Нет,Нет,Нет,Да,68
+9/21/2026 17:42:30,1,Снимаю жильё,100,7.5,3.5,0,Нет,Нет,Нет,Да,64
+9/21/2026 17:42:35,1,С родителями,120,7,3,1,Да,Нет,Да,Да,90
+9/21/2026 17:43:02,1,Снимаю жильё,45,8,4,0,Да,Нет,Нет,Да,80
+9/21/2026 17:43:22,1,В общежитии,15,7,5,1,Нет,Нет,Да,Нет,58
+9/21/2026 17:49:29,1,В общежитии,15,5.5,3.5,2,Да,Нет,Нет,Нет,65
+9/21/2026 18:42:30,4 и выше,Снимаю жильё,30,5,2,0,Да,Нет,Да,Да,67
+9/21/2026 20:48:10,1,С родителями,120,7,3,0,Нет,Нет,Нет,Нет,68
+9/21/2026 23:21:31,1,В общежитии,15,5,3.5,1,Да,Нет,Нет,Да,83
+9/22/2026 0:35:44,3,Снимаю жильё,20,8,1,2,Да,Да,Нет,Да,84
+9/22/2026 0:36:20,2,С родителями,45,5.5,3,1,Да,Да,Нет,Нет,87
+9/22/2026 0:36:51,4 и выше,Снимаю жильё,30,9,5,0,Да,Да,Нет,Нет,80
+9/22/2026 0:37:16,1,С родителями,50,7.5,4.5,3,Да,Нет,Нет,Нет,75
+9/22/2026 0:37:45,2,В общежитии,10,7,2,0,Нет,Нет,Да,Да,72
+9/22/2026 0:38:22,3,С родителями,45,6,3,4,Да,Нет,Нет,Нет,71
+9/22/2026 0:38:54,4 и выше,Снимаю жильё,30,5,3,2,Нет,Да,Да,Нет,70
+9/22/2026 0:41:48,3,С родителями,20,7,3,0,Да,Да,Нет,Нет,60
+9/22/2026 0:42:18,2,В общежитии,30,8,5,2,Да,Да,Нет,Да,50
+9/22/2026 9:59:17,2,В общежитии,45,8,5,2,Да,Нет,Нет,Да,80`;
+const FALLBACK_NOTE = "cached snapshot from Sep 22, 2026";
+
+// ---------- CSV parsing (quote-aware, same logic as the Java version) ----------
+function splitCsvLine(line){
+  const parts = [];
+  let cur = "", inQ = false;
+  for (let i=0;i<line.length;i++){
+    const ch = line[i];
+    if (ch === '"') inQ = !inQ;
+    else if (ch === ',' && !inQ) { parts.push(cur); cur = ""; }
+    else cur += ch;
+  }
+  parts.push(cur);
+  return parts;
+}
+function parseCsvText(text){
+  return text.split(/\r?\n/).filter(l => l.length > 0).map(splitCsvLine);
+}
+function parseNum(s){
+  const t = (s||"").trim().replace(",", ".");
+  if (t === "") return null;
+  const v = parseFloat(t);
+  return isNaN(v) ? null : v;
+}
+function parseYesNo(s){
+  const t = (s||"").trim().toLowerCase();
+  if (t.startsWith("да") || t.startsWith("yes")) return true;
+  if (t.startsWith("нет") || t.startsWith("no")) return false;
+  return null;
+}
+
+// ---------- turn rows into student records ----------
+function buildStudents(rows){
+  const out = [];
+  for (let i=1;i<rows.length;i++){
+    const c = rows[i];
+    if (!c || c.length < 11) continue;
+    if (c.every(v => (v||"").trim() === "")) continue;
+    const courseDigit = (c[1]||"").trim().charAt(0);
+    const s = {
+      course: parseInt(courseDigit, 10),
+      housing: (c[2]||"").trim(),
+      commute: parseNum(c[3]),
+      sleep: parseNum(c[4]),
+      study: parseNum(c[5]),
+      late: parseNum(c[6]),
+      phone: parseYesNo(c[7]),
+      job: parseYesNo(c[8]),
+      coffee: parseYesNo(c[9]),
+      passed: parseYesNo(c[10]),
+      score: c.length > 11 ? parseNum(c[11]) : null
+    };
+    if (s.commute === null || s.sleep === null || s.study === null || s.late === null) continue;
+    if (s.phone === null || s.job === null || s.coffee === null || s.passed === null) continue;
+    if (!s.housing) continue;
+    out.push(s);
+  }
+  return out;
+}
+
+// ---------- basic stats ----------
+function mean(a){ return a.reduce((x,y)=>x+y,0) / a.length; }
+function median(a){ const s=[...a].sort((x,y)=>x-y); const n=s.length; return n%2 ? s[(n-1)/2] : (s[n/2-1]+s[n/2])/2; }
+function std(a){ const m=mean(a); return Math.sqrt(a.reduce((s,v)=>s+(v-m)*(v-m),0) / (a.length-1)); }
+function minA(a){ return Math.min(...a); }
+function maxA(a){ return Math.max(...a); }
+
+// ---------- probability formulas (same as the Java version) ----------
+function erfc(x){
+  const z = Math.abs(x);
+  const t = 1/(1+0.5*z);
+  const poly = -z*z -1.26551223 + t*(1.00002368 + t*(0.37409196 + t*(0.09678418 +
+    t*(-0.18628806 + t*(0.27886807 + t*(-1.13520398 + t*(1.48851587 +
+    t*(-0.82215223 + t*0.17087277))))))));
+  const r = t*Math.exp(poly);
+  return x >= 0 ? r : 2 - r;
+}
+function normalCdf(x, mu, sigma){
+  const z = (x - mu) / sigma;
+  return 0.5 * erfc(-z / Math.sqrt(2));
+}
+function binomialPmf(n, k, p){
+  if (k < 0 || k > n) return 0;
+  let logC = 0;
+  for (let i = 1; i <= k; i++) logC += Math.log(n - k + i) - Math.log(i);
+  return Math.exp(logC + k*Math.log(p) + (n-k)*Math.log(1-p));
+}
+function poissonPmf(k, lambda){
+  let p = Math.exp(-lambda);
+  for (let i = 1; i <= k; i++) p = p * lambda / i;
+  return p;
+}
+function pearson(xs, ys){
+  const n = xs.length;
+  const mx = mean(xs), my = mean(ys);
+  let sxy=0, sxx=0, syy=0;
+  for (let i=0;i<n;i++){ const dx=xs[i]-mx, dy=ys[i]-my; sxy+=dx*dy; sxx+=dx*dx; syy+=dy*dy; }
+  const r = sxy / Math.sqrt(sxx*syy);
+  const b = sxy / sxx;
+  const a = my - b*mx;
+  return { r, a, b, n };
+}
+// two-tailed critical t at alpha = 0.05, df 1..30; beyond that, 1.96 (normal approx)
+const T_TABLE = [null,12.706,4.303,3.182,2.776,2.571,2.447,2.365,2.306,2.262,2.228,
+  2.201,2.179,2.160,2.145,2.131,2.120,2.110,2.101,2.093,2.086,
+  2.080,2.074,2.069,2.064,2.060,2.056,2.052,2.048,2.045,2.042];
+function criticalT(df){ return df >= 1 && df <= 30 ? T_TABLE[df] : 1.96; }
+
+function pct(x){ return (x*100).toLocaleString("en-US", {minimumFractionDigits:1, maximumFractionDigits:1}) + "%"; }
+function num(x, d=2){ return x.toLocaleString("en-US", {minimumFractionDigits:d, maximumFractionDigits:d}); }
+
+function bars(container, values, labels, values2, colors){
+  container.innerHTML = "";
+  const max = Math.max(...values, ...(values2||[0]), 0.0001);
+  values.forEach((v,i)=>{
+    const col = document.createElement("div"); col.className = "col";
+    const bar = document.createElement("div");
+    bar.className = "bar" + (colors && colors[i] === "b2" ? " b2" : "");
+    bar.style.height = Math.max(2, v/max*130) + "px";
+    col.appendChild(bar);
+    if (values2){
+      const bar2 = document.createElement("div"); bar2.className = "bar b2";
+      bar2.style.height = Math.max(2, values2[i]/max*130) + "px";
+      bar2.style.marginTop = "2px";
+      col.appendChild(bar2);
+    }
+    const k = document.createElement("div"); k.className = "k"; k.textContent = labels[i];
+    col.appendChild(k);
+    container.appendChild(col);
+  });
+}
+
+// ---------- app state, populated once data is loaded ----------
+let N = 0, pA = 0;
+let factors = {};      // phone/job/coffee -> {label, nB, nAB}
+let measures = {};     // sleep/commute/study -> {label, mu, sigma, min, max, def, data}
+let lateArr = [];
+let housingGroups = []; // [{type, nH, nAH}]
+let corrStats = null;   // {r, a, b, n, t, df, significant} or null
+
+function computeAll(students){
+  N = students.length;
+  const passedCount = students.filter(s => s.passed).length;
+  pA = passedCount / N;
+
+  function factorStats(label, key){
+    const withF = students.filter(s => s[key]);
+    return { label, nB: withF.length, nAB: withF.filter(s => s.passed).length };
+  }
+  factors = {
+    phone:  factorStats("Phone use in class", "phone"),
+    job:    factorStats("Has a part-time job", "job"),
+    coffee: factorStats("Coffee / energy drinks daily", "coffee")
+  };
+
+  function measureStats(label, key, min, max, def){
+    const data = students.map(s => s[key]);
+    return { label, mu: mean(data), sigma: std(data), min, max, def, data };
+  }
+  measures = {
+    sleep:   measureStats("Sleep, hours", "sleep", 2, 12, Math.round(mean(students.map(s=>s.sleep)))),
+    commute: measureStats("Commute to campus, min", "commute", 0, 140, 30),
+    study:   measureStats("Independent study, hrs/day", "study", 0, 6, 2)
+  };
+
+  lateArr = students.map(s => s.late);
+
+  const types = [...new Set(students.map(s => s.housing))].sort();
+  housingGroups = types.map(type => {
+    const inGroup = students.filter(s => s.housing === type);
+    return { type, nH: inGroup.length, nAH: inGroup.filter(s => s.passed).length };
+  });
+
+  const scoreable = students.filter(s => s.score !== null);
+  if (scoreable.length >= 8){
+    const xs = scoreable.map(s => s.sleep);
+    const ys = scoreable.map(s => s.score);
+    const { r, a, b, n } = pearson(xs, ys);
+    const df = n - 2;
+    const t = r * Math.sqrt(df / (1 - r*r));
+    const tc = criticalT(df);
+    corrStats = { r, a, b, n, t, df, tc, significant: Math.abs(t) > tc, xs, ys };
+  } else {
+    corrStats = { pending: true, have: scoreable.length, need: 8 };
+  }
+}
+
+// ---------- rendering ----------
+function renderChipsAndStats(){
+  document.getElementById("statN").textContent = N;
+  document.getElementById("statPass").textContent = pct(pA);
+  document.getElementById("statSleep").textContent = num(measures.sleep.mu,1) + " hrs";
+  document.getElementById("statLate").textContent = num(mean(lateArr),2);
+
+  function fillRow(prefix, data){
+    document.getElementById(prefix+"Mean").textContent = num(mean(data),2);
+    document.getElementById(prefix+"Med").textContent = num(median(data),1);
+    document.getElementById(prefix+"Min").textContent = num(minA(data),1);
+    document.getElementById(prefix+"Max").textContent = num(maxA(data),1);
+    document.getElementById(prefix+"Sd").textContent = num(std(data),2);
+  }
+  fillRow("dsSleep", measures.sleep.data);
+  fillRow("dsCommute", measures.commute.data);
+  fillRow("dsStudy", measures.study.data);
+  fillRow("dsLate", lateArr);
+
+  document.getElementById("binLead").textContent =
+    `Model: p = ${pct(pA)} (current pass rate from the survey). Move the group size n and the page recalculates how many people out of that group are likely to pass without retakes.`;
+  document.getElementById("poisLead").textContent =
+    `By the survey, students are late an average of λ = ${num(mean(lateArr),2)} times a week. Move λ to see how the chance of zero late arrivals changes.`;
+}
+
+let factorKey = "phone";
+function renderFactor(){
+  const f = factors[factorKey];
+  const pB = f.nB / N;
+  const pAB = f.nAB / N;
+  const pAgivenB = pB > 0 ? pAB / pB : 0;
+  const pAgivenNotB = (N - f.nB) > 0 ? (Math.round(pA*N) - f.nAB) / (N - f.nB) : 0;
+  document.getElementById("condText").textContent = `P(A | ${f.label.toLowerCase()}) = ${pct(pAgivenB)}`;
+  document.getElementById("condSub").textContent = `Without this factor: ${pct(pAgivenNotB)}. Across all students: ${pct(pA)}.`;
+  bars(document.getElementById("condBars"), [pAgivenB*100, pAgivenNotB*100], ["yes","no"], null, [null, "b2"]);
+}
+
+function renderBinomial(){
+  const binN = document.getElementById("binN");
+  const n = parseInt(binN.value);
+  document.getElementById("binNVal").textContent = n;
+  const values = [], labels = [];
+  for (let k=0;k<=n;k++){ values.push(binomialPmf(n,k,pA)*100); labels.push(k); }
+  const expected = n*pA;
+  let mode = 0;
+  for (let k=1;k<=n;k++) if (values[k]>values[mode]) mode = k;
+  document.getElementById("binText").textContent = `Expect about ${num(expected,1)} out of ${n} to pass`;
+  document.getElementById("binSub").textContent = `Most likely count: k = ${mode} (P = ${pct(values[mode]/100)}). Variance = ${num(n*pA*(1-pA),2)}.`;
+  bars(document.getElementById("binBars"), values, labels);
+}
+
+function renderPoisson(){
+  const lambdaR = document.getElementById("lambdaR");
+  const lambda = parseFloat(lambdaR.value);
+  document.getElementById("lambdaVal").textContent = num(lambda,2);
+  const values = [], labels = [];
+  for (let k=0;k<=7;k++){ values.push(poissonPmf(k,lambda)*100); labels.push(k); }
+  const p0 = poissonPmf(0,lambda);
+  document.getElementById("poisText").textContent = `P(zero late arrivals) = ${pct(p0)}`;
+  document.getElementById("poisSub").textContent = `P(late at least once) = ${pct(1-p0)}. For Poisson, mean and variance are both λ = ${num(lambda,2)}.`;
+  bars(document.getElementById("poisBars"), values, labels);
+}
+
+function shareBetween(data, a, b){
+  if (!data.length) return null;
+  let c = 0; data.forEach(v => { if (v>=a && v<=b) c++; });
+  return c/data.length;
+}
+let measureKey = "sleep";
+function renderNormal(){
+  const threshR = document.getElementById("threshR");
+  const m = measures[measureKey];
+  const x = parseFloat(threshR.value);
+  document.getElementById("threshVal").textContent = num(x,1);
+  const p = normalCdf(x, m.mu, m.sigma);
+  document.getElementById("normText").textContent = `P(${m.label.toLowerCase()} ≤ ${num(x,1)}) = ${pct(p)}`;
+  const real = shareBetween(m.data, -Infinity, x);
+  document.getElementById("normSub").textContent = real !== null
+    ? `Model estimate: ${pct(p)}. Actual share in the survey: ${pct(real)}.`
+    : `Estimate from the normal model with μ = ${num(m.mu,2)}, σ = ${num(m.sigma,2)}.`;
+  const one = normalCdf(m.mu+m.sigma,m.mu,m.sigma) - normalCdf(m.mu-m.sigma,m.mu,m.sigma);
+  const two = normalCdf(m.mu+2*m.sigma,m.mu,m.sigma) - normalCdf(m.mu-2*m.sigma,m.mu,m.sigma);
+  document.getElementById("normRow").innerHTML =
+    `<td>${num(m.mu,2)}</td><td>${num(m.sigma,2)}</td><td class="num">${pct(one)}</td><td class="num">${pct(two)}</td>`;
+}
+
+function renderCorrelation(){
+  const lead = document.getElementById("corrLead");
+  const body = document.getElementById("corrBody");
+  if (corrStats.pending){
+    lead.textContent = `Waiting for enough students to answer the score question — ${corrStats.have} so far, need at least ${corrStats.need}. This section will fill in automatically once enough responses arrive.`;
+    body.style.display = "none";
+    document.getElementById("ccCorrRow").style.display = "none";
+    return;
+  }
+  lead.textContent = `Based on the ${corrStats.n} students who reported both a sleep answer and an exam score.`;
+  body.style.display = "";
+  const sign = corrStats.b >= 0 ? "+" : "−";
+  document.getElementById("corrText").textContent = `r = ${num(corrStats.r,3)}, Score = ${num(corrStats.a,1)} ${sign} ${num(Math.abs(corrStats.b),2)}·Sleep`;
+  document.getElementById("corrSub").textContent =
+    `H₀: ρ = 0. t = ${num(corrStats.t,2)}, critical t (df = ${corrStats.df}, α = 0.05) = ${num(corrStats.tc,2)}. ` +
+    (corrStats.significant
+      ? "The correlation is statistically significant — we reject H₀."
+      : "Not statistically significant at this sample size — we cannot reject H₀.");
+  renderScatter();
+
+  document.getElementById("ccCorrRow").style.display = "";
+  document.getElementById("ccCorr").textContent =
+    `r = ${num(corrStats.r,2)} (${corrStats.significant ? "significant" : "not significant"} at α = 0.05, n = ${corrStats.n}). ` +
+    `More sleep is associated with a ${corrStats.b >= 0 ? "higher" : "lower"} score in this sample.`;
+}
+
+function renderScatter(){
+  const svg = document.getElementById("scatterSvg");
+  const { xs, ys, a, b } = corrStats;
+  const W = 700, H = 320, M = 40;
+  const xMin = Math.min(...xs) - 0.5, xMax = Math.max(...xs) + 0.5;
+  const yMin = Math.min(...ys) - 5, yMax = Math.max(...ys) + 5;
+  const sx = x => M + (x - xMin) / (xMax - xMin) * (W - 2*M);
+  const sy = y => H - M - (y - yMin) / (yMax - yMin) * (H - 2*M);
+
+  let svgContent = `<line class="axis" x1="${M}" y1="${H-M}" x2="${W-M}" y2="${H-M}"/>`;
+  svgContent += `<line class="axis" x1="${M}" y1="${M}" x2="${M}" y2="${H-M}"/>`;
+  svgContent += `<text x="${W/2}" y="${H-8}" text-anchor="middle">Sleep, hours</text>`;
+  svgContent += `<text x="14" y="${H/2}" text-anchor="middle" transform="rotate(-90 14 ${H/2})">Score, %</text>`;
+
+  const lx1 = xMin, lx2 = xMax;
+  svgContent += `<line class="line" x1="${sx(lx1)}" y1="${sy(a+b*lx1)}" x2="${sx(lx2)}" y2="${sy(a+b*lx2)}"/>`;
+
+  xs.forEach((x,i) => {
+    svgContent += `<circle class="pt" cx="${sx(x)}" cy="${sy(ys[i])}" r="5"/>`;
+  });
+  svg.innerHTML = svgContent;
+}
+
+function renderConclusions(){
+  function line(key){
+    const f = factors[key];
+    const pB = f.nB / N;
+    const pAB = f.nAB / N;
+    const withF = pB > 0 ? pAB/pB : 0;
+    const withoutF = (N-f.nB) > 0 ? (Math.round(pA*N) - f.nAB) / (N-f.nB) : 0;
+    return `${pct(withF)} pass rate with it, ${pct(withoutF)} without.`;
+  }
+  document.getElementById("ccPhone").textContent = line("phone");
+  document.getElementById("ccJob").textContent = line("job");
+  document.getElementById("ccCoffee").textContent = line("coffee");
+
+  const housingText = housingGroups.map(g => `${g.type}: ${pct(g.nAH/g.nH)}`).join(". ") + ".";
+  document.getElementById("ccHousing").textContent = housingText;
+
+  const lambda = mean(lateArr);
+  document.getElementById("ccLate").textContent =
+    `Averages ${num(lambda,2)}/week; the chance of a perfectly on-time week is ${pct(poissonPmf(0,lambda))}.`;
+
+  function shape(key, label){
+    const m = measures[key];
+    const d = m.data;
+    const skewed = Math.abs(m.mu - median(d)) > 0.2 * m.sigma;
+    return `${label} ${skewed ? "is noticeably skewed" : "follows the bell curve reasonably well"}`;
+  }
+  document.getElementById("ccNormal").textContent =
+    `${shape("sleep","Sleep")}; ${shape("study","study time").toLowerCase()}; ${shape("commute","commute time").toLowerCase()}.`;
+
+  const best = housingGroups.reduce((a,b) => (b.nAH/b.nH > a.nAH/a.nH ? b : a));
+  document.getElementById("ccSummary").textContent =
+    `Day-to-day habits tested here — phone use, coffee, part-time work — move the pass rate only a little. ` +
+    `Housing shows the widest split (highest: ${best.type}, ${pct(best.nAH/best.nH)}), which points less at any single habit and more at stability of routine. ` +
+    `With ${N} self-selected students, this reads as a lead worth investigating further, not a proven cause.`;
+}
+
+function setupControls(){
+  const factorButtons = document.getElementById("factorButtons");
+  factorButtons.innerHTML = "";
+  Object.keys(factors).forEach(key => {
+    const btn = document.createElement("button");
+    btn.textContent = factors[key].label;
+    btn.className = key === factorKey ? "active" : "";
+    btn.onclick = () => {
+      factorKey = key;
+      renderFactor();
+      [...factorButtons.children].forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+    };
+    factorButtons.appendChild(btn);
+  });
+
+  const measureButtons = document.getElementById("measureButtons");
+  measureButtons.innerHTML = "";
+  const threshR = document.getElementById("threshR");
+  Object.keys(measures).forEach(key => {
+    const btn = document.createElement("button");
+    btn.textContent = measures[key].label;
+    btn.className = key === measureKey ? "active" : "";
+    btn.onclick = () => {
+      measureKey = key;
+      [...measureButtons.children].forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      const m = measures[key];
+      threshR.min = m.min; threshR.max = m.max; threshR.step = (m.max-m.min)/40;
+      threshR.value = m.def;
+      renderNormal();
+    };
+    measureButtons.appendChild(btn);
+  });
+
+  document.getElementById("binN").oninput = renderBinomial;
+  document.getElementById("lambdaR").oninput = renderPoisson;
+  threshR.oninput = renderNormal;
+  const m0 = measures[measureKey];
+  threshR.min = m0.min; threshR.max = m0.max; threshR.step = (m0.max-m0.min)/40; threshR.value = m0.def;
+  document.getElementById("lambdaR").value = mean(lateArr).toFixed(2);
+}
+
+function renderAll(){
+  setupControls();
+  renderChipsAndStats();
+  renderFactor();
+  renderBinomial();
+  renderPoisson();
+  renderNormal();
+  renderCorrelation();
+  renderConclusions();
+}
+
+// ---------- load data: try the live Google Sheet, fall back to a cached snapshot ----------
+async function fetchWithTimeout(url, ms){
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  try {
+    const res = await fetch(url, { cache: "no-store", signal: controller.signal });
+    return res;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+async function fetchCsvText(){
+  const attempts = [
+    { name: "direct", url: CSV_URL },
+    { name: "allorigins", url: "https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_URL) },
+    { name: "corsproxy.io", url: "https://corsproxy.io/?url=" + encodeURIComponent(CSV_URL) },
+    { name: "codetabs", url: "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(CSV_URL) }
+  ];
+  let lastError = null;
+  for (const attempt of attempts){
+    try {
+      const res = await fetchWithTimeout(attempt.url, 7000);
+      if (!res.ok) { lastError = new Error(attempt.name + ": HTTP " + res.status); continue; }
+      const text = await res.text();
+      // sanity check: a real CSV should start with our header row, not an HTML error page
+      if (!text.trim().startsWith("Timestamp")) { lastError = new Error(attempt.name + ": unexpected content"); continue; }
+      return text;
+    } catch (e){
+      console.warn(attempt.name + " failed:", e);
+      lastError = e;
+    }
+  }
+  throw lastError || new Error("all fetch attempts failed");
+}
+
+async function loadData(){
+  const dot = document.getElementById("statusDot");
+  const text = document.getElementById("statusText");
+  text.textContent = "Connecting to the live survey…";
+  dot.className = "dot";
+  try {
+    const csvText = await fetchCsvText();
+    const students = buildStudents(parseCsvText(csvText));
+    if (students.length < 5) throw new Error("too few rows");
+    computeAll(students);
+    renderAll();
+    const now = new Date();
+    text.textContent = `Live from Google Sheets, updated ${now.toLocaleTimeString("en-US")} (${N} responses)`;
+  } catch (e){
+    console.warn("Live fetch failed, using fallback data:", e);
+    const students = buildStudents(parseCsvText(FALLBACK_CSV));
+    computeAll(students);
+    renderAll();
+    dot.className = "dot stale";
+    text.textContent = `Couldn't reach the live sheet — showing a ${FALLBACK_NOTE} (${N} responses).`;
+  }
+}
+
+document.getElementById("refreshBtn").onclick = loadData;
+loadData();
+</script>
+</body>
+</html>
