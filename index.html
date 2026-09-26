@@ -306,6 +306,7 @@
 
 <section>
   <h2>Conclusions</h2>
+  <p class="lead">Every percentage in the table below is a <strong>conditional probability</strong>, not a plain one. It doesn't answer "what share of all students passed" — that number is the overall pass rate shown at the top of the page. Instead, each row narrows the question to one specific group and asks "of just these students, what share passed?" That's a different, smaller question for every row, which is also why the numbers aren't meant to add up to 100% — they're separate answers, not pieces of one pie.</p>
   <p class="lead">Answering the question habit by habit, using the tools above (updates automatically with new responses):</p>
   <table>
     <thead><tr><th>Habit / factor</th><th>What the data shows</th></tr></thead>
@@ -497,7 +498,16 @@ function bars(container, values, labels, values2, colors){
 }
 
 // ---------- app state, populated once data is loaded ----------
-let N = 0, pA = 0;
+let N = 0, pA = 0, passedTotal = 0;
+
+// the survey form itself is in Russian, so raw housing answers come back in Russian —
+// translate them here so the page stays consistently in English
+const HOUSING_LABELS = {
+  "В общежитии": "dorm",
+  "С родителями": "living with parents",
+  "Снимаю жильё": "renting"
+};
+function translateHousing(type){ return HOUSING_LABELS[type] || type; }
 let factors = {};      // phone/job/coffee -> {label, nB, nAB}
 let measures = {};     // sleep/commute/study -> {label, mu, sigma, min, max, def, data}
 let lateArr = [];
@@ -507,6 +517,7 @@ let corrStats = null;   // {r, a, b, n, t, df, significant} or null
 function computeAll(students){
   N = students.length;
   const passedCount = students.filter(s => s.passed).length;
+  passedTotal = passedCount;
   pA = passedCount / N;
 
   function factorStats(label, key){
@@ -582,7 +593,7 @@ function renderFactor(){
   const pB = f.nB / N;
   const pAB = f.nAB / N;
   const pAgivenB = pB > 0 ? pAB / pB : 0;
-  const pAgivenNotB = (N - f.nB) > 0 ? (Math.round(pA*N) - f.nAB) / (N - f.nB) : 0;
+  const pAgivenNotB = (N - f.nB) > 0 ? (passedTotal - f.nAB) / (N - f.nB) : 0;
   document.getElementById("condText").textContent = `P(A | ${f.label.toLowerCase()}) = ${pct(pAgivenB)}`;
   document.getElementById("condSub").textContent = `Without this factor: ${pct(pAgivenNotB)}. Across all students: ${pct(pA)}.`;
   bars(document.getElementById("condBars"), [pAgivenB*100, pAgivenNotB*100], ["yes","no"], null, [null, "b2"]);
@@ -692,14 +703,14 @@ function renderConclusions(){
     const pB = f.nB / N;
     const pAB = f.nAB / N;
     const withF = pB > 0 ? pAB/pB : 0;
-    const withoutF = (N-f.nB) > 0 ? (Math.round(pA*N) - f.nAB) / (N-f.nB) : 0;
+    const withoutF = (N-f.nB) > 0 ? (passedTotal - f.nAB) / (N-f.nB) : 0;
     return `${pct(withF)} pass rate with it, ${pct(withoutF)} without.`;
   }
   document.getElementById("ccPhone").textContent = line("phone");
   document.getElementById("ccJob").textContent = line("job");
   document.getElementById("ccCoffee").textContent = line("coffee");
 
-  const housingText = housingGroups.map(g => `${g.type}: ${pct(g.nAH/g.nH)}`).join(". ") + ".";
+  const housingText = housingGroups.map(g => `${translateHousing(g.type)}: ${pct(g.nAH/g.nH)}`).join(". ") + ".";
   document.getElementById("ccHousing").textContent = housingText;
 
   const lambda = mean(lateArr);
@@ -718,7 +729,7 @@ function renderConclusions(){
   const best = housingGroups.reduce((a,b) => (b.nAH/b.nH > a.nAH/a.nH ? b : a));
   document.getElementById("ccSummary").textContent =
     `Day-to-day habits tested here — phone use, coffee, part-time work — move the pass rate only a little. ` +
-    `Housing shows the widest split (highest: ${best.type}, ${pct(best.nAH/best.nH)}), which points less at any single habit and more at stability of routine. ` +
+    `Housing shows the widest split (highest: ${translateHousing(best.type)}, ${pct(best.nAH/best.nH)}), which points less at any single habit and more at stability of routine. ` +
     `With ${N} self-selected students, this reads as a lead worth investigating further, not a proven cause.`;
 }
 
