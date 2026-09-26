@@ -186,10 +186,11 @@
 <div class="wrap">
 
 <header>
-  <h1>What raises the odds of a debt-free exam session?</h1>
-  <p class="lede">Across <b id="statN">—</b> students surveyed, <b id="statPass">—</b> passed the exam session with no retakes, sleeping <b id="statSleep">—</b> a night on average and arriving late <b id="statLate">—</b> times a week. Five formulas from probability theory test which of these habits actually move that number — move the controls below to see each one for yourself.</p>
+  <div class="segmented" id="langButtons" style="margin-bottom:14px"></div>
+  <h1 id="hTitle">What raises the odds of a debt-free exam session?</h1>
+  <p class="lede" id="pLede">—</p>
   <div class="cta-row">
-    <a class="cta" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener">Take the survey</a>
+    <a class="cta" id="ctaTop" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener">Take the survey</a>
     <div class="status">
       <span class="dot" id="statusDot"></span>
       <span id="statusText">Connecting to the live survey…</span>
@@ -199,44 +200,44 @@
 </header>
 
 <section>
-  <h2>The problem and the question</h2>
-  <p class="lead">Students juggle sleep, commuting, side jobs, and screen time, and it's easy to assume any one of these decides whether a session goes well. This project doesn't test a single cause. It asks: <strong>of the habits we can measure, which ones actually shift the odds of finishing the session without a retake — and by how much?</strong> Five formulas from probability theory each answer a slice of that question: conditional probability and Bayes' rule test individual habits and housing situation, the binomial model asks what a whole study group looks like, Poisson models a rare event (lateness), the normal model checks whether sleep, commute, and study time follow a predictable pattern, and — once enough students report a score — correlation and regression test sleep against exam performance directly.</p>
+  <h2 id="hProblem">The problem and the question</h2>
+  <p class="lead" id="pProblem">—</p>
 </section>
 
 <section>
-  <h2>Descriptive statistics</h2>
-  <p class="lead">Before testing any probability model, here is what the raw survey answers look like. This table updates every time the page loads new responses.</p>
+  <h2 id="hDescriptive">Descriptive statistics</h2>
+  <p class="lead" id="pDescriptive">—</p>
   <table>
-    <thead><tr><th>Measure</th><th class="num">Mean</th><th class="num">Median</th><th class="num">Min</th><th class="num">Max</th><th class="num">Std. dev.</th></tr></thead>
+    <thead><tr><th id="thMeasure">Measure</th><th class="num" id="thMean">Mean</th><th class="num" id="thMedian">Median</th><th class="num" id="thMin">Min</th><th class="num" id="thMax">Max</th><th class="num" id="thStd">Std. dev.</th></tr></thead>
     <tbody>
-      <tr><td>Sleep, hours</td><td class="num" id="dsSleepMean">—</td><td class="num" id="dsSleepMed">—</td><td class="num" id="dsSleepMin">—</td><td class="num" id="dsSleepMax">—</td><td class="num" id="dsSleepSd">—</td></tr>
-      <tr><td>Commute, minutes</td><td class="num" id="dsCommuteMean">—</td><td class="num" id="dsCommuteMed">—</td><td class="num" id="dsCommuteMin">—</td><td class="num" id="dsCommuteMax">—</td><td class="num" id="dsCommuteSd">—</td></tr>
-      <tr><td>Independent study, hrs/day</td><td class="num" id="dsStudyMean">—</td><td class="num" id="dsStudyMed">—</td><td class="num" id="dsStudyMin">—</td><td class="num" id="dsStudyMax">—</td><td class="num" id="dsStudySd">—</td></tr>
-      <tr><td>Late arrivals / week</td><td class="num" id="dsLateMean">—</td><td class="num" id="dsLateMed">—</td><td class="num" id="dsLateMin">—</td><td class="num" id="dsLateMax">—</td><td class="num" id="dsLateSd">—</td></tr>
+      <tr><td id="rowSleep">Sleep, hours</td><td class="num" id="dsSleepMean">—</td><td class="num" id="dsSleepMed">—</td><td class="num" id="dsSleepMin">—</td><td class="num" id="dsSleepMax">—</td><td class="num" id="dsSleepSd">—</td></tr>
+      <tr><td id="rowCommute">Commute, minutes</td><td class="num" id="dsCommuteMean">—</td><td class="num" id="dsCommuteMed">—</td><td class="num" id="dsCommuteMin">—</td><td class="num" id="dsCommuteMax">—</td><td class="num" id="dsCommuteSd">—</td></tr>
+      <tr><td id="rowStudy">Independent study, hrs/day</td><td class="num" id="dsStudyMean">—</td><td class="num" id="dsStudyMed">—</td><td class="num" id="dsStudyMin">—</td><td class="num" id="dsStudyMax">—</td><td class="num" id="dsStudySd">—</td></tr>
+      <tr><td id="rowLate">Late arrivals / week</td><td class="num" id="dsLateMean">—</td><td class="num" id="dsLateMed">—</td><td class="num" id="dsLateMin">—</td><td class="num" id="dsLateMax">—</td><td class="num" id="dsLateSd">—</td></tr>
     </tbody>
   </table>
 </section>
 
 <section>
-  <h2>Conditional probability</h2>
+  <h2 id="hConditional">Conditional probability</h2>
   <p class="formula">P(A | B) = P(A and B) / P(B)</p>
-  <p class="lead">A = "passed exams with no retakes." Pick a factor B and compare the odds of passing between students who have it and students who don't.</p>
+  <p class="lead" id="pConditionalLead">—</p>
   <div class="segmented" id="factorButtons"></div>
   <div class="out" style="margin-top:16px">
     <div class="big" id="condText">—</div>
     <div class="small" id="condSub">—</div>
   </div>
-  <div class="legend"><span class="l1">with factor</span><span class="l2">without factor</span></div>
+  <div class="legend"><span class="l1" id="legWith">with factor</span><span class="l2" id="legWithout">without factor</span></div>
   <div class="bars" id="condBars"></div>
 </section>
 
 <section>
-  <h2>Binomial distribution</h2>
+  <h2 id="hBinomial">Binomial distribution</h2>
   <p class="formula">P(X = k) = C(n, k) · pᵏ · (1 − p)ⁿ⁻ᵏ</p>
-  <p class="lead" id="binLead">Model: p = the current pass rate from the survey. Move the group size n and the page recalculates how many people out of that group are likely to pass without retakes.</p>
+  <p class="lead" id="binLead">—</p>
   <div class="controls">
     <div class="row">
-      <label class="field-label" for="binN">Group size n</label>
+      <label class="field-label" for="binN" id="lblGroupSize">Group size n</label>
       <input type="range" id="binN" min="5" max="40" step="1" value="25">
       <span class="val" id="binNVal">25</span>
     </div>
@@ -249,12 +250,12 @@
 </section>
 
 <section>
-  <h2>Poisson distribution</h2>
+  <h2 id="hPoisson">Poisson distribution</h2>
   <p class="formula">P(X = k) = λᵏ · e⁻λ / k!</p>
-  <p class="lead" id="poisLead">By the survey, students are late an average of λ times a week (see above). Move λ to see how the chance of zero late arrivals changes.</p>
+  <p class="lead" id="poisLead">—</p>
   <div class="controls">
     <div class="row">
-      <label class="field-label" for="lambdaR">Average late arrivals λ</label>
+      <label class="field-label" for="lambdaR" id="lblLambda">Average late arrivals λ</label>
       <input type="range" id="lambdaR" min="0.2" max="4" step="0.1" value="1.16">
       <span class="val" id="lambdaVal">1.16</span>
     </div>
@@ -267,13 +268,13 @@
 </section>
 
 <section>
-  <h2>Normal distribution</h2>
+  <h2 id="hNormal">Normal distribution</h2>
   <p class="formula">P(X ≤ x) = Φ((x − μ) / σ)</p>
-  <p class="lead">μ and σ come straight from the survey. Pick a measure and a threshold x to see the share of students below it.</p>
+  <p class="lead" id="pNormalLead">—</p>
   <div class="controls">
     <div class="segmented" id="measureButtons"></div>
     <div class="row">
-      <label class="field-label" for="threshR">Threshold x</label>
+      <label class="field-label" for="threshR" id="lblThreshold">Threshold x</label>
       <input type="range" id="threshR" min="0" max="1" step="0.1" value="0.5">
       <span class="val" id="threshVal">—</span>
     </div>
@@ -283,14 +284,14 @@
     <div class="small" id="normSub">—</div>
   </div>
   <table>
-    <caption>μ, σ, and the 68–95 rule for this measure</caption>
-    <thead><tr><th>μ (mean)</th><th>σ (std. dev.)</th><th class="num">within μ ± σ</th><th class="num">within μ ± 2σ</th></tr></thead>
+    <caption id="capNormalRule">μ, σ, and the 68–95 rule for this measure</caption>
+    <thead><tr><th id="thMu">μ (mean)</th><th id="thSigma">σ (std. dev.)</th><th class="num" id="thWithin1">within μ ± σ</th><th class="num" id="thWithin2">within μ ± 2σ</th></tr></thead>
     <tbody><tr id="normRow"><td>—</td><td>—</td><td class="num">—</td><td class="num">—</td></tr></tbody>
   </table>
 </section>
 
 <section id="corrSection">
-  <h2>Correlation &amp; regression: sleep and exam score</h2>
+  <h2 id="hCorrelation">Correlation &amp; regression: sleep and exam score</h2>
   <p class="formula">r = Σ(xᵢ−x̄)(yᵢ−ȳ) / √(Σ(xᵢ−x̄)² · Σ(yᵢ−ȳ)²) &nbsp;&nbsp; Score = a + b·Sleep</p>
   <p class="lead" id="corrLead">Waiting for enough students to answer the score question…</p>
   <div id="corrBody" style="display:none">
@@ -305,19 +306,19 @@
 </section>
 
 <section>
-  <h2>Conclusions</h2>
-  <p class="lead">Every percentage in the table below is a <strong>conditional probability</strong>, not a plain one. It doesn't answer "what share of all students passed" — that number is the overall pass rate shown at the top of the page. Instead, each row narrows the question to one specific group and asks "of just these students, what share passed?" That's a different, smaller question for every row, which is also why the numbers aren't meant to add up to 100% — they're separate answers, not pieces of one pie.</p>
-  <p class="lead">Answering the question habit by habit, using the tools above (updates automatically with new responses):</p>
+  <h2 id="hConclusions">Conclusions</h2>
+  <p class="lead" id="pConclusions1">—</p>
+  <p class="lead" id="pConclusions2">—</p>
   <table>
-    <thead><tr><th>Habit / factor</th><th>What the data shows</th></tr></thead>
+    <thead><tr><th id="thHabit">Habit / factor</th><th id="thShows">What the data shows</th></tr></thead>
     <tbody>
-      <tr><td>Phone use in class</td><td id="ccPhone">—</td></tr>
-      <tr><td>Part-time job</td><td id="ccJob">—</td></tr>
-      <tr><td>Coffee / energy drinks</td><td id="ccCoffee">—</td></tr>
-      <tr><td>Housing situation</td><td id="ccHousing">—</td></tr>
-      <tr><td>Lateness (Poisson)</td><td id="ccLate">—</td></tr>
-      <tr><td>Sleep, commute, study (normal)</td><td id="ccNormal">—</td></tr>
-      <tr id="ccCorrRow" style="display:none"><td>Sleep vs. exam score</td><td id="ccCorr">—</td></tr>
+      <tr><td id="rowPhone">Phone use in class</td><td id="ccPhone">—</td></tr>
+      <tr><td id="rowJob">Part-time job</td><td id="ccJob">—</td></tr>
+      <tr><td id="rowCoffee">Coffee / energy drinks</td><td id="ccCoffee">—</td></tr>
+      <tr><td id="rowHousing">Housing situation</td><td id="ccHousing">—</td></tr>
+      <tr><td id="rowLateness">Lateness (Poisson)</td><td id="ccLate">—</td></tr>
+      <tr><td id="rowNormalRow">Sleep, commute, study (normal)</td><td id="ccNormal">—</td></tr>
+      <tr id="ccCorrRow" style="display:none"><td id="rowCorr">Sleep vs. exam score</td><td id="ccCorr">—</td></tr>
     </tbody>
   </table>
   <p class="lead" style="margin-top:14px" id="ccSummary">—</p>
@@ -325,12 +326,254 @@
 
 <footer>
   <p id="footerNote">Data: a live, anonymous survey of students collected for this project — this page fetches the latest responses from Google Sheets on every load. The sample is small and self-selected, so differences between groups may be due to chance — correlation isn't causation here.</p>
-  <a class="cta" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener">Take the survey</a>
+  <a class="cta" id="ctaBottom" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener">Take the survey</a>
 </footer>
 
 </div>
 
 <script>
+// ============================================================
+// i18n: language state + dictionaries
+// ============================================================
+let LANG = "en";
+
+const FACTOR_META = {
+  phone:  { en: "Phone use in class",            ru: "Телефон на парах",              kk: "Сабақта телефон қолдану" },
+  job:    { en: "Has a part-time job",           ru: "Подрабатывает",                 kk: "Қосымша жұмыс істейді" },
+  coffee: { en: "Coffee / energy drinks daily",  ru: "Кофе/энергетики каждый день",   kk: "Күнде кофе/энергетик ішеді" }
+};
+const MEASURE_META = {
+  sleep:   { en: "Sleep, hours",                   ru: "Сон, часов",                    kk: "Ұйқы, сағат" },
+  commute: { en: "Commute to campus, min",         ru: "Дорога до вуза, мин",           kk: "Оқу орнына жол, мин" },
+  study:   { en: "Independent study, hrs/day",     ru: "Самоподготовка, ч/день",        kk: "Өзіндік дайындық, сағ/күн" }
+};
+const HOUSING_META = {
+  "В общежитии":  { en: "dorm",                 ru: "общежитие",         kk: "жатақхана" },
+  "С родителями": { en: "living with parents",  ru: "с родителями",      kk: "ата-анасымен" },
+  "Снимаю жильё": { en: "renting",              ru: "снимает жильё",     kk: "пәтер жалдайды" }
+};
+function tFactor(key){ return FACTOR_META[key][LANG]; }
+function tMeasure(key){ return MEASURE_META[key][LANG]; }
+function tHousing(rawType){ const m = HOUSING_META[rawType]; return m ? m[LANG] : rawType; }
+
+// flat static strings: headings, captions, table headers, buttons, footer
+const STRINGS = {
+en: {
+  title: "What raises the odds of a debt-free exam session?",
+  takeSurvey: "Take the survey",
+  refresh: "Refresh",
+  statusConnecting: "Connecting to the live survey…",
+  statusLive: (time, n) => `Live from Google Sheets, updated ${time} (${n} responses)`,
+  statusStale: (note, n) => `Couldn't reach the live sheet — showing a ${note} (${n} responses).`,
+
+  hProblem: "The problem and the question",
+  pProblem: "Students juggle sleep, commuting, side jobs, and screen time, and it's easy to assume any one of these decides whether a session goes well. This project doesn't test a single cause. It asks: of the habits we can measure, which ones actually shift the odds of finishing the session without a retake — and by how much? Five formulas from probability theory each answer a slice of that question: conditional probability and Bayes' rule test individual habits and housing situation, the binomial model asks what a whole study group looks like, Poisson models a rare event (lateness), the normal model checks whether sleep, commute, and study time follow a predictable pattern, and — once enough students report a score — correlation and regression test sleep against exam performance directly.",
+
+  hDescriptive: "Descriptive statistics",
+  pDescriptive: "Before testing any probability model, here is what the raw survey answers look like. This table updates every time the page loads new responses.",
+  thMeasure: "Measure", thMean: "Mean", thMedian: "Median", thMin: "Min", thMax: "Max", thStd: "Std. dev.",
+  rowLate: "Late arrivals / week",
+
+  hConditional: "Conditional probability",
+  pConditionalLead: 'A = "passed exams with no retakes." Pick a factor B and compare the odds of passing between students who have it and students who don\'t.',
+  legWith: "with factor", legWithout: "without factor",
+  condText: (label, p) => `P(A | ${label}) = ${p}`,
+  condSub: (pNot, pAll) => `Without this factor: ${pNot}. Across all students: ${pAll}.`,
+
+  hBinomial: "Binomial distribution",
+  binLead: (p) => `Model: p = ${p} (current pass rate from the survey). Move the group size n and the page recalculates how many people out of that group are likely to pass without retakes.`,
+  lblGroupSize: "Group size n",
+  binText: (exp, n) => `Expect about ${exp} out of ${n} to pass`,
+  binSub: (mode, pMode, variance) => `Most likely count: k = ${mode} (P = ${pMode}). Variance = ${variance}.`,
+
+  hPoisson: "Poisson distribution",
+  poisLead: (lambda) => `By the survey, students are late an average of λ = ${lambda} times a week. Move λ to see how the chance of zero late arrivals changes.`,
+  lblLambda: "Average late arrivals λ",
+  poisText: (p0) => `P(zero late arrivals) = ${p0}`,
+  poisSub: (pAtLeast1, lambda) => `P(late at least once) = ${pAtLeast1}. For Poisson, mean and variance are both λ = ${lambda}.`,
+
+  hNormal: "Normal distribution",
+  pNormalLead: "μ and σ come straight from the survey. Pick a measure and a threshold x to see the share of students below it.",
+  lblThreshold: "Threshold x",
+  normText: (label, x, p) => `P(${label} ≤ ${x}) = ${p}`,
+  normSubModel: (p) => `Model estimate: ${p}.`,
+  normSubBoth: (p, real) => `Model estimate: ${p}. Actual share in the survey: ${real}.`,
+  capNormalRule: "μ, σ, and the 68–95 rule for this measure",
+  thMu: "μ (mean)", thSigma: "σ (std. dev.)", thWithin1: "within μ ± σ", thWithin2: "within μ ± 2σ",
+
+  hCorrelation: "Correlation & regression: sleep and exam score",
+  corrPending: (have, need) => `Waiting for enough students to answer the score question — ${have} so far, need at least ${need}. This section will fill in automatically once enough responses arrive.`,
+  corrReady: (n) => `Based on the ${n} students who reported both a sleep answer and an exam score.`,
+  corrText: (r, a, sign, b) => `r = ${r}, Score = ${a} ${sign} ${b}·Sleep`,
+  corrSub: (t, df, tc, verdict) => `H₀: ρ = 0. t = ${t}, critical t (df = ${df}, α = 0.05) = ${tc}. ${verdict}`,
+  corrSignificant: "The correlation is statistically significant — we reject H₀.",
+  corrNotSignificant: "Not statistically significant at this sample size — we cannot reject H₀.",
+  ccCorr: (r, sig, n, dir) => `r = ${r} (${sig} at α = 0.05, n = ${n}). More sleep is associated with a ${dir} score in this sample.`,
+  ccCorrSig: "significant", ccCorrNotSig: "not significant", dirHigher: "higher", dirLower: "lower",
+
+  hConclusions: "Conclusions",
+  pConclusions1: "Every percentage in the table below is a conditional probability, not a plain one. It doesn't answer \"what share of all students passed\" — that number is the overall pass rate shown at the top of the page. Instead, each row narrows the question to one specific group and asks \"of just these students, what share passed?\" That's a different, smaller question for every row, which is also why the numbers aren't meant to add up to 100% — they're separate answers, not pieces of one pie.",
+  pConclusions2: "Answering the question habit by habit, using the tools above (updates automatically with new responses):",
+  thHabit: "Habit / factor", thShows: "What the data shows",
+  rowPhone: "Phone use in class", rowJob: "Part-time job", rowCoffee: "Coffee / energy drinks",
+  rowHousing: "Housing situation", rowLateness: "Lateness (Poisson)", rowNormalRow: "Sleep, commute, study (normal)",
+  rowCorr: "Sleep vs. exam score",
+  ccLine: (withF, withoutF) => `${withF} pass rate with it, ${withoutF} without.`,
+  ccLate: (lambda, p0) => `Averages ${lambda}/week; the chance of a perfectly on-time week is ${p0}.`,
+  shapeSkewed: (label) => `${label} is noticeably skewed`,
+  shapeSymmetric: (label) => `${label} follows the bell curve reasonably well`,
+  ccNormal: (a, b, c) => `${a}; ${b}; ${c}.`,
+  ccSummary: (best, bestPct, n) => `Day-to-day habits tested here — phone use, coffee, part-time work — move the pass rate only a little. Housing shows the widest split (highest: ${best}, ${bestPct}), which points less at any single habit and more at stability of routine. With ${n} self-selected students, this reads as a lead worth investigating further, not a proven cause.`,
+
+  footerNote: "Data: a live, anonymous survey of students collected for this project — this page fetches the latest responses from Google Sheets on every load. The sample is small and self-selected, so differences between groups may be due to chance — correlation isn't causation here.",
+  scoreAxis: "Score, %",
+  lede: (n, pass, sleep, late) => `Across <b>${n}</b> students surveyed, <b>${pass}</b> passed the exam session with no retakes, sleeping <b>${sleep}</b> a night on average and arriving late <b>${late}</b> times a week. Five formulas from probability theory test which of these habits actually move that number — move the controls below to see each one for yourself.`
+},
+ru: {
+  title: "Что повышает шанс закрыть сессию без долгов?",
+  takeSurvey: "Пройти опрос",
+  refresh: "Обновить",
+  statusConnecting: "Подключаюсь к опросу…",
+  statusLive: (time, n) => `Живые данные из Google Таблиц, обновлено ${time} (${n} ответов)`,
+  statusStale: (note, n) => `Не удалось получить свежие данные — показан ${note} (${n} ответов).`,
+
+  hProblem: "Проблема и вопрос исследования",
+  pProblem: "Студенты совмещают сон, дорогу до вуза, подработку и время в телефоне, и легко решить, что именно один из этих факторов определяет, как пройдёт сессия. Этот проект не проверяет одну причину. Он спрашивает: какие из измеримых привычек реально меняют шанс закрыть сессию без пересдачи — и насколько? Пять формул теории вероятностей отвечают на свою часть этого вопроса: условная вероятность и формула Байеса проверяют отдельные привычки и тип жилья, биномиальная модель отвечает, как выглядит целая учебная группа, Пуассон моделирует редкое событие (опоздания), нормальная модель проверяет, укладываются ли сон, дорога и самоподготовка в предсказуемый паттерн, а корреляция и регрессия — когда наберётся достаточно баллов — напрямую проверяют связь сна с результатом сессии.",
+
+  hDescriptive: "Описательная статистика",
+  pDescriptive: "Прежде чем проверять любую вероятностную модель — вот как выглядят сырые ответы опроса. Таблица обновляется при каждой загрузке новых ответов.",
+  thMeasure: "Показатель", thMean: "Среднее", thMedian: "Медиана", thMin: "Мин", thMax: "Макс", thStd: "Ст. откл.",
+  rowLate: "Опозданий в неделю",
+
+  hConditional: "Условная вероятность",
+  pConditionalLead: "A = «сдал сессию без долгов». Выберите фактор B и сравните шанс сдать сессию у тех, кто с фактором, и у тех, кто без него.",
+  legWith: "с фактором", legWithout: "без фактора",
+  condText: (label, p) => `P(A | ${label}) = ${p}`,
+  condSub: (pNot, pAll) => `Без этого фактора: ${pNot}. По всем студентам: ${pAll}.`,
+
+  hBinomial: "Биномиальное распределение",
+  binLead: (p) => `Модель: p = ${p} (текущая доля сдавших по опросу). Двигайте размер группы n — страница пересчитает, сколько человек из неё, скорее всего, сдадут без долгов.`,
+  lblGroupSize: "Размер группы n",
+  binText: (exp, n) => `Ожидаем около ${exp} из ${n} сдавших`,
+  binSub: (mode, pMode, variance) => `Самое вероятное число: k = ${mode} (P = ${pMode}). Дисперсия = ${variance}.`,
+
+  hPoisson: "Распределение Пуассона",
+  poisLead: (lambda) => `По опросу студенты опаздывают в среднем λ = ${lambda} раза в неделю. Подвиньте λ, чтобы увидеть, как меняется шанс не опоздать ни разу.`,
+  lblLambda: "Среднее число опозданий λ",
+  poisText: (p0) => `P(ни разу не опоздал) = ${p0}`,
+  poisSub: (pAtLeast1, lambda) => `P(опоздал хотя бы раз) = ${pAtLeast1}. У Пуассона среднее и дисперсия равны λ = ${lambda}.`,
+
+  hNormal: "Нормальное распределение",
+  pNormalLead: "μ и σ берутся прямо из опроса. Выберите показатель и порог x, чтобы узнать долю студентов ниже него.",
+  lblThreshold: "Порог x",
+  normText: (label, x, p) => `P(${label} ≤ ${x}) = ${p}`,
+  normSubModel: (p) => `Оценка по модели: ${p}.`,
+  normSubBoth: (p, real) => `Оценка по модели: ${p}. Реальная доля по опросу: ${real}.`,
+  capNormalRule: "μ, σ и правило 68–95 для этого показателя",
+  thMu: "μ (среднее)", thSigma: "σ (ст. откл.)", thWithin1: "в μ ± σ", thWithin2: "в μ ± 2σ",
+
+  hCorrelation: "Корреляция и регрессия: сон и балл за сессию",
+  corrPending: (have, need) => `Ждём, пока достаточно студентов ответят на вопрос про балл — пока ${have}, нужно хотя бы ${need}. Раздел заполнится автоматически, когда ответов станет достаточно.`,
+  corrReady: (n) => `На основе ${n} студентов, указавших и сон, и балл за сессию.`,
+  corrText: (r, a, sign, b) => `r = ${r}, Балл = ${a} ${sign} ${b}·Сон`,
+  corrSub: (t, df, tc, verdict) => `H₀: ρ = 0. t = ${t}, критическое t (df = ${df}, α = 0.05) = ${tc}. ${verdict}`,
+  corrSignificant: "Корреляция статистически значима — отвергаем H₀.",
+  corrNotSignificant: "Не значима при таком размере выборки — не можем отвергнуть H₀.",
+  ccCorr: (r, sig, n, dir) => `r = ${r} (${sig} при α = 0.05, n = ${n}). Больше сна связано с ${dir} баллом в этой выборке.`,
+  ccCorrSig: "значима", ccCorrNotSig: "не значима", dirHigher: "более высоким", dirLower: "более низким",
+
+  hConclusions: "Выводы",
+  pConclusions1: "Каждое число в таблице ниже — это условная вероятность, а не вероятность вообще. Оно не отвечает на вопрос «какая доля всех студентов сдала» — это общая доля сдавших, показанная вверху страницы. Вместо этого каждая строка сужает вопрос до одной конкретной группы: «а какая доля сдала именно среди них?» Это разный, более узкий вопрос в каждой строке — и поэтому числа не обязаны складываться в 100%, это отдельные ответы, а не части одного целого.",
+  pConclusions2: "Отвечаем на вопрос привычка за привычкой, используя инструменты выше (обновляется автоматически с новыми ответами):",
+  thHabit: "Привычка / фактор", thShows: "Что показывают данные",
+  rowPhone: "Телефон на парах", rowJob: "Подработка", rowCoffee: "Кофе/энергетики",
+  rowHousing: "Тип жилья", rowLateness: "Опоздания (Пуассон)", rowNormalRow: "Сон, дорога, самоподготовка (нормальное)",
+  rowCorr: "Сон и балл за сессию",
+  ccLine: (withF, withoutF) => `с фактором сдали ${withF}, без него ${withoutF}.`,
+  ccLate: (lambda, p0) => `В среднем ${lambda}/неделю; шанс идеальной недели без опозданий — ${p0}.`,
+  shapeSkewed: (label) => `${label} заметно смещено`,
+  shapeSymmetric: (label) => `${label} неплохо укладывается в колокол`,
+  ccNormal: (a, b, c) => `${a}; ${b}; ${c}.`,
+  ccSummary: (best, bestPct, n) => `Бытовые привычки — телефон, кофе, подработка — почти не меняют долю сдавших. Жильё даёт самый широкий разброс (больше всего: ${best}, ${bestPct}) — это скорее намёк на стабильность распорядка, чем на конкретную привычку. При ${n} добровольных ответах это повод для дальнейшего изучения, а не доказанная причина.`,
+
+  footerNote: "Данные: живой анонимный опрос студентов для этого проекта — страница подтягивает свежие ответы из Google Таблиц при каждой загрузке. Выборка небольшая и добровольная, поэтому различия между группами могут быть случайными — связь не означает причину.",
+  scoreAxis: "Балл, %",
+  lede: (n, pass, sleep, late) => `Среди <b>${n}</b> опрошенных студентов <b>${pass}</b> сдали сессию без долгов, спят в среднем <b>${sleep}</b> в сутки и опаздывают <b>${late}</b> раза в неделю. Пять формул теории вероятностей проверяют, какие из этих привычек реально меняют эту цифру — подвигайте настройки ниже, чтобы увидеть каждую из них.`
+},
+kk: {
+  title: "Сессияны қарызсыз аяқтау мүмкіндігін не арттырады?",
+  takeSurvey: "Сауалнамаға қатысу",
+  refresh: "Жаңарту",
+  statusConnecting: "Сауалнамаға қосылуда…",
+  statusLive: (time, n) => `Google Sheets-тен тікелей деректер, жаңартылды ${time} (${n} жауап)`,
+  statusStale: (note, n) => `Тікелей деректерге қол жеткізу мүмкін болмады — ${note} көрсетілді (${n} жауап).`,
+
+  hProblem: "Мәселе мен зерттеу сұрағы",
+  pProblem: "Студенттер ұйқы, жолда өткізетін уақыт, қосымша жұмыс пен экранда өткізетін уақытты қатар алып жүреді, сондықтан осылардың бірі ғана сессияның нәтижесін шешеді деп ойлау оңай. Бұл жоба бір ғана себепті тексермейді. Ол мынаны сұрайды: өлшей алатын әдеттердің қайсысы сессияны қарызсыз аяқтау мүмкіндігін нақты өзгертеді — және қаншалықты? Ықтималдық теориясының бес формуласы осы сұрақтың бір бөлігіне жауап береді: шартты ықтималдық пен Байес формуласы жеке әдеттер мен тұрғын үй жағдайын тексереді, биномдық модель бүкіл топ қалай көрінетінін сұрайды, Пуассон сирек оқиғаны (кешігуді) модельдейді, қалыпты таралу ұйқы, жол және өзіндік дайындықтың болжамды үлгіге сай келетінін тексереді, ал жеткілікті балл жиналған соң корреляция мен регрессия ұйқы мен сессия нәтижесінің байланысын тікелей тексереді.",
+
+  hDescriptive: "Сипаттамалық статистика",
+  pDescriptive: "Кез келген ықтималдық моделін тексермес бұрын — сауалнаманың шикі жауаптары осылай көрінеді. Кесте жаңа жауаптар жүктелген сайын жаңарады.",
+  thMeasure: "Көрсеткіш", thMean: "Орташа", thMedian: "Медиана", thMin: "Мин", thMax: "Макс", thStd: "Станд. ауытқу",
+  rowLate: "Аптасына кешігу саны",
+
+  hConditional: "Шартты ықтималдық",
+  pConditionalLead: "A = «сессияны қарызсыз аяқтады». B факторын таңдап, осы фактор бар және жоқ студенттердің сессияны сәтті аяқтау мүмкіндігін салыстырыңыз.",
+  legWith: "фактормен", legWithout: "факторсыз",
+  condText: (label, p) => `P(A | ${label}) = ${p}`,
+  condSub: (pNot, pAll) => `Бұл фактор болмаса: ${pNot}. Барлық студенттер бойынша: ${pAll}.`,
+
+  hBinomial: "Биномдық таралу",
+  binLead: (p) => `Модель: p = ${p} (сауалнама бойынша ағымдағы сәттілік үлесі). Топ өлшемін (n) жылжытыңыз — бет сол топтан қанша адам қарызсыз аяқтауы мүмкін екенін қайта есептейді.`,
+  lblGroupSize: "Топ өлшемі n",
+  binText: (exp, n) => `${n} адамнан шамамен ${exp} адам аяқтайды деп күтіледі`,
+  binSub: (mode, pMode, variance) => `Ең ықтимал сан: k = ${mode} (P = ${pMode}). Дисперсия = ${variance}.`,
+
+  hPoisson: "Пуассон таралуы",
+  poisLead: (lambda) => `Сауалнама бойынша студенттер аптасына орташа λ = ${lambda} рет кешігеді. Кешікпеген апта мүмкіндігінің қалай өзгеретінін көру үшін λ мәнін жылжытыңыз.`,
+  lblLambda: "Орташа кешігу саны λ",
+  poisText: (p0) => `P(кешікпеу) = ${p0}`,
+  poisSub: (pAtLeast1, lambda) => `P(кемінде бір рет кешігу) = ${pAtLeast1}. Пуассон үшін орташа мән мен дисперсия λ = ${lambda}-ге тең.`,
+
+  hNormal: "Қалыпты таралу",
+  pNormalLead: "μ және σ тікелей сауалнамадан алынады. Көрсеткіш пен шекті мән x таңдап, содан төмен студенттер үлесін көріңіз.",
+  lblThreshold: "Шекті мән x",
+  normText: (label, x, p) => `P(${label} ≤ ${x}) = ${p}`,
+  normSubModel: (p) => `Модель бойынша баға: ${p}.`,
+  normSubBoth: (p, real) => `Модель бойынша баға: ${p}. Сауалнамадағы нақты үлес: ${real}.`,
+  capNormalRule: "Осы көрсеткіш үшін μ, σ және 68–95 ережесі",
+  thMu: "μ (орташа)", thSigma: "σ (станд. ауытқу)", thWithin1: "μ ± σ ішінде", thWithin2: "μ ± 2σ ішінде",
+
+  hCorrelation: "Корреляция және регрессия: ұйқы мен сессия баллы",
+  corrPending: (have, need) => `Балл сұрағына жеткілікті студент жауап беруін күтудеміз — қазір ${have}, кемінде ${need} керек. Жеткілікті жауап жиналған соң бұл бөлім автоматты түрде толады.`,
+  corrReady: (n) => `Ұйқы туралы да, балл туралы да жауап берген ${n} студент негізінде.`,
+  corrText: (r, a, sign, b) => `r = ${r}, Балл = ${a} ${sign} ${b}·Ұйқы`,
+  corrSub: (t, df, tc, verdict) => `H₀: ρ = 0. t = ${t}, критикалық t (df = ${df}, α = 0.05) = ${tc}. ${verdict}`,
+  corrSignificant: "Корреляция статистикалық түрде маңызды — H₀-ды теріске шығарамыз.",
+  corrNotSignificant: "Бұл таңдама көлемінде маңызды емес — H₀-ды теріске шығара алмаймыз.",
+  ccCorr: (r, sig, n, dir) => `r = ${r} (α = 0.05 деңгейінде ${sig}, n = ${n}). Бұл таңдамада көбірек ұйқы ${dir} баллмен байланысты.`,
+  ccCorrSig: "маңызды", ccCorrNotSig: "маңызды емес", dirHigher: "жоғарырақ", dirLower: "төменірек",
+
+  hConclusions: "Қорытынды",
+  pConclusions1: "Төмендегі кестедегі әрбір пайыз — жай ықтималдық емес, шартты ықтималдық. Ол «барлық студенттердің қандай үлесі аяқтады» деген сұраққа жауап бермейді — бұл сан беттің жоғарғы жағында көрсетілген жалпы сәттілік үлесі. Оның орнына әр жол сұрақты бір нақты топқа тарылтады: «дәл осы студенттердің қандай үлесі аяқтады?» Бұл әр жолда әртүрлі, тарылған сұрақ, сондықтан сандар 100%-ға қосылуға міндетті емес — бұл бір бүтіннің бөліктері емес, бөлек жауаптар.",
+  pConclusions2: "Жоғарыдағы құралдарды пайдаланып, сұраққа әдет-әдетімен жауап береміз (жаңа жауаптармен автоматты жаңарады):",
+  thHabit: "Әдет / фактор", thShows: "Деректер нені көрсетеді",
+  rowPhone: "Сабақта телефон қолдану", rowJob: "Қосымша жұмыс", rowCoffee: "Кофе/энергетик сусындар",
+  rowHousing: "Тұрғын үй жағдайы", rowLateness: "Кешігу (Пуассон)", rowNormalRow: "Ұйқы, жол, өзіндік дайындық (қалыпты)",
+  rowCorr: "Ұйқы мен сессия баллы",
+  ccLine: (withF, withoutF) => `фактормен ${withF}, факторсыз ${withoutF} аяқтады.`,
+  ccLate: (lambda, p0) => `Орташа ${lambda}/апта; кешікпеген аптаның мүмкіндігі — ${p0}.`,
+  shapeSkewed: (label) => `${label} айтарлықтай ауытқыған`,
+  shapeSymmetric: (label) => `${label} қалыпты үлгіге жақсы сай келеді`,
+  ccNormal: (a, b, c) => `${a}; ${b}; ${c}.`,
+  ccSummary: (best, bestPct, n) => `Мұнда тексерілген күнделікті әдеттер — телефон, кофе, қосымша жұмыс — сәттілік үлесін аз ғана өзгертеді. Тұрғын үй ең үлкен айырмашылықты көрсетеді (ең жоғарысы: ${best}, ${bestPct}), бұл жеке әдетке емес, тұрақты режимге көбірек нұсқайды. ${n} өз еркімен қатысқан студентпен бұл дәлелденген себеп емес, әрі қарай зерттеуге лайық бағыт.`,
+
+  footerNote: "Деректер: осы жоба үшін жиналған студенттердің тікелей, анонимді сауалнамасы — бұл бет әр жүктелген сайын Google Sheets-тен соңғы жауаптарды алады. Таңдама шағын және өз еркімен қатысу негізінде жиналған, сондықтан топтар арасындағы айырмашылықтар кездейсоқ болуы мүмкін — байланыс себепті білдірмейді.",
+  scoreAxis: "Балл, %",
+  lede: (n, pass, sleep, late) => `Сауалнамаға қатысқан <b>${n}</b> студенттің ішінен <b>${pass}</b> сессияны қарызсыз аяқтады, орташа түнде <b>${sleep}</b> ұйықтайды және аптасына <b>${late}</b> рет кешігеді. Ықтималдық теориясының бес формуласы осы әдеттердің қайсысы нақты осы санды өзгертетінін тексереді — әрқайсысын өзіңіз көру үшін төмендегі баптауларды жылжытыңыз.`
+}
+};
+function S(){ return STRINGS[LANG]; }
+
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRLsyOwkmUOHJqrol0ZSQgJX--O-ZLD6v3-tSeGjzia6y17LNwOv80QH3qvgDDXGAterQsXoGoDfPA/pub?gid=1819341040&single=true&output=csv";
 const FALLBACK_CSV = `Timestamp,На каком вы курсе?,Где вы живёте?,Сколько минут вы добираетесь до вуза в одну сторону?,Сколько часов вы обычно спите в учебные дни?,"Сколько часов в день вы в среднем занимаетесь самостоятельно (домашка, чтение, проекты)?",Сколько раз за последние 7 дней вы опоздали на пары?,Пользуетесь ли вы телефоном на парах не по учебе?,Вы работаете или подрабатываете?,Пьёте ли вы кофе или энергетики каждый день?,Вы сдали последнюю сессию без долгов?,"Средний балл за последнюю сессию или оценка за последний тест (в процентах, от 0 до 100)"
 9/21/2026 16:44:22,2,В общежитии,15,5,2.5,1,Нет,Нет,Да,Да,
@@ -365,7 +608,11 @@ const FALLBACK_CSV = `Timestamp,На каком вы курсе?,Где вы ж�
 9/22/2026 0:41:48,3,С родителями,20,7,3,0,Да,Да,Нет,Нет,60
 9/22/2026 0:42:18,2,В общежитии,30,8,5,2,Да,Да,Нет,Да,50
 9/22/2026 9:59:17,2,В общежитии,45,8,5,2,Да,Нет,Нет,Да,80`;
-const FALLBACK_NOTE = "cached snapshot from Sep 22, 2026";
+const FALLBACK_NOTE = {
+  en: "cached snapshot from Sep 22, 2026",
+  ru: "резервный снимок от 22 сентября 2026",
+  kk: "2026 жылғы 22 қыркүйектегі сақталған көшірме"
+};
 
 // ---------- CSV parsing (quote-aware, same logic as the Java version) ----------
 function splitCsvLine(line){
@@ -473,8 +720,9 @@ const T_TABLE = [null,12.706,4.303,3.182,2.776,2.571,2.447,2.365,2.306,2.262,2.2
   2.080,2.074,2.069,2.064,2.060,2.056,2.052,2.048,2.045,2.042];
 function criticalT(df){ return df >= 1 && df <= 30 ? T_TABLE[df] : 1.96; }
 
-function pct(x){ return (x*100).toLocaleString("en-US", {minimumFractionDigits:1, maximumFractionDigits:1}) + "%"; }
-function num(x, d=2){ return x.toLocaleString("en-US", {minimumFractionDigits:d, maximumFractionDigits:d}); }
+function localeTag(){ return LANG === "en" ? "en-US" : LANG === "ru" ? "ru-RU" : "kk-KZ"; }
+function pct(x){ return (x*100).toLocaleString(localeTag(), {minimumFractionDigits:1, maximumFractionDigits:1}) + "%"; }
+function num(x, d=2){ return x.toLocaleString(localeTag(), {minimumFractionDigits:d, maximumFractionDigits:d}); }
 
 function bars(container, values, labels, values2, colors){
   container.innerHTML = "";
@@ -499,15 +747,6 @@ function bars(container, values, labels, values2, colors){
 
 // ---------- app state, populated once data is loaded ----------
 let N = 0, pA = 0, passedTotal = 0;
-
-// the survey form itself is in Russian, so raw housing answers come back in Russian —
-// translate them here so the page stays consistently in English
-const HOUSING_LABELS = {
-  "В общежитии": "dorm",
-  "С родителями": "living with parents",
-  "Снимаю жильё": "renting"
-};
-function translateHousing(type){ return HOUSING_LABELS[type] || type; }
 let factors = {};      // phone/job/coffee -> {label, nB, nAB}
 let measures = {};     // sleep/commute/study -> {label, mu, sigma, min, max, def, data}
 let lateArr = [];
@@ -563,11 +802,72 @@ function computeAll(students){
 }
 
 // ---------- rendering ----------
+function applyStatic(){
+  const s = S();
+  document.getElementById("hTitle").textContent = s.title;
+  document.getElementById("pLede").innerHTML = ""; // filled by renderChipsAndStats once data is ready
+  document.getElementById("ctaTop").textContent = s.takeSurvey;
+  document.getElementById("ctaBottom").textContent = s.takeSurvey;
+  document.getElementById("refreshBtn").textContent = s.refresh;
+
+  document.getElementById("hProblem").textContent = s.hProblem;
+  document.getElementById("pProblem").textContent = s.pProblem;
+
+  document.getElementById("hDescriptive").textContent = s.hDescriptive;
+  document.getElementById("pDescriptive").textContent = s.pDescriptive;
+  document.getElementById("thMeasure").textContent = s.thMeasure;
+  document.getElementById("thMean").textContent = s.thMean;
+  document.getElementById("thMedian").textContent = s.thMedian;
+  document.getElementById("thMin").textContent = s.thMin;
+  document.getElementById("thMax").textContent = s.thMax;
+  document.getElementById("thStd").textContent = s.thStd;
+  document.getElementById("rowSleep").textContent = tMeasure("sleep");
+  document.getElementById("rowCommute").textContent = tMeasure("commute");
+  document.getElementById("rowStudy").textContent = tMeasure("study");
+  document.getElementById("rowLate").textContent = s.rowLate;
+
+  document.getElementById("hConditional").textContent = s.hConditional;
+  document.getElementById("pConditionalLead").textContent = s.pConditionalLead;
+  document.getElementById("legWith").textContent = s.legWith;
+  document.getElementById("legWithout").textContent = s.legWithout;
+
+  document.getElementById("hBinomial").textContent = s.hBinomial;
+  document.getElementById("lblGroupSize").textContent = s.lblGroupSize;
+
+  document.getElementById("hPoisson").textContent = s.hPoisson;
+  document.getElementById("lblLambda").textContent = s.lblLambda;
+
+  document.getElementById("hNormal").textContent = s.hNormal;
+  document.getElementById("pNormalLead").textContent = s.pNormalLead;
+  document.getElementById("lblThreshold").textContent = s.lblThreshold;
+  document.getElementById("capNormalRule").textContent = s.capNormalRule;
+  document.getElementById("thMu").textContent = s.thMu;
+  document.getElementById("thSigma").textContent = s.thSigma;
+  document.getElementById("thWithin1").textContent = s.thWithin1;
+  document.getElementById("thWithin2").textContent = s.thWithin2;
+
+  document.getElementById("hCorrelation").textContent = s.hCorrelation;
+
+  document.getElementById("hConclusions").textContent = s.hConclusions;
+  document.getElementById("pConclusions1").textContent = s.pConclusions1;
+  document.getElementById("pConclusions2").textContent = s.pConclusions2;
+  document.getElementById("thHabit").textContent = s.thHabit;
+  document.getElementById("thShows").textContent = s.thShows;
+  document.getElementById("rowPhone").textContent = s.rowPhone;
+  document.getElementById("rowJob").textContent = s.rowJob;
+  document.getElementById("rowCoffee").textContent = s.rowCoffee;
+  document.getElementById("rowHousing").textContent = s.rowHousing;
+  document.getElementById("rowLateness").textContent = s.rowLateness;
+  document.getElementById("rowNormalRow").textContent = s.rowNormalRow;
+  document.getElementById("rowCorr").textContent = s.rowCorr;
+
+  document.getElementById("footerNote").textContent = s.footerNote;
+}
+
 function renderChipsAndStats(){
-  document.getElementById("statN").textContent = N;
-  document.getElementById("statPass").textContent = pct(pA);
-  document.getElementById("statSleep").textContent = num(measures.sleep.mu,1) + " hrs";
-  document.getElementById("statLate").textContent = num(mean(lateArr),2);
+  const s = S();
+  const sleepUnit = LANG === "en" ? " hrs" : LANG === "ru" ? " ч." : " сағ";
+  document.getElementById("pLede").innerHTML = s.lede(N, pct(pA), num(measures.sleep.mu,1) + sleepUnit, num(mean(lateArr),2));
 
   function fillRow(prefix, data){
     document.getElementById(prefix+"Mean").textContent = num(mean(data),2);
@@ -581,25 +881,25 @@ function renderChipsAndStats(){
   fillRow("dsStudy", measures.study.data);
   fillRow("dsLate", lateArr);
 
-  document.getElementById("binLead").textContent =
-    `Model: p = ${pct(pA)} (current pass rate from the survey). Move the group size n and the page recalculates how many people out of that group are likely to pass without retakes.`;
-  document.getElementById("poisLead").textContent =
-    `By the survey, students are late an average of λ = ${num(mean(lateArr),2)} times a week. Move λ to see how the chance of zero late arrivals changes.`;
+  document.getElementById("binLead").textContent = s.binLead(pct(pA));
+  document.getElementById("poisLead").textContent = s.poisLead(num(mean(lateArr),2));
 }
 
 let factorKey = "phone";
 function renderFactor(){
+  const s = S();
   const f = factors[factorKey];
   const pB = f.nB / N;
   const pAB = f.nAB / N;
   const pAgivenB = pB > 0 ? pAB / pB : 0;
   const pAgivenNotB = (N - f.nB) > 0 ? (passedTotal - f.nAB) / (N - f.nB) : 0;
-  document.getElementById("condText").textContent = `P(A | ${f.label.toLowerCase()}) = ${pct(pAgivenB)}`;
-  document.getElementById("condSub").textContent = `Without this factor: ${pct(pAgivenNotB)}. Across all students: ${pct(pA)}.`;
-  bars(document.getElementById("condBars"), [pAgivenB*100, pAgivenNotB*100], ["yes","no"], null, [null, "b2"]);
+  document.getElementById("condText").textContent = s.condText(tFactor(factorKey).toLowerCase(), pct(pAgivenB));
+  document.getElementById("condSub").textContent = s.condSub(pct(pAgivenNotB), pct(pA));
+  bars(document.getElementById("condBars"), [pAgivenB*100, pAgivenNotB*100], [s.legWith.split(" ")[0], s.legWithout.split(" ")[0]], null, [null, "b2"]);
 }
 
 function renderBinomial(){
+  const s = S();
   const binN = document.getElementById("binN");
   const n = parseInt(binN.value);
   document.getElementById("binNVal").textContent = n;
@@ -608,20 +908,21 @@ function renderBinomial(){
   const expected = n*pA;
   let mode = 0;
   for (let k=1;k<=n;k++) if (values[k]>values[mode]) mode = k;
-  document.getElementById("binText").textContent = `Expect about ${num(expected,1)} out of ${n} to pass`;
-  document.getElementById("binSub").textContent = `Most likely count: k = ${mode} (P = ${pct(values[mode]/100)}). Variance = ${num(n*pA*(1-pA),2)}.`;
+  document.getElementById("binText").textContent = s.binText(num(expected,1), n);
+  document.getElementById("binSub").textContent = s.binSub(mode, pct(values[mode]/100), num(n*pA*(1-pA),2));
   bars(document.getElementById("binBars"), values, labels);
 }
 
 function renderPoisson(){
+  const s = S();
   const lambdaR = document.getElementById("lambdaR");
   const lambda = parseFloat(lambdaR.value);
   document.getElementById("lambdaVal").textContent = num(lambda,2);
   const values = [], labels = [];
   for (let k=0;k<=7;k++){ values.push(poissonPmf(k,lambda)*100); labels.push(k); }
   const p0 = poissonPmf(0,lambda);
-  document.getElementById("poisText").textContent = `P(zero late arrivals) = ${pct(p0)}`;
-  document.getElementById("poisSub").textContent = `P(late at least once) = ${pct(1-p0)}. For Poisson, mean and variance are both λ = ${num(lambda,2)}.`;
+  document.getElementById("poisText").textContent = s.poisText(pct(p0));
+  document.getElementById("poisSub").textContent = s.poisSub(pct(1-p0), num(lambda,2));
   bars(document.getElementById("poisBars"), values, labels);
 }
 
@@ -632,16 +933,17 @@ function shareBetween(data, a, b){
 }
 let measureKey = "sleep";
 function renderNormal(){
+  const s = S();
   const threshR = document.getElementById("threshR");
   const m = measures[measureKey];
   const x = parseFloat(threshR.value);
   document.getElementById("threshVal").textContent = num(x,1);
   const p = normalCdf(x, m.mu, m.sigma);
-  document.getElementById("normText").textContent = `P(${m.label.toLowerCase()} ≤ ${num(x,1)}) = ${pct(p)}`;
+  document.getElementById("normText").textContent = s.normText(tMeasure(measureKey).toLowerCase(), num(x,1), pct(p));
   const real = shareBetween(m.data, -Infinity, x);
   document.getElementById("normSub").textContent = real !== null
-    ? `Model estimate: ${pct(p)}. Actual share in the survey: ${pct(real)}.`
-    : `Estimate from the normal model with μ = ${num(m.mu,2)}, σ = ${num(m.sigma,2)}.`;
+    ? s.normSubBoth(pct(p), pct(real))
+    : s.normSubModel(pct(p));
   const one = normalCdf(m.mu+m.sigma,m.mu,m.sigma) - normalCdf(m.mu-m.sigma,m.mu,m.sigma);
   const two = normalCdf(m.mu+2*m.sigma,m.mu,m.sigma) - normalCdf(m.mu-2*m.sigma,m.mu,m.sigma);
   document.getElementById("normRow").innerHTML =
@@ -649,32 +951,36 @@ function renderNormal(){
 }
 
 function renderCorrelation(){
+  const s = S();
   const lead = document.getElementById("corrLead");
   const body = document.getElementById("corrBody");
   if (corrStats.pending){
-    lead.textContent = `Waiting for enough students to answer the score question — ${corrStats.have} so far, need at least ${corrStats.need}. This section will fill in automatically once enough responses arrive.`;
+    lead.textContent = s.corrPending(corrStats.have, corrStats.need);
     body.style.display = "none";
     document.getElementById("ccCorrRow").style.display = "none";
     return;
   }
-  lead.textContent = `Based on the ${corrStats.n} students who reported both a sleep answer and an exam score.`;
+  lead.textContent = s.corrReady(corrStats.n);
   body.style.display = "";
   const sign = corrStats.b >= 0 ? "+" : "−";
-  document.getElementById("corrText").textContent = `r = ${num(corrStats.r,3)}, Score = ${num(corrStats.a,1)} ${sign} ${num(Math.abs(corrStats.b),2)}·Sleep`;
-  document.getElementById("corrSub").textContent =
-    `H₀: ρ = 0. t = ${num(corrStats.t,2)}, critical t (df = ${corrStats.df}, α = 0.05) = ${num(corrStats.tc,2)}. ` +
-    (corrStats.significant
-      ? "The correlation is statistically significant — we reject H₀."
-      : "Not statistically significant at this sample size — we cannot reject H₀.");
+  document.getElementById("corrText").textContent = s.corrText(num(corrStats.r,3), num(corrStats.a,1), sign, num(Math.abs(corrStats.b),2));
+  document.getElementById("corrSub").textContent = s.corrSub(
+    num(corrStats.t,2), corrStats.df, num(corrStats.tc,2),
+    corrStats.significant ? s.corrSignificant : s.corrNotSignificant
+  );
   renderScatter();
 
   document.getElementById("ccCorrRow").style.display = "";
-  document.getElementById("ccCorr").textContent =
-    `r = ${num(corrStats.r,2)} (${corrStats.significant ? "significant" : "not significant"} at α = 0.05, n = ${corrStats.n}). ` +
-    `More sleep is associated with a ${corrStats.b >= 0 ? "higher" : "lower"} score in this sample.`;
+  document.getElementById("ccCorr").textContent = s.ccCorr(
+    num(corrStats.r,2),
+    corrStats.significant ? s.ccCorrSig : s.ccCorrNotSig,
+    corrStats.n,
+    corrStats.b >= 0 ? s.dirHigher : s.dirLower
+  );
 }
 
 function renderScatter(){
+  const s = S();
   const svg = document.getElementById("scatterSvg");
   const { xs, ys, a, b } = corrStats;
   const W = 700, H = 320, M = 40;
@@ -685,8 +991,8 @@ function renderScatter(){
 
   let svgContent = `<line class="axis" x1="${M}" y1="${H-M}" x2="${W-M}" y2="${H-M}"/>`;
   svgContent += `<line class="axis" x1="${M}" y1="${M}" x2="${M}" y2="${H-M}"/>`;
-  svgContent += `<text x="${W/2}" y="${H-8}" text-anchor="middle">Sleep, hours</text>`;
-  svgContent += `<text x="14" y="${H/2}" text-anchor="middle" transform="rotate(-90 14 ${H/2})">Score, %</text>`;
+  svgContent += `<text x="${W/2}" y="${H-8}" text-anchor="middle">${tMeasure("sleep")}</text>`;
+  svgContent += `<text x="14" y="${H/2}" text-anchor="middle" transform="rotate(-90 14 ${H/2})">${s.scoreAxis}</text>`;
 
   const lx1 = xMin, lx2 = xMax;
   svgContent += `<line class="line" x1="${sx(lx1)}" y1="${sy(a+b*lx1)}" x2="${sx(lx2)}" y2="${sy(a+b*lx2)}"/>`;
@@ -698,47 +1004,63 @@ function renderScatter(){
 }
 
 function renderConclusions(){
+  const s = S();
   function line(key){
     const f = factors[key];
     const pB = f.nB / N;
     const pAB = f.nAB / N;
     const withF = pB > 0 ? pAB/pB : 0;
     const withoutF = (N-f.nB) > 0 ? (passedTotal - f.nAB) / (N-f.nB) : 0;
-    return `${pct(withF)} pass rate with it, ${pct(withoutF)} without.`;
+    return s.ccLine(pct(withF), pct(withoutF));
   }
   document.getElementById("ccPhone").textContent = line("phone");
   document.getElementById("ccJob").textContent = line("job");
   document.getElementById("ccCoffee").textContent = line("coffee");
 
-  const housingText = housingGroups.map(g => `${translateHousing(g.type)}: ${pct(g.nAH/g.nH)}`).join(". ") + ".";
+  const housingText = housingGroups.map(g => `${tHousing(g.type)}: ${pct(g.nAH/g.nH)}`).join(". ") + ".";
   document.getElementById("ccHousing").textContent = housingText;
 
   const lambda = mean(lateArr);
-  document.getElementById("ccLate").textContent =
-    `Averages ${num(lambda,2)}/week; the chance of a perfectly on-time week is ${pct(poissonPmf(0,lambda))}.`;
+  document.getElementById("ccLate").textContent = s.ccLate(num(lambda,2), pct(poissonPmf(0,lambda)));
 
-  function shape(key, label){
+  function shape(key){
     const m = measures[key];
     const d = m.data;
     const skewed = Math.abs(m.mu - median(d)) > 0.2 * m.sigma;
-    return `${label} ${skewed ? "is noticeably skewed" : "follows the bell curve reasonably well"}`;
+    return skewed ? s.shapeSkewed(tMeasure(key)) : s.shapeSymmetric(tMeasure(key));
   }
-  document.getElementById("ccNormal").textContent =
-    `${shape("sleep","Sleep")}; ${shape("study","study time").toLowerCase()}; ${shape("commute","commute time").toLowerCase()}.`;
+  document.getElementById("ccNormal").textContent = s.ccNormal(shape("sleep"), shape("study"), shape("commute"));
 
   const best = housingGroups.reduce((a,b) => (b.nAH/b.nH > a.nAH/a.nH ? b : a));
-  document.getElementById("ccSummary").textContent =
-    `Day-to-day habits tested here — phone use, coffee, part-time work — move the pass rate only a little. ` +
-    `Housing shows the widest split (highest: ${translateHousing(best.type)}, ${pct(best.nAH/best.nH)}), which points less at any single habit and more at stability of routine. ` +
-    `With ${N} self-selected students, this reads as a lead worth investigating further, not a proven cause.`;
+  document.getElementById("ccSummary").textContent = s.ccSummary(tHousing(best.type), pct(best.nAH/best.nH), N);
+}
+
+function setupLangButtons(){
+  const langButtons = document.getElementById("langButtons");
+  const langs = [["en","EN"],["ru","RU"],["kk","KZ"]];
+  langButtons.innerHTML = "";
+  langs.forEach(([code,label]) => {
+    const btn = document.createElement("button");
+    btn.textContent = label;
+    btn.className = code === LANG ? "active" : "";
+    btn.onclick = () => {
+      LANG = code;
+      [...langButtons.children].forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      document.documentElement.lang = code;
+      renderAll();
+    };
+    langButtons.appendChild(btn);
+  });
 }
 
 function setupControls(){
+  const s = S();
   const factorButtons = document.getElementById("factorButtons");
   factorButtons.innerHTML = "";
   Object.keys(factors).forEach(key => {
     const btn = document.createElement("button");
-    btn.textContent = factors[key].label;
+    btn.textContent = tFactor(key);
     btn.className = key === factorKey ? "active" : "";
     btn.onclick = () => {
       factorKey = key;
@@ -754,7 +1076,7 @@ function setupControls(){
   const threshR = document.getElementById("threshR");
   Object.keys(measures).forEach(key => {
     const btn = document.createElement("button");
-    btn.textContent = measures[key].label;
+    btn.textContent = tMeasure(key);
     btn.className = key === measureKey ? "active" : "";
     btn.onclick = () => {
       measureKey = key;
@@ -777,6 +1099,8 @@ function setupControls(){
 }
 
 function renderAll(){
+  setupLangButtons();
+  applyStatic();
   setupControls();
   renderChipsAndStats();
   renderFactor();
@@ -824,9 +1148,10 @@ async function fetchCsvText(){
 }
 
 async function loadData(){
+  const s = S();
   const dot = document.getElementById("statusDot");
   const text = document.getElementById("statusText");
-  text.textContent = "Connecting to the live survey…";
+  text.textContent = s.statusConnecting;
   dot.className = "dot";
   try {
     const csvText = await fetchCsvText();
@@ -835,14 +1160,14 @@ async function loadData(){
     computeAll(students);
     renderAll();
     const now = new Date();
-    text.textContent = `Live from Google Sheets, updated ${now.toLocaleTimeString("en-US")} (${N} responses)`;
+    text.textContent = S().statusLive(now.toLocaleTimeString(LANG === "en" ? "en-US" : LANG === "ru" ? "ru-RU" : "kk-KZ"), N);
   } catch (e){
     console.warn("Live fetch failed, using fallback data:", e);
     const students = buildStudents(parseCsvText(FALLBACK_CSV));
     computeAll(students);
     renderAll();
     dot.className = "dot stale";
-    text.textContent = `Couldn't reach the live sheet — showing a ${FALLBACK_NOTE} (${N} responses).`;
+    text.textContent = S().statusStale(FALLBACK_NOTE[LANG], N);
   }
 }
 
