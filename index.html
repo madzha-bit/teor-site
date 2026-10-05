@@ -177,6 +177,79 @@
     transform: rotate(-2deg);
   }
 
+  .calc-card {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 640px) {
+    .calc-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .calc-field { display: flex; flex-direction: column; gap: 6px; }
+  .calc-field .field-label { min-width: 0; font-size: 0.9rem; }
+  .calc-field .segmented { border-bottom: none; gap: 8px; }
+  .calc-field .segmented button {
+    border: 1px solid var(--rule);
+    background: var(--panel);
+    border-radius: 999px;
+    padding: 7px 14px;
+    color: var(--ink);
+  }
+  .calc-field .segmented button.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  .calc-result {
+    border-top: 1px solid var(--rule);
+    padding-top: 18px;
+    text-align: center;
+  }
+  .calc-number {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 700;
+    font-size: 2.6rem;
+    color: var(--accent);
+    line-height: 1.1;
+  }
+  .gauge {
+    position: relative;
+    height: 14px;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    margin: 14px auto 10px;
+    max-width: 440px;
+    overflow: visible;
+  }
+  .gauge-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width .25s ease;
+  }
+  .gauge-marker {
+    position: absolute;
+    top: -4px;
+    width: 2px;
+    height: 22px;
+    background: var(--warn);
+    left: 50%;
+  }
+  .calc-result .small { max-width: 50ch; margin: 0 auto; }
+  .calc-result .waiting { max-width: 50ch; margin: 10px auto 0; }
+
   footer { color: var(--ink-soft); font-size: 0.85rem; padding-top: 22px; margin-top: 4px; }
   footer p { max-width: 66ch; }
   footer .cta { margin-top: 14px; }
@@ -305,6 +378,41 @@
   </div>
 </section>
 
+<section id="calcSection">
+  <h2 id="hCalculator">Check your own odds</h2>
+  <p class="lead" id="pCalculatorLead">—</p>
+  <div class="calc-card">
+    <div class="calc-grid">
+      <div class="calc-field">
+        <label class="field-label" id="lblCalcHousing">Housing</label>
+        <div class="segmented" id="calcHousingButtons"></div>
+      </div>
+      <div class="calc-field">
+        <label class="field-label" id="lblCalcPhone">Phone use in class</label>
+        <div class="segmented" id="calcPhoneButtons"></div>
+      </div>
+      <div class="calc-field">
+        <label class="field-label" id="lblCalcJob">Part-time job</label>
+        <div class="segmented" id="calcJobButtons"></div>
+      </div>
+      <div class="calc-field">
+        <label class="field-label" id="lblCalcCoffee">Coffee / energy drinks</label>
+        <div class="segmented" id="calcCoffeeButtons"></div>
+      </div>
+    </div>
+    <div class="calc-result">
+      <div class="small" id="calcLabel">—</div>
+      <div class="calc-number" id="calcText">—</div>
+      <div class="gauge">
+        <div class="gauge-fill" id="gaugeFill"></div>
+        <div class="gauge-marker" id="gaugeMarker" title="Survey average"></div>
+      </div>
+      <div class="small" id="calcSub">—</div>
+      <p class="waiting" id="calcNote">—</p>
+    </div>
+  </div>
+</section>
+
 <section>
   <h2 id="hConclusions">Conclusions</h2>
   <p class="lead" id="pConclusions1">—</p>
@@ -411,6 +519,19 @@ en: {
   ccCorr: (r, sig, n, dir) => `r = ${r} (${sig} at α = 0.05, n = ${n}). More sleep is associated with a ${dir} score in this sample.`,
   ccCorrSig: "significant", ccCorrNotSig: "not significant", dirHigher: "higher", dirLower: "lower",
 
+  hCalculator: "Check your own odds",
+  pCalculatorLead: "Pick your own situation below. This combines the conditional probabilities from the section above using Bayes' rule, treating the four factors as independent given the outcome — a simplifying assumption, so treat the result as an estimate, not a diagnosis.",
+  lblCalcHousing: "🏠 Housing", lblCalcPhone: "📱 Phone use in class", lblCalcJob: "💼 Part-time job", lblCalcCoffee: "☕ Coffee / energy drinks",
+  yesLabel: "Yes", noLabel: "No",
+  calcLabel: "Estimated chance of passing with no retakes",
+  calcText: (p) => p,
+  calcSub: (prior) => `For comparison, the overall rate across all students surveyed is ${prior}.`,
+  calcNote: (parts) => `What's pulling it: ${parts}`,
+  effectNone: (label) => `${label} — no real effect`,
+  effectUpSmall: (label) => `${label} — pushes it up a little`,
+  effectUpBig: (label) => `${label} — pushes it up a lot`,
+  effectDownSmall: (label) => `${label} — pushes it down a little`,
+  effectDownBig: (label) => `${label} — pushes it down a lot`,
   hConclusions: "Conclusions",
   pConclusions1: "Every percentage in the table below is a conditional probability, not a plain one. It doesn't answer \"what share of all students passed\" — that number is the overall pass rate shown at the top of the page. Instead, each row narrows the question to one specific group and asks \"of just these students, what share passed?\" That's a different, smaller question for every row, which is also why the numbers aren't meant to add up to 100% — they're separate answers, not pieces of one pie.",
   pConclusions2: "Answering the question habit by habit, using the tools above (updates automatically with new responses):",
@@ -482,6 +603,19 @@ ru: {
   ccCorr: (r, sig, n, dir) => `r = ${r} (${sig} при α = 0.05, n = ${n}). Больше сна связано с ${dir} баллом в этой выборке.`,
   ccCorrSig: "значима", ccCorrNotSig: "не значима", dirHigher: "более высоким", dirLower: "более низким",
 
+  hCalculator: "Проверь свои шансы",
+  pCalculatorLead: "Выберите свою ситуацию ниже. Это объединяет условные вероятности из раздела выше по формуле Байеса, считая четыре фактора независимыми при данном исходе — это упрощение, поэтому относитесь к результату как к оценке, а не диагнозу.",
+  lblCalcHousing: "🏠 Жильё", lblCalcPhone: "📱 Телефон на парах", lblCalcJob: "💼 Подработка", lblCalcCoffee: "☕ Кофе/энергетики",
+  yesLabel: "Да", noLabel: "Нет",
+  calcLabel: "Оценка шанса сдать сессию без долгов",
+  calcText: (p) => p,
+  calcSub: (prior) => `Для сравнения, общая доля по всем опрошенным — ${prior}.`,
+  calcNote: (parts) => `Что на это влияет: ${parts}`,
+  effectNone: (label) => `${label} — почти не влияет`,
+  effectUpSmall: (label) => `${label} — немного повышает шанс`,
+  effectUpBig: (label) => `${label} — сильно повышает шанс`,
+  effectDownSmall: (label) => `${label} — немного понижает шанс`,
+  effectDownBig: (label) => `${label} — сильно понижает шанс`,
   hConclusions: "Выводы",
   pConclusions1: "Каждое число в таблице ниже — это условная вероятность, а не вероятность вообще. Оно не отвечает на вопрос «какая доля всех студентов сдала» — это общая доля сдавших, показанная вверху страницы. Вместо этого каждая строка сужает вопрос до одной конкретной группы: «а какая доля сдала именно среди них?» Это разный, более узкий вопрос в каждой строке — и поэтому числа не обязаны складываться в 100%, это отдельные ответы, а не части одного целого.",
   pConclusions2: "Отвечаем на вопрос привычка за привычкой, используя инструменты выше (обновляется автоматически с новыми ответами):",
@@ -553,6 +687,19 @@ kk: {
   ccCorr: (r, sig, n, dir) => `r = ${r} (α = 0.05 деңгейінде ${sig}, n = ${n}). Бұл таңдамада көбірек ұйқы ${dir} баллмен байланысты.`,
   ccCorrSig: "маңызды", ccCorrNotSig: "маңызды емес", dirHigher: "жоғарырақ", dirLower: "төменірек",
 
+  hCalculator: "Өз мүмкіндігіңізді тексеріңіз",
+  pCalculatorLead: "Төменде өз жағдайыңызды таңдаңыз. Бұл жоғарыдағы шартты ықтималдықтарды Байес формуласы арқылы біріктіреді, төрт факторды нәтижеге қатысты тәуелсіз деп есептейді — бұл жеңілдету, сондықтан нәтижені диагноз емес, болжам ретінде қабылдаңыз.",
+  lblCalcHousing: "🏠 Тұрғын үй", lblCalcPhone: "📱 Сабақта телефон", lblCalcJob: "💼 Қосымша жұмыс", lblCalcCoffee: "☕ Кофе/энергетик",
+  yesLabel: "Иә", noLabel: "Жоқ",
+  calcLabel: "Сессияны қарызсыз аяқтау мүмкіндігінің бағасы",
+  calcText: (p) => p,
+  calcSub: (prior) => `Салыстыру үшін, барлық сауалнамаға қатысқандар бойынша жалпы үлес — ${prior}.`,
+  calcNote: (parts) => `Мұған не әсер етеді: ${parts}`,
+  effectNone: (label) => `${label} — іс жүзінде әсер етпейді`,
+  effectUpSmall: (label) => `${label} — мүмкіндікті сәл арттырады`,
+  effectUpBig: (label) => `${label} — мүмкіндікті күрт арттырады`,
+  effectDownSmall: (label) => `${label} — мүмкіндікті сәл төмендетеді`,
+  effectDownBig: (label) => `${label} — мүмкіндікті күрт төмендетеді`,
   hConclusions: "Қорытынды",
   pConclusions1: "Төмендегі кестедегі әрбір пайыз — жай ықтималдық емес, шартты ықтималдық. Ол «барлық студенттердің қандай үлесі аяқтады» деген сұраққа жауап бермейді — бұл сан беттің жоғарғы жағында көрсетілген жалпы сәттілік үлесі. Оның орнына әр жол сұрақты бір нақты топқа тарылтады: «дәл осы студенттердің қандай үлесі аяқтады?» Бұл әр жолда әртүрлі, тарылған сұрақ, сондықтан сандар 100%-ға қосылуға міндетті емес — бұл бір бүтіннің бөліктері емес, бөлек жауаптар.",
   pConclusions2: "Жоғарыдағы құралдарды пайдаланып, сұраққа әдет-әдетімен жауап береміз (жаңа жауаптармен автоматты жаңарады):",
@@ -636,11 +783,23 @@ function parseNum(s){
   const v = parseFloat(t);
   return isNaN(v) ? null : v;
 }
+// Understands old single-language answers ("Да") and new trilingual ones ("Иә / Да / Yes"),
+// in any order: each part between slashes is checked on its own.
 function parseYesNo(s){
-  const t = (s||"").trim().toLowerCase();
-  if (t.startsWith("да") || t.startsWith("yes")) return true;
-  if (t.startsWith("нет") || t.startsWith("no")) return false;
+  const parts = (s||"").toLowerCase().split("/").map(p => p.trim());
+  for (const p of parts){
+    if (p.startsWith("да") || p.startsWith("иә") || p.startsWith("yes")) return true;
+    if (p.startsWith("нет") || p.startsWith("жоқ") || p.startsWith("no")) return false;
+  }
   return null;
+}
+// Maps any language version of a housing answer to the original Russian key used in HOUSING_META.
+function canonHousing(raw){
+  const t = (raw||"").trim().toLowerCase();
+  if (/общеж|dorm|жатақ/.test(t)) return "В общежитии";
+  if (/родител|parent|ата-ана/.test(t)) return "С родителями";
+  if (/снима|rent|жалда|пәтер/.test(t)) return "Снимаю жильё";
+  return (raw||"").trim();
 }
 
 // ---------- turn rows into student records ----------
@@ -653,7 +812,7 @@ function buildStudents(rows){
     const courseDigit = (c[1]||"").trim().charAt(0);
     const s = {
       course: parseInt(courseDigit, 10),
-      housing: (c[2]||"").trim(),
+      housing: canonHousing(c[2]),
       commute: parseNum(c[3]),
       sleep: parseNum(c[4]),
       study: parseNum(c[5]),
@@ -848,6 +1007,13 @@ function applyStatic(){
 
   document.getElementById("hCorrelation").textContent = s.hCorrelation;
 
+  document.getElementById("hCalculator").textContent = s.hCalculator;
+  document.getElementById("pCalculatorLead").textContent = s.pCalculatorLead;
+  document.getElementById("lblCalcHousing").textContent = s.lblCalcHousing;
+  document.getElementById("lblCalcPhone").textContent = s.lblCalcPhone;
+  document.getElementById("lblCalcJob").textContent = s.lblCalcJob;
+  document.getElementById("lblCalcCoffee").textContent = s.lblCalcCoffee;
+
   document.getElementById("hConclusions").textContent = s.hConclusions;
   document.getElementById("pConclusions1").textContent = s.pConclusions1;
   document.getElementById("pConclusions2").textContent = s.pConclusions2;
@@ -1035,6 +1201,86 @@ function renderConclusions(){
   document.getElementById("ccSummary").textContent = s.ccSummary(tHousing(best.type), pct(best.nAH/best.nH), N);
 }
 
+// ---------- "check your own odds" calculator (Naive Bayes combination) ----------
+let calcState = { housing: null, phone: false, job: false, coffee: false };
+
+// Likelihood ratio P(answer | A) / P(answer | not A) for one yes/no factor.
+function factorLikelihoodRatio(key, answer){
+  const f = factors[key];
+  const failedTotal = N - passedTotal;
+  const passYes = f.nAB, passNo = passedTotal - f.nAB;
+  const failYes = f.nB - f.nAB, failNo = failedTotal - failYes; // bug fix: was (N - f.nB) - failYes, which used the wrong total
+  const pGivenA = (answer ? passYes : passNo) / passedTotal;
+  const pGivenNotA = (answer ? failYes : failNo) / failedTotal;
+  return pGivenNotA > 0 ? pGivenA / pGivenNotA : 1;
+}
+function housingLikelihoodRatio(rawType){
+  const h = housingGroups.find(g => g.type === rawType);
+  if (!h) return 1;
+  const passH = h.nAH, failH = h.nH - h.nAH;
+  const pGivenA = passH / passedTotal;
+  const pGivenNotA = failH / (N - passedTotal);
+  return pGivenNotA > 0 ? pGivenA / pGivenNotA : 1;
+}
+function computeCalculator(){
+  const priorOdds = pA / (1 - pA);
+  let odds = priorOdds;
+  const contributions = [];
+  ["phone","job","coffee"].forEach(key => {
+    const lr = factorLikelihoodRatio(key, calcState[key]);
+    odds *= lr;
+    contributions.push({ label: tFactor(key), lr });
+  });
+  const hLr = housingLikelihoodRatio(calcState.housing);
+  odds *= hLr;
+  contributions.push({ label: tHousing(calcState.housing), lr: hLr });
+  const p = odds / (1 + odds);
+  return { p, contributions };
+}
+function effectPhrase(s, c){
+  const logLr = Math.log(c.lr);
+  if (Math.abs(logLr) < 0.1) return s.effectNone(c.label);
+  if (logLr > 0) return logLr > 0.4 ? s.effectUpBig(c.label) : s.effectUpSmall(c.label);
+  return logLr < -0.4 ? s.effectDownBig(c.label) : s.effectDownSmall(c.label);
+}
+function renderCalculator(){
+  const s = S();
+  const { p, contributions } = computeCalculator();
+  document.getElementById("calcLabel").textContent = s.calcLabel;
+  document.getElementById("calcText").textContent = s.calcText(pct(p));
+  document.getElementById("calcSub").textContent = s.calcSub(pct(pA));
+  document.getElementById("calcNote").textContent = s.calcNote(contributions.map(c => effectPhrase(s, c)).join("; "));
+  document.getElementById("gaugeFill").style.width = Math.max(0, Math.min(100, p*100)) + "%";
+  document.getElementById("gaugeMarker").style.left = Math.max(0, Math.min(100, pA*100)) + "%";
+}
+function setupCalcControls(){
+  function buildToggle(containerId, key, isHousing){
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    const options = isHousing
+      ? housingGroups.map(g => g.type)
+      : [false, true];
+    options.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.textContent = isHousing ? tHousing(opt) : (opt ? S().yesLabel : S().noLabel);
+      const isActive = isHousing ? (calcState.housing === opt) : (calcState[key] === opt);
+      btn.className = isActive ? "active" : "";
+      btn.onclick = () => {
+        if (isHousing) calcState.housing = opt; else calcState[key] = opt;
+        [...container.children].forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        renderCalculator();
+      };
+      container.appendChild(btn);
+    });
+  }
+  if (calcState.housing === null) calcState.housing = housingGroups[0].type;
+  buildToggle("calcHousingButtons", "housing", true);
+  buildToggle("calcPhoneButtons", "phone", false);
+  buildToggle("calcJobButtons", "job", false);
+  buildToggle("calcCoffeeButtons", "coffee", false);
+}
+
 function setupLangButtons(){
   const langButtons = document.getElementById("langButtons");
   const langs = [["en","EN"],["ru","RU"],["kk","KZ"]];
@@ -1108,6 +1354,8 @@ function renderAll(){
   renderPoisson();
   renderNormal();
   renderCorrelation();
+  setupCalcControls();
+  renderCalculator();
   renderConclusions();
 }
 
