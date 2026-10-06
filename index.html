@@ -2,727 +2,316 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Students &amp; Probability: Live Survey Data</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session Survivor — A Probability RPG</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --paper: #f7f8fb;
-    --ink: #13203b;
-    --ink-soft: #57647f;
-    --rule: #d7deea;
-    --grid: rgba(19,32,59,0.055);
-    --accent: #404485;
-    --accent-soft: #e8e8f0;
-    --warn: #b3261e;
-    --warn-soft: #fbe8e6;
-    --panel: #ffffff;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    box-sizing: border-box;
-  }
-  :root:not([data-theme="light"]) {
-    @media (prefers-color-scheme: dark) {
-      --paper: #0c1220;
-      --ink: #eef1f7;
-      --ink-soft: #9aa7c2;
-      --rule: #253449;
-      --grid: rgba(238,241,247,0.05);
-      --accent: #9598bb;
-      --accent-soft: #23284d;
-      --warn: #f0897c;
-      --warn-soft: #3a201d;
-      --panel: #101a2c;
-    }
-  }
-  :root[data-theme="dark"] {
-    --paper: #0c1220; --ink: #eef1f7; --ink-soft: #9aa7c2; --rule: #253449;
-    --grid: rgba(238,241,247,0.05); --accent: #9598bb; --accent-soft: #23284d;
-    --warn: #f0897c; --warn-soft: #3a201d; --panel: #101a2c;
-  }
-  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px),
-      var(--paper);
-    background-size: 26px 26px, 26px 26px, auto;
-    color: var(--ink);
-    font-family: "IBM Plex Sans", -apple-system, sans-serif;
-    line-height: 1.6;
-    font-size: 16px;
-  }
-  .wrap { max-width: 920px; margin: 0 auto; padding: 48px 28px 90px; }
+:root{
+  --bg:#0a0c1b; --panel:#13173a; --panel2:#1b2050; --line:#2c3374;
+  --ink:#f1f3ff; --mute:#9aa1d4;
+  --mint:#4df0c2; --hot:#ff4f8b; --gold:#ffd24a; --blue:#6f80ff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;line-height:1.55;
+  background:
+    radial-gradient(900px 500px at 85% -10%,rgba(111,128,255,.25),transparent 60%),
+    radial-gradient(700px 400px at -10% 20%,rgba(77,240,194,.12),transparent 60%),
+    linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px),var(--bg);
+  background-size:auto,auto,28px 28px,28px 28px,auto;
+}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 80px}
+.hidden{display:none!important}
 
-  header { margin-bottom: 8px; }
-  h1 {
-    font-family: "Source Serif 4", Georgia, serif;
-    font-weight: 700;
-    font-size: clamp(1.9rem, 6vw, 2.6rem);
-    line-height: 1.16;
-    margin: 0 0 18px;
-    letter-spacing: -0.01em;
-  }
-  header .lede {
-    font-size: 1.05rem;
-    color: var(--ink-soft);
-    max-width: 62ch;
-    margin: 0 0 22px;
-  }
-  header .lede b { color: var(--ink); font-weight: 600; font-family: "IBM Plex Mono", monospace; }
+/* sticky HUD */
+.hudbar{position:sticky;top:0;z-index:20;background:rgba(10,12,27,.94);backdrop-filter:blur(8px);border-bottom:2px solid var(--line);margin:0 0 6px;padding:10px 16px}
+.hudin{max-width:980px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hp{flex:1;min-width:190px}
+.hp small{font:600 10px "Press Start 2P",monospace;color:var(--mute);display:flex;justify-content:space-between}
+.hp small b{color:var(--ink)}
+.hpbar{height:16px;background:#0b0e28;border:2px solid var(--line);border-radius:99px;overflow:hidden;margin-top:5px}
+.hpbar i{display:block;height:100%;width:100%;background:var(--mint);transition:width .35s,background .35s}
+.hpbar i.mid{background:var(--gold)} .hpbar i.low{background:var(--hot)}
+.chip{background:var(--panel);border:2px solid var(--line);padding:7px 11px;font-family:"Press Start 2P",monospace;font-size:9px;border-radius:6px;white-space:nowrap;line-height:1.4}
+.chip b{color:var(--gold);font-size:11px}
+.chip.d b{color:var(--hot)}
 
-  .cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
-  .cta {
-    display: inline-block;
-    background: var(--ink);
-    color: var(--paper);
-    font-family: "IBM Plex Sans", sans-serif;
-    font-weight: 600;
-    font-size: 0.96rem;
-    text-decoration: none;
-    padding: 12px 22px;
-    border: 2px solid var(--ink);
-    box-shadow: 4px 4px 0 var(--accent);
-    transition: transform .12s ease, box-shadow .12s ease;
-  }
-  .cta:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--accent); }
-  .cta:active { transform: translate(0,0); box-shadow: 2px 2px 0 var(--accent); }
+@media(max-width:600px){.hudbar{padding:7px 10px}.hudin{gap:5px}.hp{min-width:100%}.chip{padding:5px 6px;font-size:7px}.chip b{font-size:9px}.how div{font-size:12px;padding:8px 10px}}
+h1{font-family:"Press Start 2P",monospace;font-size:clamp(16px,3.6vw,26px);line-height:1.35;margin:6px 0 0;color:var(--mint);text-shadow:0 0 18px rgba(77,240,194,.45)}
+h1 small{display:block;font-size:.42em;color:var(--mute);margin-top:10px;text-shadow:none}
+.status{font:500 12px "IBM Plex Mono",monospace;color:var(--mute);margin:10px 0 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
+.dot.stale{background:var(--hot);box-shadow:0 0 8px var(--hot)}
 
-  .status { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.8rem; color: var(--ink-soft); font-family: "IBM Plex Mono", monospace; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
-  .dot.stale { background: var(--warn); }
-  .status button { border: none; background: none; color: var(--accent); text-decoration: underline; font-family: inherit; font-size: inherit; cursor: pointer; padding: 0; }
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:16px 0 4px}
+.how div{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--mute)}
+.how b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
 
-  section { padding: 34px 0; border-top: 1px solid var(--rule); }
-  section:first-of-type { border-top: none; padding-top: 30px; }
-  section h2 {
-    font-family: "Source Serif 4", Georgia, serif;
-    font-weight: 600;
-    font-size: 1.35rem;
-    margin: 0 0 6px;
-  }
-  section > p.lead { color: var(--ink-soft); font-size: 0.96rem; margin: 0 0 18px; max-width: 64ch; }
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 14px}
+nav button{font-family:"Press Start 2P",monospace;font-size:10px;padding:12px 14px;color:var(--ink);cursor:pointer;background:var(--panel);border:2px solid var(--line);border-radius:6px;transition:.12s}
+nav button:hover{border-color:var(--blue)}
+nav button.on{background:var(--blue);border-color:var(--blue);box-shadow:0 4px 0 #3e4bb5;transform:translateY(-2px)}
 
-  .formula {
-    font-family: "IBM Plex Mono", monospace;
-    font-style: italic;
-    font-size: 1rem;
-    color: var(--ink);
-    background: var(--accent-soft);
-    border-left: 3px solid var(--accent);
-    padding: 10px 14px;
-    margin: 10px 0 16px;
-    display: inline-block;
-  }
+.card{background:linear-gradient(180deg,var(--panel),#101331);border:2px solid var(--line);border-radius:12px;padding:20px;margin:0 0 16px}
+.card h2{font-family:"Press Start 2P",monospace;font-size:13px;line-height:1.5;margin:0 0 8px;color:var(--gold)}
+.card h3{margin:0 0 6px;font-size:17px}
+.card h3 small{font:500 11px "IBM Plex Mono",monospace;color:var(--blue);background:rgba(111,128,255,.15);padding:2px 8px;border-radius:99px;margin-left:8px;vertical-align:2px}
+.lead{color:var(--mute);margin:0 0 14px;max-width:72ch}
+.plain{background:rgba(77,240,194,.07);border-left:4px solid var(--mint);padding:9px 12px;border-radius:6px;margin:10px 0;font-size:14px}
+.plain b{color:var(--mint)}
+details.math{margin:8px 0}
+details.math summary{cursor:pointer;color:var(--blue);font:600 12px "IBM Plex Mono",monospace}
+.formula{font:500 13px "IBM Plex Mono",monospace;background:#0b0e28;border-left:4px solid var(--blue);padding:9px 12px;border-radius:6px;margin:8px 0;overflow-x:auto;white-space:pre-wrap;color:#cfd4ff}
+.formula b{color:var(--mint)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.row label{color:var(--mute);font-size:14px;min-width:200px}
+.row label b{color:var(--ink);font-family:"IBM Plex Mono",monospace}
+input[type=range]{flex:1;min-width:150px;accent-color:var(--mint);height:6px}
+select{background:#0b0e28;color:var(--ink);border:2px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;max-width:100%}
 
-  .controls { display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; }
-  .row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  label.field-label { font-size: 0.86rem; color: var(--ink-soft); min-width: 150px; }
-  input[type="range"] { flex: 1; min-width: 140px; accent-color: var(--accent); height: 4px; }
-  .val { font-family: "IBM Plex Mono", monospace; font-weight: 600; min-width: 64px; text-align: right; }
+button.btn{font-family:"Press Start 2P",monospace;font-size:11px;padding:13px 18px;border:0;border-radius:8px;cursor:pointer;color:#06281f;background:var(--mint);box-shadow:0 5px 0 #1c9f80;transition:.08s}
+button.btn:hover{filter:brightness(1.1)}
+button.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #1c9f80}
+button.btn.hot{background:var(--hot);box-shadow:0 5px 0 #a82a58;color:#fff}
+button.btn.gold{background:var(--gold);box-shadow:0 5px 0 #b38d17}
+button.btn.ghost{background:var(--panel2);color:var(--ink);box-shadow:0 5px 0 #0c0f2b}
+button.btn:disabled{opacity:.4;cursor:not-allowed;filter:none}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{background:var(--panel2);border:2px solid var(--line);color:var(--ink);border-radius:99px;padding:7px 14px;cursor:pointer;font:500 14px "IBM Plex Sans",sans-serif}
+.seg button.on{background:var(--blue);border-color:var(--blue);font-weight:600}
 
-  .segmented { display: flex; gap: 20px; flex-wrap: wrap; border-bottom: 1px solid var(--rule); padding-bottom: 0; }
-  .segmented button {
-    border: none; background: none; color: var(--ink-soft);
-    padding: 6px 0; font-size: 0.9rem; font-family: "IBM Plex Sans", sans-serif;
-    cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
-  }
-  .segmented button.active { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
-  .segmented button:focus-visible, input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stepper{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.stepper span{font:600 9px "Press Start 2P",monospace;padding:8px 10px;border-radius:6px;background:#0b0e28;border:2px solid var(--line);color:var(--mute)}
+.stepper span.on{background:var(--gold);color:#2b2100;border-color:var(--gold)}
+.stepper span.done{color:var(--mint);border-color:var(--mint)}
 
-  .out {
-    background: transparent;
-    border: 2px dashed var(--accent);
-    border-radius: 4px;
-    padding: 14px 18px;
-    margin: 16px 0;
-  }
-  .out .big { font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 1.35rem; color: var(--accent); }
-  .out .small { color: var(--ink-soft); font-size: 0.85rem; margin-top: 4px; }
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.stat{background:#0b0e28;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat small{display:block;color:var(--mute);font-size:12px}
+.stat b{font:600 20px "IBM Plex Mono",monospace}
+.stat b.g{color:var(--mint)} .stat b.r{color:var(--hot)} .stat b.y{color:var(--gold)}
 
-  .bars { display: flex; align-items: flex-end; gap: 3px; height: 150px; padding-top: 8px; overflow-x: auto; }
-  .bars .col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-width: 20px; flex: 1; height: 100%; position: relative; }
-  .bars .bar { width: 100%; max-width: 26px; background: var(--accent); border-radius: 0; }
-  .bars .bar.b2 { background: var(--warn); }
-  .bars .k { font-size: 0.66rem; color: var(--ink-soft); margin-top: 4px; font-family: "IBM Plex Mono", monospace; }
-  .legend { display: flex; gap: 16px; font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 6px; font-family: "IBM Plex Mono", monospace; }
-  .legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 6px; vertical-align: -1px; }
-  .legend .l1::before { background: var(--accent); }
-  .legend .l2::before { background: var(--warn); }
+.gauge{height:16px;background:#0b0e28;border:2px solid var(--line);border-radius:99px;position:relative;margin:12px 0 4px}
+.gauge i{display:block;height:100%;background:linear-gradient(90deg,var(--hot),var(--gold),var(--mint));border-radius:99px;transition:width .3s}
+.gauge u{position:absolute;top:-6px;width:3px;height:24px;background:#fff;border-radius:2px}
+.big{font:700 34px "IBM Plex Mono",monospace;color:var(--mint)}
 
-  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-  table caption { text-align: left; color: var(--ink-soft); font-size: 0.8rem; margin-bottom: 8px; }
-  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--rule); }
-  th { color: var(--ink-soft); font-weight: 600; font-size: 0.8rem; }
-  td.num, th.num { text-align: right; font-family: "IBM Plex Mono", monospace; }
+svg.chart{width:100%;height:auto;display:block;background:#0b0e28;border-radius:10px;border:1px solid var(--line)}
+svg.chart text{fill:var(--mute);font:11px "IBM Plex Mono",monospace}
+.bar{fill:var(--blue)} .bar.zone{fill:#c9a52c} .bar.hit{fill:var(--mint)} .bar.miss{fill:var(--hot)}
 
-  .waiting { color: var(--ink-soft); font-size: 0.92rem; }
+.result{border:2px dashed var(--line);border-radius:10px;padding:14px;margin:12px 0;animation:pop .25s ease}
+.result.win{border-color:var(--mint);background:rgba(77,240,194,.08)}
+.result.lose{border-color:var(--hot);background:rgba(255,79,139,.08)}
+.result h4{font-family:"Press Start 2P",monospace;font-size:12px;margin:0 0 8px;line-height:1.5}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.people{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.people span{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:15px;font-weight:700;animation:pop .3s ease backwards}
+.people .ok{background:rgba(77,240,194,.2);border:2px solid var(--mint);color:var(--mint)}
+.people .no{background:rgba(255,79,139,.15);border:2px solid var(--hot);color:var(--hot)}
+table.t{border-collapse:collapse;width:100%;font-size:14px;margin:10px 0}
+table.t th,table.t td{border:1px solid var(--line);padding:8px;text-align:center}
+table.t th{color:var(--mute);font-weight:500;background:#0b0e28}
+.note{color:var(--mute);font-size:13px}
+.myth{border-left:4px solid var(--gold);background:rgba(255,210,74,.07);padding:10px 14px;border-radius:6px;margin:12px 0;font-size:14px}
 
-  .scatter-wrap { overflow-x: auto; }
-  svg.scatter { width: 100%; min-width: 460px; height: auto; }
-  svg.scatter .pt { fill: var(--accent); opacity: 0.8; }
-  svg.scatter .line { stroke: var(--warn); stroke-width: 2; fill: none; }
-  svg.scatter .axis { stroke: var(--rule); stroke-width: 1; }
-  svg.scatter text { fill: var(--ink-soft); font-size: 11px; font-family: "IBM Plex Mono", monospace; }
+.shop{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin:10px 0}
+.item{background:#0b0e28;border:2px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.item .ic{font-size:26px}
+.item b{font-size:15px}
+.item span{font-size:13px;color:var(--mute);flex:1}
+.item button{font-family:"Press Start 2P",monospace;font-size:9px;padding:10px;border:0;border-radius:6px;background:var(--gold);color:#2b2100;cursor:pointer;box-shadow:0 3px 0 #b38d17}
+.item button:disabled{opacity:.35;cursor:not-allowed}
+.acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:10px 0}
+.log{margin:14px 0 0;padding:0;list-style:none;font:500 12px "IBM Plex Mono",monospace;color:var(--mute)}
+.log li{padding:3px 0;border-bottom:1px dashed var(--line)}
 
-  .note {
-    font-family: "Caveat", cursive;
-    font-size: 1.25rem;
-    color: var(--warn);
-    display: inline-block;
-    transform: rotate(-2deg);
-  }
-
-  .calc-card {
-    background: var(--accent-soft);
-    border: 1px solid var(--accent);
-    border-radius: 10px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-  }
-  .calc-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  @media (min-width: 640px) {
-    .calc-grid { grid-template-columns: 1fr 1fr; }
-  }
-  .calc-field { display: flex; flex-direction: column; gap: 6px; }
-  .calc-field .field-label { min-width: 0; font-size: 0.9rem; }
-  .calc-field .segmented { border-bottom: none; gap: 8px; }
-  .calc-field .segmented button {
-    border: 1px solid var(--rule);
-    background: var(--panel);
-    border-radius: 999px;
-    padding: 7px 14px;
-    color: var(--ink);
-  }
-  .calc-field .segmented button.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-    font-weight: 600;
-  }
-  .calc-result {
-    border-top: 1px solid var(--rule);
-    padding-top: 18px;
-    text-align: center;
-  }
-  .calc-number {
-    font-family: "IBM Plex Mono", monospace;
-    font-weight: 700;
-    font-size: 2.6rem;
-    color: var(--accent);
-    line-height: 1.1;
-  }
-  .gauge {
-    position: relative;
-    height: 14px;
-    background: var(--panel);
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    margin: 14px auto 10px;
-    max-width: 440px;
-    overflow: visible;
-  }
-  .gauge-fill {
-    height: 100%;
-    width: 0%;
-    background: var(--accent);
-    border-radius: 999px;
-    transition: width .25s ease;
-  }
-  .gauge-marker {
-    position: absolute;
-    top: -4px;
-    width: 2px;
-    height: 22px;
-    background: var(--warn);
-    left: 50%;
-  }
-  .calc-result .small { max-width: 50ch; margin: 0 auto; }
-  .calc-result .waiting { max-width: 50ch; margin: 10px auto 0; }
-
-  footer { color: var(--ink-soft); font-size: 0.85rem; padding-top: 22px; margin-top: 4px; }
-  footer p { max-width: 66ch; }
-  footer .cta { margin-top: 14px; }
+/* death overlay */
+#death{position:fixed;inset:0;z-index:50;background:rgba(5,0,10,.92);display:grid;place-items:center;padding:20px}
+#death .box{max-width:460px;text-align:center;background:var(--panel);border:3px solid var(--hot);border-radius:14px;padding:26px;box-shadow:0 0 60px rgba(255,79,139,.35);animation:pop .3s ease}
+#death h2{font-family:"Press Start 2P",monospace;color:var(--hot);font-size:18px;margin:0 0 12px}
+#death .skull{font-size:60px}
+#death .btns{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 </style>
 </head>
 <body>
+
+<div class="hudbar"><div class="hudin">
+  <div class="hp"><small><span>❤ HEALTH</span><b id="hpText">100/100</b></small><div class="hpbar"><i id="hpFill"></i></div></div>
+  <div class="chip">💰 MONEY <b id="money">₸100</b></div>
+  <div class="chip">📅 DAY <b id="dayH">–</b></div>
+  <div class="chip">⭐ SCORE <b id="ptsH">0</b></div>
+  <div class="chip d">💀 DEATHS <b id="deathsH">0</b></div>
+  <div class="chip">🎒 <b id="itemsH" style="font-size:10px">nothing</b></div>
+</div></div>
+
 <div class="wrap">
+<h1>SESSION SURVIVOR<small>An exam-week RPG where every dice roll is a real probability formula</small></h1>
+<div class="status"><span class="dot" id="dot"></span><span id="statusText">Loading survey data…</span><button class="btn ghost" id="refresh" style="font-size:8px;padding:6px 10px;box-shadow:none">Reload data</button></div>
 
-<header>
-  <div class="segmented" id="langButtons" style="margin-bottom:14px"></div>
-  <h1 id="hTitle">What raises the odds of a debt-free exam session?</h1>
-  <p class="lede" id="pLede">—</p>
-  <div class="cta-row">
-    <a class="cta" id="ctaTop" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener">Take the survey</a>
-    <div class="status">
-      <span class="dot" id="statusDot"></span>
-      <span id="statusText">Connecting to the live survey…</span>
-      <button id="refreshBtn" type="button">Refresh</button>
-    </div>
-  </div>
-</header>
-
-<section>
-  <h2 id="hProblem">The problem and the question</h2>
-  <p class="lead" id="pProblem">—</p>
-</section>
-
-<section>
-  <h2 id="hDescriptive">Descriptive statistics</h2>
-  <p class="lead" id="pDescriptive">—</p>
-  <table>
-    <thead><tr><th id="thMeasure">Measure</th><th class="num" id="thMean">Mean</th><th class="num" id="thMedian">Median</th><th class="num" id="thMin">Min</th><th class="num" id="thMax">Max</th><th class="num" id="thStd">Std. dev.</th></tr></thead>
-    <tbody>
-      <tr><td id="rowSleep">Sleep, hours</td><td class="num" id="dsSleepMean">—</td><td class="num" id="dsSleepMed">—</td><td class="num" id="dsSleepMin">—</td><td class="num" id="dsSleepMax">—</td><td class="num" id="dsSleepSd">—</td></tr>
-      <tr><td id="rowCommute">Commute, minutes</td><td class="num" id="dsCommuteMean">—</td><td class="num" id="dsCommuteMed">—</td><td class="num" id="dsCommuteMin">—</td><td class="num" id="dsCommuteMax">—</td><td class="num" id="dsCommuteSd">—</td></tr>
-      <tr><td id="rowStudy">Independent study, hrs/day</td><td class="num" id="dsStudyMean">—</td><td class="num" id="dsStudyMed">—</td><td class="num" id="dsStudyMin">—</td><td class="num" id="dsStudyMax">—</td><td class="num" id="dsStudySd">—</td></tr>
-      <tr><td id="rowLate">Late arrivals / week</td><td class="num" id="dsLateMean">—</td><td class="num" id="dsLateMed">—</td><td class="num" id="dsLateMin">—</td><td class="num" id="dsLateMax">—</td><td class="num" id="dsLateSd">—</td></tr>
-    </tbody>
-  </table>
-</section>
-
-<section>
-  <h2 id="hConditional">Conditional probability</h2>
-  <p class="formula">P(A | B) = P(A and B) / P(B)</p>
-  <p class="lead" id="pConditionalLead">—</p>
-  <div class="segmented" id="factorButtons"></div>
-  <div class="out" style="margin-top:16px">
-    <div class="big" id="condText">—</div>
-    <div class="small" id="condSub">—</div>
-  </div>
-  <div class="legend"><span class="l1" id="legWith">with factor</span><span class="l2" id="legWithout">without factor</span></div>
-  <div class="bars" id="condBars"></div>
-</section>
-
-<section>
-  <h2 id="hBinomial">Binomial distribution</h2>
-  <p class="formula">P(X = k) = C(n, k) · pᵏ · (1 − p)ⁿ⁻ᵏ</p>
-  <p class="lead" id="binLead">—</p>
-  <div class="controls">
-    <div class="row">
-      <label class="field-label" for="binN" id="lblGroupSize">Group size n</label>
-      <input type="range" id="binN" min="5" max="40" step="1" value="25">
-      <span class="val" id="binNVal">25</span>
-    </div>
-  </div>
-  <div class="out">
-    <div class="big" id="binText">—</div>
-    <div class="small" id="binSub">—</div>
-  </div>
-  <div class="bars" id="binBars"></div>
-</section>
-
-<section>
-  <h2 id="hPoisson">Poisson distribution</h2>
-  <p class="formula">P(X = k) = λᵏ · e⁻λ / k!</p>
-  <p class="lead" id="poisLead">—</p>
-  <div class="controls">
-    <div class="row">
-      <label class="field-label" for="lambdaR" id="lblLambda">Average late arrivals λ</label>
-      <input type="range" id="lambdaR" min="0.2" max="4" step="0.1" value="1.16">
-      <span class="val" id="lambdaVal">1.16</span>
-    </div>
-  </div>
-  <div class="out">
-    <div class="big" id="poisText">—</div>
-    <div class="small" id="poisSub">—</div>
-  </div>
-  <div class="bars" id="poisBars"></div>
-</section>
-
-<section>
-  <h2 id="hNormal">Normal distribution</h2>
-  <p class="formula">P(X ≤ x) = Φ((x − μ) / σ)</p>
-  <p class="lead" id="pNormalLead">—</p>
-  <div class="controls">
-    <div class="segmented" id="measureButtons"></div>
-    <div class="row">
-      <label class="field-label" for="threshR" id="lblThreshold">Threshold x</label>
-      <input type="range" id="threshR" min="0" max="1" step="0.1" value="0.5">
-      <span class="val" id="threshVal">—</span>
-    </div>
-  </div>
-  <div class="out">
-    <div class="big" id="normText">—</div>
-    <div class="small" id="normSub">—</div>
-  </div>
-  <table>
-    <caption id="capNormalRule">μ, σ, and the 68–95 rule for this measure</caption>
-    <thead><tr><th id="thMu">μ (mean)</th><th id="thSigma">σ (std. dev.)</th><th class="num" id="thWithin1">within μ ± σ</th><th class="num" id="thWithin2">within μ ± 2σ</th></tr></thead>
-    <tbody><tr id="normRow"><td>—</td><td>—</td><td class="num">—</td><td class="num">—</td></tr></tbody>
-  </table>
-</section>
-
-<section id="corrSection">
-  <h2 id="hCorrelation">Correlation &amp; regression: sleep and exam score</h2>
-  <p class="formula">r = Σ(xᵢ−x̄)(yᵢ−ȳ) / √(Σ(xᵢ−x̄)² · Σ(yᵢ−ȳ)²) &nbsp;&nbsp; Score = a + b·Sleep</p>
-  <p class="lead" id="corrLead">Waiting for enough students to answer the score question…</p>
-  <div id="corrBody" style="display:none">
-    <div class="out">
-      <div class="big" id="corrText">—</div>
-      <div class="small" id="corrSub">—</div>
-    </div>
-    <div class="scatter-wrap">
-      <svg class="scatter" id="scatterSvg" viewBox="0 0 700 320"></svg>
-    </div>
-  </div>
-</section>
-
-<section id="calcSection">
-  <h2 id="hCalculator">Check your own odds</h2>
-  <p class="lead" id="pCalculatorLead">—</p>
-  <div class="calc-card">
-    <div class="calc-grid">
-      <div class="calc-field">
-        <label class="field-label" id="lblCalcHousing">Housing</label>
-        <div class="segmented" id="calcHousingButtons"></div>
-      </div>
-      <div class="calc-field">
-        <label class="field-label" id="lblCalcPhone">Phone use in class</label>
-        <div class="segmented" id="calcPhoneButtons"></div>
-      </div>
-      <div class="calc-field">
-        <label class="field-label" id="lblCalcJob">Part-time job</label>
-        <div class="segmented" id="calcJobButtons"></div>
-      </div>
-      <div class="calc-field">
-        <label class="field-label" id="lblCalcCoffee">Coffee / energy drinks</label>
-        <div class="segmented" id="calcCoffeeButtons"></div>
-      </div>
-    </div>
-    <div class="calc-result">
-      <div class="small" id="calcLabel">—</div>
-      <div class="calc-number" id="calcText">—</div>
-      <div class="gauge">
-        <div class="gauge-fill" id="gaugeFill"></div>
-        <div class="gauge-marker" id="gaugeMarker" title="Survey average"></div>
-      </div>
-      <div class="small" id="calcSub">—</div>
-      <p class="waiting" id="calcNote">—</p>
-    </div>
-  </div>
-</section>
-
-<section>
-  <h2 id="hConclusions">Conclusions</h2>
-  <p class="lead" id="pConclusions1">—</p>
-  <p class="lead" id="pConclusions2">—</p>
-  <table>
-    <thead><tr><th id="thHabit">Habit / factor</th><th id="thShows">What the data shows</th></tr></thead>
-    <tbody>
-      <tr><td id="rowPhone">Phone use in class</td><td id="ccPhone">—</td></tr>
-      <tr><td id="rowJob">Part-time job</td><td id="ccJob">—</td></tr>
-      <tr><td id="rowCoffee">Coffee / energy drinks</td><td id="ccCoffee">—</td></tr>
-      <tr><td id="rowHousing">Housing situation</td><td id="ccHousing">—</td></tr>
-      <tr><td id="rowLateness">Lateness (Poisson)</td><td id="ccLate">—</td></tr>
-      <tr><td id="rowNormalRow">Sleep, commute, study (normal)</td><td id="ccNormal">—</td></tr>
-      <tr id="ccCorrRow" style="display:none"><td id="rowCorr">Sleep vs. exam score</td><td id="ccCorr">—</td></tr>
-    </tbody>
-  </table>
-  <p class="lead" style="margin-top:14px" id="ccSummary">—</p>
-</section>
-
-<footer>
-  <p id="footerNote">Data: a live, anonymous survey of students collected for this project — this page fetches the latest responses from Google Sheets on every load. The sample is small and self-selected, so differences between groups may be due to chance — correlation isn't causation here.</p>
-  <a class="cta" id="ctaBottom" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener">Take the survey</a>
-</footer>
-
+<div class="how">
+  <div><b>🎯 Goal</b>Survive 5 exam days, earn points and money.</div>
+  <div><b>🔁 Every day</b>① Commute dice → ② Exam → ③ Evening (sleep, work, shop).</div>
+  <div><b>❤ Health</b>Lates and failed exams hurt. At 0 HP you collapse and must respawn.</div>
+  <div><b>💰 Money</b>Earn it from exams, work and quests. Spend it in the shop or bet it in the casino.</div>
 </div>
 
+<nav id="nav">
+  <button data-tab="play" class="on">1 · Play</button>
+  <button data-tab="group">2 · Casino</button>
+  <button data-tab="detective">3 · Quest: Detective</button>
+  <button data-tab="lab">4 · Quest: Lab</button>
+</nav>
+
+<div id="loading" class="card"><h2>Loading…</h2><p class="lead">Fetching the survey responses.</p></div>
+
+<div id="app" class="hidden">
+
+<!-- ================= PLAY ================= -->
+<section id="tab-play" class="tab">
+  <div class="card" id="cIntro">
+    <h2>Create your student</h2>
+    <p class="lead">Your habits change your <b>luck</b>. The game looks at the survey and asks: "of students like you, how many passed the session?" That number moves your exam scores up or down.</p>
+    <div class="row"><label>🏠 Where do you live?</label><div class="seg" id="pHousing"></div></div>
+    <div class="row"><label>📱 Phone in class?</label><div class="seg" id="pPhone"></div></div>
+    <div class="row"><label>💼 Part-time job?</label><div class="seg" id="pJob"></div></div>
+    <div class="row"><label>☕ Daily coffee / energy drinks?</label><div class="seg" id="pCoffee"></div></div>
+    <div class="big" id="pBig">—</div>
+    <div class="gauge"><i id="pFill" style="width:0"></i><u id="pMark"></u></div>
+    <div class="note" id="pNote"></div>
+    <details class="math"><summary>▸ Show the math (Bayes' rule)</summary><div class="formula" id="pFormula"></div></details>
+    <div class="myth" id="sleepMyth"></div>
+    <button class="btn" id="startBtn">Start the exam week ▶</button>
+  </div>
+
+  <div class="card hidden" id="cDay">
+    <div class="stepper"><span id="st1">① COMMUTE</span><span id="st2">② EXAM</span><span id="st3">③ EVENING</span></div>
+
+    <!-- step 1 -->
+    <div id="stepCommute">
+      <h3>Morning commute <small>Poisson</small></h3>
+      <p class="lead">Traffic, snow, alarm clocks… every week you are late a <i>random</i> number of times. The survey says students are late about <b id="lamTxt"></b> times a week. Each late arrival costs <b>4 HP</b> and <b>3 exam points</b>.</p>
+      <div class="plain" id="cPlain"></div>
+      <div id="cPoisChart"></div>
+      <details class="math"><summary>▸ Show the math (Poisson distribution)</summary><div class="formula" id="cPoisF"></div></details>
+      <div class="row"><button class="btn gold" id="cRollBtn">Roll the commute 🎲</button></div>
+      <div id="cPoisOut"></div>
+      <button class="btn hidden" id="toExamBtn">Go to the exam →</button>
+    </div>
+
+    <!-- step 2 -->
+    <div id="stepExam" class="hidden">
+      <h3>Exam time <small>Normal distribution</small></h3>
+      <p class="lead">Your score is random, centred on your average, and most results land near the middle. <b>Pick a target score:</b> hit it and you earn points and money; miss it and the exam hurts (<b>−25 HP</b>). Higher target means a bigger prize but a smaller chance.</p>
+      <div class="plain" id="cNormPlain"></div>
+      <div id="cBell"></div>
+      <div class="row"><label>Target score: <b id="cXv">70</b></label><input type="range" id="cX" min="30" max="100" value="70"></div>
+      <div class="stats" id="cStats"></div>
+      <details class="math"><summary>▸ Show the math (Normal distribution)</summary><div class="formula" id="cNormF"></div></details>
+      <button class="btn" id="cSitBtn">Sit the exam 📝</button>
+      <div id="cResult"></div>
+      <button class="btn hidden" id="toEveBtn">Go to the evening →</button>
+    </div>
+
+    <!-- step 3 -->
+    <div id="stepEvening" class="hidden">
+      <h3>Evening 🌙</h3>
+      <p class="lead" id="eveLead"></p>
+      <div class="acts">
+        <div class="item"><span class="ic">😴</span><b>Sleep</b><span>Restore 25 HP. Free. Once per evening.</span><button id="bSleep">SLEEP</button></div>
+        <div class="item"><span class="ic">💼</span><b>Work a shift</b><span>Earn ₸40 but lose 12 HP. Once per evening.</span><button id="bWork">WORK</button></div>
+      </div>
+      <h3 style="margin-top:16px">🛒 Campus shop</h3>
+      <div class="shop" id="shop"></div>
+      <button class="btn hot" id="endDayBtn">End the day →</button>
+    </div>
+
+    <ul class="log" id="logBox"></ul>
+  </div>
+
+  <div class="card hidden" id="cEnd"></div>
+</section>
+
+<!-- ================= CASINO ================= -->
+<section id="tab-group" class="tab hidden">
+  <div class="card">
+    <h2>Study Group Casino</h2>
+    <p class="lead">Bet <b>your money</b> on how many students in a group will pass the session. The casino prices every bet using the <b>binomial distribution</b> and the survey's real pass rates, and keeps a 10% edge. Rare outcomes pay more.</p>
+    <div class="row"><label>Which group?</label><select id="gType"></select></div>
+    <div class="row"><label>Group size: <b id="gNv">12</b> students</label><input type="range" id="gN" min="3" max="30" value="12"></div>
+    <div class="row"><label>You win if at least <b id="gKv">6</b> pass</label><input type="range" id="gK" min="1" max="12" value="6"></div>
+    <div class="row"><label>Your bet: <b id="gSv">₸10</b></label><input type="range" id="gS" min="5" max="100" step="5" value="10"></div>
+    <div class="plain" id="gPlain"></div>
+    <div id="gChart"></div>
+    <div class="stats" id="gStats"></div>
+    <details class="math"><summary>▸ Show the math (Binomial distribution)</summary><div class="formula" id="gFormula"></div></details>
+    <div class="row">
+      <button class="btn" id="gRoll">Place bet 🎲</button>
+      <button class="btn ghost" id="gSim">Test the odds: 1000 groups</button>
+      <button class="btn ghost hidden" id="gReset">Borrow ₸30 from the dean</button>
+    </div>
+    <div class="people" id="gPeople"></div>
+    <div id="gResult"></div>
+  </div>
+</section>
+
+<!-- ================= DETECTIVE ================= -->
+<section id="tab-detective" class="tab hidden">
+  <div class="card">
+    <h2>Quest: Bayes Detective</h2>
+    <p class="lead">Five cases about the survey. Guess the percentage, then see the real table and formula. Finish all five to <b>earn up to ₸100</b>. Beware: "pass rate among job-holders" and "job-holders among passers" are <i>different</i> numbers.</p>
+    <div class="row" style="font-family:'Press Start 2P',monospace;font-size:11px"><span id="dRound">Case 1 / 5</span><span>SCORE <b id="dScore" style="color:var(--gold)">0</b></span></div>
+    <h3 id="dQ" style="min-height:52px"></h3>
+    <div class="row"><label>Your guess: <b id="dGv">50%</b></label><input type="range" id="dG" min="0" max="100" value="50"></div>
+    <button class="btn" id="dBtn">Lock in guess 🔍</button>
+    <div id="dReveal"></div>
+  </div>
+</section>
+
+<!-- ================= LAB ================= -->
+<section id="tab-lab" class="tab hidden">
+  <div class="card">
+    <h2>Quest: Regression Lab</h2>
+    <p class="lead">Each dot is a real student: hours of sleep (across) vs exam score (up). The yellow line is the best straight-line fit. Plant up to 5 <b>fake students</b> by clicking the chart and try to flip the statistical verdict. Succeed and earn <b>₸100</b>.</p>
+    <div id="labGoal" class="myth"></div>
+    <svg class="chart" id="labSvg" viewBox="0 0 600 340" style="cursor:crosshair"></svg>
+    <div class="stats" id="labStats"></div>
+    <details class="math"><summary>▸ Show the math (correlation &amp; t-test)</summary><div class="formula" id="labFormula"></div></details>
+    <div class="row">
+      <button class="btn ghost" id="labUndo">Undo fake</button>
+      <button class="btn ghost" id="labReset">Reset</button>
+      <span class="note" id="labCount"></span>
+    </div>
+    <div id="labResult"></div>
+  </div>
+</section>
+
+</div><!-- /app -->
+
+<footer>Data: an anonymous student survey pulled live from Google Sheets (with a cached fallback). The sample is small and self-selected, so treat every number as a lead, not a proof. Game rules (HP damage, prices, rewards, the 10% casino edge, the ±30 luck scaling) are invented for fun; every probability comes from the survey.</footer>
+</div>
+
+<div id="death" class="hidden"><div class="box">
+  <div class="skull">💀</div>
+  <h2>YOU COLLAPSED</h2>
+  <p id="deathWhy" class="lead" style="margin:0 auto"></p>
+  <div class="btns">
+    <button class="btn gold" id="reviveBtn">🎫 Use Revive Token (full HP, keep money)</button>
+    <button class="btn hot" id="respawnBtn">Respawn at the dorm</button>
+  </div>
+  <p class="note" id="respawnNote" style="margin-top:12px"></p>
+</div></div>
+
 <script>
-// ============================================================
-// i18n: language state + dictionaries
-// ============================================================
-let LANG = "en";
-
-const FACTOR_META = {
-  phone:  { en: "Phone use in class",            ru: "Телефон на парах",              kk: "Сабақта телефон қолдану" },
-  job:    { en: "Has a part-time job",           ru: "Подрабатывает",                 kk: "Қосымша жұмыс істейді" },
-  coffee: { en: "Coffee / energy drinks daily",  ru: "Кофе/энергетики каждый день",   kk: "Күнде кофе/энергетик ішеді" }
-};
-const MEASURE_META = {
-  sleep:   { en: "Sleep, hours",                   ru: "Сон, часов",                    kk: "Ұйқы, сағат" },
-  commute: { en: "Commute to campus, min",         ru: "Дорога до вуза, мин",           kk: "Оқу орнына жол, мин" },
-  study:   { en: "Independent study, hrs/day",     ru: "Самоподготовка, ч/день",        kk: "Өзіндік дайындық, сағ/күн" }
-};
-const HOUSING_META = {
-  "В общежитии":  { en: "dorm",                 ru: "общежитие",         kk: "жатақхана" },
-  "С родителями": { en: "living with parents",  ru: "с родителями",      kk: "ата-анасымен" },
-  "Снимаю жильё": { en: "renting",              ru: "снимает жильё",     kk: "пәтер жалдайды" }
-};
-function tFactor(key){ return FACTOR_META[key][LANG]; }
-function tMeasure(key){ return MEASURE_META[key][LANG]; }
-function tHousing(rawType){ const m = HOUSING_META[rawType]; return m ? m[LANG] : rawType; }
-
-// flat static strings: headings, captions, table headers, buttons, footer
-const STRINGS = {
-en: {
-  title: "What raises the odds of a debt-free exam session?",
-  takeSurvey: "Take the survey",
-  refresh: "Refresh",
-  statusConnecting: "Connecting to the live survey…",
-  statusLive: (time, n) => `Live from Google Sheets, updated ${time} (${n} responses)`,
-  statusStale: (note, n) => `Couldn't reach the live sheet — showing a ${note} (${n} responses).`,
-
-  hProblem: "The problem and the question",
-  pProblem: "Students juggle sleep, commuting, side jobs, and screen time, and it's easy to assume any one of these decides whether a session goes well. This project doesn't test a single cause. It asks: of the habits we can measure, which ones actually shift the odds of finishing the session without a retake — and by how much? Five formulas from probability theory each answer a slice of that question: conditional probability and Bayes' rule test individual habits and housing situation, the binomial model asks what a whole study group looks like, Poisson models a rare event (lateness), the normal model checks whether sleep, commute, and study time follow a predictable pattern, and — once enough students report a score — correlation and regression test sleep against exam performance directly.",
-
-  hDescriptive: "Descriptive statistics",
-  pDescriptive: "Before testing any probability model, here is what the raw survey answers look like. This table updates every time the page loads new responses.",
-  thMeasure: "Measure", thMean: "Mean", thMedian: "Median", thMin: "Min", thMax: "Max", thStd: "Std. dev.",
-  rowLate: "Late arrivals / week",
-
-  hConditional: "Conditional probability",
-  pConditionalLead: 'A = "passed exams with no retakes." Pick a factor B and compare the odds of passing between students who have it and students who don\'t.',
-  legWith: "with factor", legWithout: "without factor",
-  condText: (label, p) => `P(A | ${label}) = ${p}`,
-  condSub: (pNot, pAll) => `Without this factor: ${pNot}. Across all students: ${pAll}.`,
-
-  hBinomial: "Binomial distribution",
-  binLead: (p) => `Model: p = ${p} (current pass rate from the survey). Move the group size n and the page recalculates how many people out of that group are likely to pass without retakes.`,
-  lblGroupSize: "Group size n",
-  binText: (exp, n) => `Expect about ${exp} out of ${n} to pass`,
-  binSub: (mode, pMode, variance) => `Most likely count: k = ${mode} (P = ${pMode}). Variance = ${variance}.`,
-
-  hPoisson: "Poisson distribution",
-  poisLead: (lambda) => `By the survey, students are late an average of λ = ${lambda} times a week. Move λ to see how the chance of zero late arrivals changes.`,
-  lblLambda: "Average late arrivals λ",
-  poisText: (p0) => `P(zero late arrivals) = ${p0}`,
-  poisSub: (pAtLeast1, lambda) => `P(late at least once) = ${pAtLeast1}. For Poisson, mean and variance are both λ = ${lambda}.`,
-
-  hNormal: "Normal distribution",
-  pNormalLead: "μ and σ come straight from the survey. Pick a measure and a threshold x to see the share of students below it.",
-  lblThreshold: "Threshold x",
-  normText: (label, x, p) => `P(${label} ≤ ${x}) = ${p}`,
-  normSubModel: (p) => `Model estimate: ${p}.`,
-  normSubBoth: (p, real) => `Model estimate: ${p}. Actual share in the survey: ${real}.`,
-  capNormalRule: "μ, σ, and the 68–95 rule for this measure",
-  thMu: "μ (mean)", thSigma: "σ (std. dev.)", thWithin1: "within μ ± σ", thWithin2: "within μ ± 2σ",
-
-  hCorrelation: "Correlation & regression: sleep and exam score",
-  corrPending: (have, need) => `Waiting for enough students to answer the score question — ${have} so far, need at least ${need}. This section will fill in automatically once enough responses arrive.`,
-  corrReady: (n) => `Based on the ${n} students who reported both a sleep answer and an exam score.`,
-  corrText: (r, a, sign, b) => `r = ${r}, Score = ${a} ${sign} ${b}·Sleep`,
-  corrSub: (t, df, tc, verdict) => `H₀: ρ = 0. t = ${t}, critical t (df = ${df}, α = 0.05) = ${tc}. ${verdict}`,
-  corrSignificant: "The correlation is statistically significant — we reject H₀.",
-  corrNotSignificant: "Not statistically significant at this sample size — we cannot reject H₀.",
-  ccCorr: (r, sig, n, dir) => `r = ${r} (${sig} at α = 0.05, n = ${n}). More sleep is associated with a ${dir} score in this sample.`,
-  ccCorrSig: "significant", ccCorrNotSig: "not significant", dirHigher: "higher", dirLower: "lower",
-
-  hCalculator: "Check your own odds",
-  pCalculatorLead: "Pick your own situation below. This combines the conditional probabilities from the section above using Bayes' rule, treating the four factors as independent given the outcome — a simplifying assumption, so treat the result as an estimate, not a diagnosis.",
-  lblCalcHousing: "🏠 Housing", lblCalcPhone: "📱 Phone use in class", lblCalcJob: "💼 Part-time job", lblCalcCoffee: "☕ Coffee / energy drinks",
-  yesLabel: "Yes", noLabel: "No",
-  calcLabel: "Estimated chance of passing with no retakes",
-  calcText: (p) => p,
-  calcSub: (prior) => `For comparison, the overall rate across all students surveyed is ${prior}.`,
-  calcNote: (parts) => `What's pulling it: ${parts}`,
-  effectNone: (label) => `${label} — no real effect`,
-  effectUpSmall: (label) => `${label} — pushes it up a little`,
-  effectUpBig: (label) => `${label} — pushes it up a lot`,
-  effectDownSmall: (label) => `${label} — pushes it down a little`,
-  effectDownBig: (label) => `${label} — pushes it down a lot`,
-  hConclusions: "Conclusions",
-  pConclusions1: "Every percentage in the table below is a conditional probability, not a plain one. It doesn't answer \"what share of all students passed\" — that number is the overall pass rate shown at the top of the page. Instead, each row narrows the question to one specific group and asks \"of just these students, what share passed?\" That's a different, smaller question for every row, which is also why the numbers aren't meant to add up to 100% — they're separate answers, not pieces of one pie.",
-  pConclusions2: "Answering the question habit by habit, using the tools above (updates automatically with new responses):",
-  thHabit: "Habit / factor", thShows: "What the data shows",
-  rowPhone: "Phone use in class", rowJob: "Part-time job", rowCoffee: "Coffee / energy drinks",
-  rowHousing: "Housing situation", rowLateness: "Lateness (Poisson)", rowNormalRow: "Sleep, commute, study (normal)",
-  rowCorr: "Sleep vs. exam score",
-  ccLine: (withF, withoutF) => `${withF} pass rate with it, ${withoutF} without.`,
-  ccLate: (lambda, p0) => `Averages ${lambda}/week; the chance of a perfectly on-time week is ${p0}.`,
-  shapeSkewed: (label) => `${label} is noticeably skewed`,
-  shapeSymmetric: (label) => `${label} follows the bell curve reasonably well`,
-  ccNormal: (a, b, c) => `${a}; ${b}; ${c}.`,
-  ccSummary: (best, bestPct, n) => `Day-to-day habits tested here — phone use, coffee, part-time work — move the pass rate only a little. Housing shows the widest split (highest: ${best}, ${bestPct}), which points less at any single habit and more at stability of routine. With ${n} self-selected students, this reads as a lead worth investigating further, not a proven cause.`,
-
-  footerNote: "Data: a live, anonymous survey of students collected for this project — this page fetches the latest responses from Google Sheets on every load. The sample is small and self-selected, so differences between groups may be due to chance — correlation isn't causation here.",
-  scoreAxis: "Score, %",
-  lede: (n, pass, sleep, late) => `Across <b>${n}</b> students surveyed, <b>${pass}</b> passed the exam session with no retakes, sleeping <b>${sleep}</b> a night on average and arriving late <b>${late}</b> times a week. Five formulas from probability theory test which of these habits actually move that number — move the controls below to see each one for yourself.`
-},
-ru: {
-  title: "Что повышает шанс закрыть сессию без долгов?",
-  takeSurvey: "Пройти опрос",
-  refresh: "Обновить",
-  statusConnecting: "Подключаюсь к опросу…",
-  statusLive: (time, n) => `Живые данные из Google Таблиц, обновлено ${time} (${n} ответов)`,
-  statusStale: (note, n) => `Не удалось получить свежие данные — показан ${note} (${n} ответов).`,
-
-  hProblem: "Проблема и вопрос исследования",
-  pProblem: "Студенты совмещают сон, дорогу до вуза, подработку и время в телефоне, и легко решить, что именно один из этих факторов определяет, как пройдёт сессия. Этот проект не проверяет одну причину. Он спрашивает: какие из измеримых привычек реально меняют шанс закрыть сессию без пересдачи — и насколько? Пять формул теории вероятностей отвечают на свою часть этого вопроса: условная вероятность и формула Байеса проверяют отдельные привычки и тип жилья, биномиальная модель отвечает, как выглядит целая учебная группа, Пуассон моделирует редкое событие (опоздания), нормальная модель проверяет, укладываются ли сон, дорога и самоподготовка в предсказуемый паттерн, а корреляция и регрессия — когда наберётся достаточно баллов — напрямую проверяют связь сна с результатом сессии.",
-
-  hDescriptive: "Описательная статистика",
-  pDescriptive: "Прежде чем проверять любую вероятностную модель — вот как выглядят сырые ответы опроса. Таблица обновляется при каждой загрузке новых ответов.",
-  thMeasure: "Показатель", thMean: "Среднее", thMedian: "Медиана", thMin: "Мин", thMax: "Макс", thStd: "Ст. откл.",
-  rowLate: "Опозданий в неделю",
-
-  hConditional: "Условная вероятность",
-  pConditionalLead: "A = «сдал сессию без долгов». Выберите фактор B и сравните шанс сдать сессию у тех, кто с фактором, и у тех, кто без него.",
-  legWith: "с фактором", legWithout: "без фактора",
-  condText: (label, p) => `P(A | ${label}) = ${p}`,
-  condSub: (pNot, pAll) => `Без этого фактора: ${pNot}. По всем студентам: ${pAll}.`,
-
-  hBinomial: "Биномиальное распределение",
-  binLead: (p) => `Модель: p = ${p} (текущая доля сдавших по опросу). Двигайте размер группы n — страница пересчитает, сколько человек из неё, скорее всего, сдадут без долгов.`,
-  lblGroupSize: "Размер группы n",
-  binText: (exp, n) => `Ожидаем около ${exp} из ${n} сдавших`,
-  binSub: (mode, pMode, variance) => `Самое вероятное число: k = ${mode} (P = ${pMode}). Дисперсия = ${variance}.`,
-
-  hPoisson: "Распределение Пуассона",
-  poisLead: (lambda) => `По опросу студенты опаздывают в среднем λ = ${lambda} раза в неделю. Подвиньте λ, чтобы увидеть, как меняется шанс не опоздать ни разу.`,
-  lblLambda: "Среднее число опозданий λ",
-  poisText: (p0) => `P(ни разу не опоздал) = ${p0}`,
-  poisSub: (pAtLeast1, lambda) => `P(опоздал хотя бы раз) = ${pAtLeast1}. У Пуассона среднее и дисперсия равны λ = ${lambda}.`,
-
-  hNormal: "Нормальное распределение",
-  pNormalLead: "μ и σ берутся прямо из опроса. Выберите показатель и порог x, чтобы узнать долю студентов ниже него.",
-  lblThreshold: "Порог x",
-  normText: (label, x, p) => `P(${label} ≤ ${x}) = ${p}`,
-  normSubModel: (p) => `Оценка по модели: ${p}.`,
-  normSubBoth: (p, real) => `Оценка по модели: ${p}. Реальная доля по опросу: ${real}.`,
-  capNormalRule: "μ, σ и правило 68–95 для этого показателя",
-  thMu: "μ (среднее)", thSigma: "σ (ст. откл.)", thWithin1: "в μ ± σ", thWithin2: "в μ ± 2σ",
-
-  hCorrelation: "Корреляция и регрессия: сон и балл за сессию",
-  corrPending: (have, need) => `Ждём, пока достаточно студентов ответят на вопрос про балл — пока ${have}, нужно хотя бы ${need}. Раздел заполнится автоматически, когда ответов станет достаточно.`,
-  corrReady: (n) => `На основе ${n} студентов, указавших и сон, и балл за сессию.`,
-  corrText: (r, a, sign, b) => `r = ${r}, Балл = ${a} ${sign} ${b}·Сон`,
-  corrSub: (t, df, tc, verdict) => `H₀: ρ = 0. t = ${t}, критическое t (df = ${df}, α = 0.05) = ${tc}. ${verdict}`,
-  corrSignificant: "Корреляция статистически значима — отвергаем H₀.",
-  corrNotSignificant: "Не значима при таком размере выборки — не можем отвергнуть H₀.",
-  ccCorr: (r, sig, n, dir) => `r = ${r} (${sig} при α = 0.05, n = ${n}). Больше сна связано с ${dir} баллом в этой выборке.`,
-  ccCorrSig: "значима", ccCorrNotSig: "не значима", dirHigher: "более высоким", dirLower: "более низким",
-
-  hCalculator: "Проверь свои шансы",
-  pCalculatorLead: "Выберите свою ситуацию ниже. Это объединяет условные вероятности из раздела выше по формуле Байеса, считая четыре фактора независимыми при данном исходе — это упрощение, поэтому относитесь к результату как к оценке, а не диагнозу.",
-  lblCalcHousing: "🏠 Жильё", lblCalcPhone: "📱 Телефон на парах", lblCalcJob: "💼 Подработка", lblCalcCoffee: "☕ Кофе/энергетики",
-  yesLabel: "Да", noLabel: "Нет",
-  calcLabel: "Оценка шанса сдать сессию без долгов",
-  calcText: (p) => p,
-  calcSub: (prior) => `Для сравнения, общая доля по всем опрошенным — ${prior}.`,
-  calcNote: (parts) => `Что на это влияет: ${parts}`,
-  effectNone: (label) => `${label} — почти не влияет`,
-  effectUpSmall: (label) => `${label} — немного повышает шанс`,
-  effectUpBig: (label) => `${label} — сильно повышает шанс`,
-  effectDownSmall: (label) => `${label} — немного понижает шанс`,
-  effectDownBig: (label) => `${label} — сильно понижает шанс`,
-  hConclusions: "Выводы",
-  pConclusions1: "Каждое число в таблице ниже — это условная вероятность, а не вероятность вообще. Оно не отвечает на вопрос «какая доля всех студентов сдала» — это общая доля сдавших, показанная вверху страницы. Вместо этого каждая строка сужает вопрос до одной конкретной группы: «а какая доля сдала именно среди них?» Это разный, более узкий вопрос в каждой строке — и поэтому числа не обязаны складываться в 100%, это отдельные ответы, а не части одного целого.",
-  pConclusions2: "Отвечаем на вопрос привычка за привычкой, используя инструменты выше (обновляется автоматически с новыми ответами):",
-  thHabit: "Привычка / фактор", thShows: "Что показывают данные",
-  rowPhone: "Телефон на парах", rowJob: "Подработка", rowCoffee: "Кофе/энергетики",
-  rowHousing: "Тип жилья", rowLateness: "Опоздания (Пуассон)", rowNormalRow: "Сон, дорога, самоподготовка (нормальное)",
-  rowCorr: "Сон и балл за сессию",
-  ccLine: (withF, withoutF) => `с фактором сдали ${withF}, без него ${withoutF}.`,
-  ccLate: (lambda, p0) => `В среднем ${lambda}/неделю; шанс идеальной недели без опозданий — ${p0}.`,
-  shapeSkewed: (label) => `${label} заметно смещено`,
-  shapeSymmetric: (label) => `${label} неплохо укладывается в колокол`,
-  ccNormal: (a, b, c) => `${a}; ${b}; ${c}.`,
-  ccSummary: (best, bestPct, n) => `Бытовые привычки — телефон, кофе, подработка — почти не меняют долю сдавших. Жильё даёт самый широкий разброс (больше всего: ${best}, ${bestPct}) — это скорее намёк на стабильность распорядка, чем на конкретную привычку. При ${n} добровольных ответах это повод для дальнейшего изучения, а не доказанная причина.`,
-
-  footerNote: "Данные: живой анонимный опрос студентов для этого проекта — страница подтягивает свежие ответы из Google Таблиц при каждой загрузке. Выборка небольшая и добровольная, поэтому различия между группами могут быть случайными — связь не означает причину.",
-  scoreAxis: "Балл, %",
-  lede: (n, pass, sleep, late) => `Среди <b>${n}</b> опрошенных студентов <b>${pass}</b> сдали сессию без долгов, спят в среднем <b>${sleep}</b> в сутки и опаздывают <b>${late}</b> раза в неделю. Пять формул теории вероятностей проверяют, какие из этих привычек реально меняют эту цифру — подвигайте настройки ниже, чтобы увидеть каждую из них.`
-},
-kk: {
-  title: "Сессияны қарызсыз аяқтау мүмкіндігін не арттырады?",
-  takeSurvey: "Сауалнамаға қатысу",
-  refresh: "Жаңарту",
-  statusConnecting: "Сауалнамаға қосылуда…",
-  statusLive: (time, n) => `Google Sheets-тен тікелей деректер, жаңартылды ${time} (${n} жауап)`,
-  statusStale: (note, n) => `Тікелей деректерге қол жеткізу мүмкін болмады — ${note} көрсетілді (${n} жауап).`,
-
-  hProblem: "Мәселе мен зерттеу сұрағы",
-  pProblem: "Студенттер ұйқы, жолда өткізетін уақыт, қосымша жұмыс пен экранда өткізетін уақытты қатар алып жүреді, сондықтан осылардың бірі ғана сессияның нәтижесін шешеді деп ойлау оңай. Бұл жоба бір ғана себепті тексермейді. Ол мынаны сұрайды: өлшей алатын әдеттердің қайсысы сессияны қарызсыз аяқтау мүмкіндігін нақты өзгертеді — және қаншалықты? Ықтималдық теориясының бес формуласы осы сұрақтың бір бөлігіне жауап береді: шартты ықтималдық пен Байес формуласы жеке әдеттер мен тұрғын үй жағдайын тексереді, биномдық модель бүкіл топ қалай көрінетінін сұрайды, Пуассон сирек оқиғаны (кешігуді) модельдейді, қалыпты таралу ұйқы, жол және өзіндік дайындықтың болжамды үлгіге сай келетінін тексереді, ал жеткілікті балл жиналған соң корреляция мен регрессия ұйқы мен сессия нәтижесінің байланысын тікелей тексереді.",
-
-  hDescriptive: "Сипаттамалық статистика",
-  pDescriptive: "Кез келген ықтималдық моделін тексермес бұрын — сауалнаманың шикі жауаптары осылай көрінеді. Кесте жаңа жауаптар жүктелген сайын жаңарады.",
-  thMeasure: "Көрсеткіш", thMean: "Орташа", thMedian: "Медиана", thMin: "Мин", thMax: "Макс", thStd: "Станд. ауытқу",
-  rowLate: "Аптасына кешігу саны",
-
-  hConditional: "Шартты ықтималдық",
-  pConditionalLead: "A = «сессияны қарызсыз аяқтады». B факторын таңдап, осы фактор бар және жоқ студенттердің сессияны сәтті аяқтау мүмкіндігін салыстырыңыз.",
-  legWith: "фактормен", legWithout: "факторсыз",
-  condText: (label, p) => `P(A | ${label}) = ${p}`,
-  condSub: (pNot, pAll) => `Бұл фактор болмаса: ${pNot}. Барлық студенттер бойынша: ${pAll}.`,
-
-  hBinomial: "Биномдық таралу",
-  binLead: (p) => `Модель: p = ${p} (сауалнама бойынша ағымдағы сәттілік үлесі). Топ өлшемін (n) жылжытыңыз — бет сол топтан қанша адам қарызсыз аяқтауы мүмкін екенін қайта есептейді.`,
-  lblGroupSize: "Топ өлшемі n",
-  binText: (exp, n) => `${n} адамнан шамамен ${exp} адам аяқтайды деп күтіледі`,
-  binSub: (mode, pMode, variance) => `Ең ықтимал сан: k = ${mode} (P = ${pMode}). Дисперсия = ${variance}.`,
-
-  hPoisson: "Пуассон таралуы",
-  poisLead: (lambda) => `Сауалнама бойынша студенттер аптасына орташа λ = ${lambda} рет кешігеді. Кешікпеген апта мүмкіндігінің қалай өзгеретінін көру үшін λ мәнін жылжытыңыз.`,
-  lblLambda: "Орташа кешігу саны λ",
-  poisText: (p0) => `P(кешікпеу) = ${p0}`,
-  poisSub: (pAtLeast1, lambda) => `P(кемінде бір рет кешігу) = ${pAtLeast1}. Пуассон үшін орташа мән мен дисперсия λ = ${lambda}-ге тең.`,
-
-  hNormal: "Қалыпты таралу",
-  pNormalLead: "μ және σ тікелей сауалнамадан алынады. Көрсеткіш пен шекті мән x таңдап, содан төмен студенттер үлесін көріңіз.",
-  lblThreshold: "Шекті мән x",
-  normText: (label, x, p) => `P(${label} ≤ ${x}) = ${p}`,
-  normSubModel: (p) => `Модель бойынша баға: ${p}.`,
-  normSubBoth: (p, real) => `Модель бойынша баға: ${p}. Сауалнамадағы нақты үлес: ${real}.`,
-  capNormalRule: "Осы көрсеткіш үшін μ, σ және 68–95 ережесі",
-  thMu: "μ (орташа)", thSigma: "σ (станд. ауытқу)", thWithin1: "μ ± σ ішінде", thWithin2: "μ ± 2σ ішінде",
-
-  hCorrelation: "Корреляция және регрессия: ұйқы мен сессия баллы",
-  corrPending: (have, need) => `Балл сұрағына жеткілікті студент жауап беруін күтудеміз — қазір ${have}, кемінде ${need} керек. Жеткілікті жауап жиналған соң бұл бөлім автоматты түрде толады.`,
-  corrReady: (n) => `Ұйқы туралы да, балл туралы да жауап берген ${n} студент негізінде.`,
-  corrText: (r, a, sign, b) => `r = ${r}, Балл = ${a} ${sign} ${b}·Ұйқы`,
-  corrSub: (t, df, tc, verdict) => `H₀: ρ = 0. t = ${t}, критикалық t (df = ${df}, α = 0.05) = ${tc}. ${verdict}`,
-  corrSignificant: "Корреляция статистикалық түрде маңызды — H₀-ды теріске шығарамыз.",
-  corrNotSignificant: "Бұл таңдама көлемінде маңызды емес — H₀-ды теріске шығара алмаймыз.",
-  ccCorr: (r, sig, n, dir) => `r = ${r} (α = 0.05 деңгейінде ${sig}, n = ${n}). Бұл таңдамада көбірек ұйқы ${dir} баллмен байланысты.`,
-  ccCorrSig: "маңызды", ccCorrNotSig: "маңызды емес", dirHigher: "жоғарырақ", dirLower: "төменірек",
-
-  hCalculator: "Өз мүмкіндігіңізді тексеріңіз",
-  pCalculatorLead: "Төменде өз жағдайыңызды таңдаңыз. Бұл жоғарыдағы шартты ықтималдықтарды Байес формуласы арқылы біріктіреді, төрт факторды нәтижеге қатысты тәуелсіз деп есептейді — бұл жеңілдету, сондықтан нәтижені диагноз емес, болжам ретінде қабылдаңыз.",
-  lblCalcHousing: "🏠 Тұрғын үй", lblCalcPhone: "📱 Сабақта телефон", lblCalcJob: "💼 Қосымша жұмыс", lblCalcCoffee: "☕ Кофе/энергетик",
-  yesLabel: "Иә", noLabel: "Жоқ",
-  calcLabel: "Сессияны қарызсыз аяқтау мүмкіндігінің бағасы",
-  calcText: (p) => p,
-  calcSub: (prior) => `Салыстыру үшін, барлық сауалнамаға қатысқандар бойынша жалпы үлес — ${prior}.`,
-  calcNote: (parts) => `Мұған не әсер етеді: ${parts}`,
-  effectNone: (label) => `${label} — іс жүзінде әсер етпейді`,
-  effectUpSmall: (label) => `${label} — мүмкіндікті сәл арттырады`,
-  effectUpBig: (label) => `${label} — мүмкіндікті күрт арттырады`,
-  effectDownSmall: (label) => `${label} — мүмкіндікті сәл төмендетеді`,
-  effectDownBig: (label) => `${label} — мүмкіндікті күрт төмендетеді`,
-  hConclusions: "Қорытынды",
-  pConclusions1: "Төмендегі кестедегі әрбір пайыз — жай ықтималдық емес, шартты ықтималдық. Ол «барлық студенттердің қандай үлесі аяқтады» деген сұраққа жауап бермейді — бұл сан беттің жоғарғы жағында көрсетілген жалпы сәттілік үлесі. Оның орнына әр жол сұрақты бір нақты топқа тарылтады: «дәл осы студенттердің қандай үлесі аяқтады?» Бұл әр жолда әртүрлі, тарылған сұрақ, сондықтан сандар 100%-ға қосылуға міндетті емес — бұл бір бүтіннің бөліктері емес, бөлек жауаптар.",
-  pConclusions2: "Жоғарыдағы құралдарды пайдаланып, сұраққа әдет-әдетімен жауап береміз (жаңа жауаптармен автоматты жаңарады):",
-  thHabit: "Әдет / фактор", thShows: "Деректер нені көрсетеді",
-  rowPhone: "Сабақта телефон қолдану", rowJob: "Қосымша жұмыс", rowCoffee: "Кофе/энергетик сусындар",
-  rowHousing: "Тұрғын үй жағдайы", rowLateness: "Кешігу (Пуассон)", rowNormalRow: "Ұйқы, жол, өзіндік дайындық (қалыпты)",
-  rowCorr: "Ұйқы мен сессия баллы",
-  ccLine: (withF, withoutF) => `фактормен ${withF}, факторсыз ${withoutF} аяқтады.`,
-  ccLate: (lambda, p0) => `Орташа ${lambda}/апта; кешікпеген аптаның мүмкіндігі — ${p0}.`,
-  shapeSkewed: (label) => `${label} айтарлықтай ауытқыған`,
-  shapeSymmetric: (label) => `${label} қалыпты үлгіге жақсы сай келеді`,
-  ccNormal: (a, b, c) => `${a}; ${b}; ${c}.`,
-  ccSummary: (best, bestPct, n) => `Мұнда тексерілген күнделікті әдеттер — телефон, кофе, қосымша жұмыс — сәттілік үлесін аз ғана өзгертеді. Тұрғын үй ең үлкен айырмашылықты көрсетеді (ең жоғарысы: ${best}, ${bestPct}), бұл жеке әдетке емес, тұрақты режимге көбірек нұсқайды. ${n} өз еркімен қатысқан студентпен бұл дәлелденген себеп емес, әрі қарай зерттеуге лайық бағыт.`,
-
-  footerNote: "Деректер: осы жоба үшін жиналған студенттердің тікелей, анонимді сауалнамасы — бұл бет әр жүктелген сайын Google Sheets-тен соңғы жауаптарды алады. Таңдама шағын және өз еркімен қатысу негізінде жиналған, сондықтан топтар арасындағы айырмашылықтар кездейсоқ болуы мүмкін — байланыс себепті білдірмейді.",
-  scoreAxis: "Балл, %",
-  lede: (n, pass, sleep, late) => `Сауалнамаға қатысқан <b>${n}</b> студенттің ішінен <b>${pass}</b> сессияны қарызсыз аяқтады, орташа түнде <b>${sleep}</b> ұйықтайды және аптасына <b>${late}</b> рет кешігеді. Ықтималдық теориясының бес формуласы осы әдеттердің қайсысы нақты осы санды өзгертетінін тексереді — әрқайсысын өзіңіз көру үшін төмендегі баптауларды жылжытыңыз.`
-}
-};
-function S(){ return STRINGS[LANG]; }
-
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRLsyOwkmUOHJqrol0ZSQgJX--O-ZLD6v3-tSeGjzia6y17LNwOv80QH3qvgDDXGAterQsXoGoDfPA/pub?gid=1819341040&single=true&output=csv";
-const FALLBACK_CSV = `Timestamp,На каком вы курсе?,Где вы живёте?,Сколько минут вы добираетесь до вуза в одну сторону?,Сколько часов вы обычно спите в учебные дни?,"Сколько часов в день вы в среднем занимаетесь самостоятельно (домашка, чтение, проекты)?",Сколько раз за последние 7 дней вы опоздали на пары?,Пользуетесь ли вы телефоном на парах не по учебе?,Вы работаете или подрабатываете?,Пьёте ли вы кофе или энергетики каждый день?,Вы сдали последнюю сессию без долгов?,"Средний балл за последнюю сессию или оценка за последний тест (в процентах, от 0 до 100)"
+/* =====================================================================
+   DATA LAYER
+   ===================================================================== */
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vRRLsyOwkmUOHJqrol0ZSQgJX--O-ZLD6v3-tSeGjzia6y17LNwOv80QH3qvgDDXGAterQsXoGoDfPA/pub?gid=1819341040&single=true&output=csv";
+const FALLBACK_CSV=`Timestamp,course,housing,commute,sleep,study,late,phone,job,coffee,passed,score
 9/21/2026 16:44:22,2,В общежитии,15,5,2.5,1,Нет,Нет,Да,Да,
 9/21/2026 16:46:43,2,Снимаю жильё,5,7.5,2,1,Да,Нет,Да,Да,98
 9/21/2026 16:52:16,1,С родителями,25,8,3,2,Да,Да,Нет,Да,65
@@ -755,671 +344,594 @@ const FALLBACK_CSV = `Timestamp,На каком вы курсе?,Где вы ж�
 9/22/2026 0:41:48,3,С родителями,20,7,3,0,Да,Да,Нет,Нет,60
 9/22/2026 0:42:18,2,В общежитии,30,8,5,2,Да,Да,Нет,Да,50
 9/22/2026 9:59:17,2,В общежитии,45,8,5,2,Да,Нет,Нет,Да,80`;
-const FALLBACK_NOTE = {
-  en: "cached snapshot from Sep 22, 2026",
-  ru: "резервный снимок от 22 сентября 2026",
-  kk: "2026 жылғы 22 қыркүйектегі сақталған көшірме"
-};
 
-// ---------- CSV parsing (quote-aware, same logic as the Java version) ----------
-function splitCsvLine(line){
-  const parts = [];
-  let cur = "", inQ = false;
-  for (let i=0;i<line.length;i++){
-    const ch = line[i];
-    if (ch === '"') inQ = !inQ;
-    else if (ch === ',' && !inQ) { parts.push(cur); cur = ""; }
-    else cur += ch;
-  }
-  parts.push(cur);
-  return parts;
-}
-function parseCsvText(text){
-  return text.split(/\r?\n/).filter(l => l.length > 0).map(splitCsvLine);
-}
-function parseNum(s){
-  const t = (s||"").trim().replace(",", ".");
-  if (t === "") return null;
-  const v = parseFloat(t);
-  return isNaN(v) ? null : v;
-}
-// Understands old single-language answers ("Да") and new trilingual ones ("Иә / Да / Yes"),
-// in any order: each part between slashes is checked on its own.
-function parseYesNo(s){
-  const parts = (s||"").toLowerCase().split("/").map(p => p.trim());
-  for (const p of parts){
-    if (p.startsWith("да") || p.startsWith("иә") || p.startsWith("yes")) return true;
-    if (p.startsWith("нет") || p.startsWith("жоқ") || p.startsWith("no")) return false;
-  }
-  return null;
-}
-// Maps any language version of a housing answer to the original Russian key used in HOUSING_META.
-function canonHousing(raw){
-  const t = (raw||"").trim().toLowerCase();
-  if (/общеж|dorm|жатақ/.test(t)) return "В общежитии";
-  if (/родител|parent|ата-ана/.test(t)) return "С родителями";
-  if (/снима|rent|жалда|пәтер/.test(t)) return "Снимаю жильё";
-  return (raw||"").trim();
-}
-
-// ---------- turn rows into student records ----------
+function splitCsvLine(line){const p=[];let cur="",q=false;for(const ch of line){if(ch==='"')q=!q;else if(ch===','&&!q){p.push(cur);cur="";}else cur+=ch;}p.push(cur);return p;}
+function parseCsvText(t){return t.split(/\r?\n/).filter(l=>l.length).map(splitCsvLine);}
+function parseNum(s){const t=(s||"").trim().replace(",",".");if(t==="")return null;const v=parseFloat(t);return isNaN(v)?null:v;}
+function parseYesNo(s){for(const p of (s||"").toLowerCase().split("/").map(x=>x.trim())){if(/^(да|иә|yes)/.test(p))return true;if(/^(нет|жоқ|no)/.test(p))return false;}return null;}
+function canonHousing(raw){const t=(raw||"").trim().toLowerCase();if(/общеж|dorm|жатақ/.test(t))return "Dorm";if(/родител|parent|ата-ана/.test(t))return "With parents";if(/снима|rent|жалда|пәтер/.test(t))return "Renting";return (raw||"").trim();}
 function buildStudents(rows){
-  const out = [];
-  for (let i=1;i<rows.length;i++){
-    const c = rows[i];
-    if (!c || c.length < 11) continue;
-    if (c.every(v => (v||"").trim() === "")) continue;
-    const courseDigit = (c[1]||"").trim().charAt(0);
-    const s = {
-      course: parseInt(courseDigit, 10),
-      housing: canonHousing(c[2]),
-      commute: parseNum(c[3]),
-      sleep: parseNum(c[4]),
-      study: parseNum(c[5]),
-      late: parseNum(c[6]),
-      phone: parseYesNo(c[7]),
-      job: parseYesNo(c[8]),
-      coffee: parseYesNo(c[9]),
-      passed: parseYesNo(c[10]),
-      score: c.length > 11 ? parseNum(c[11]) : null
-    };
-    if (s.commute === null || s.sleep === null || s.study === null || s.late === null) continue;
-    if (s.phone === null || s.job === null || s.coffee === null || s.passed === null) continue;
-    if (!s.housing) continue;
+  const out=[];
+  for(let i=1;i<rows.length;i++){
+    const c=rows[i];
+    if(!c||c.length<11||c.every(v=>(v||"").trim()===""))continue;
+    const s={housing:canonHousing(c[2]),commute:parseNum(c[3]),sleep:parseNum(c[4]),study:parseNum(c[5]),late:parseNum(c[6]),
+      phone:parseYesNo(c[7]),job:parseYesNo(c[8]),coffee:parseYesNo(c[9]),passed:parseYesNo(c[10]),score:c.length>11?parseNum(c[11]):null};
+    if([s.commute,s.sleep,s.study,s.late].some(v=>v===null))continue;
+    if([s.phone,s.job,s.coffee,s.passed].some(v=>v===null))continue;
+    if(!s.housing)continue;
     out.push(s);
   }
   return out;
 }
 
-// ---------- basic stats ----------
-function mean(a){ return a.reduce((x,y)=>x+y,0) / a.length; }
-function median(a){ const s=[...a].sort((x,y)=>x-y); const n=s.length; return n%2 ? s[(n-1)/2] : (s[n/2-1]+s[n/2])/2; }
-function std(a){ const m=mean(a); return Math.sqrt(a.reduce((s,v)=>s+(v-m)*(v-m),0) / (a.length-1)); }
-function minA(a){ return Math.min(...a); }
-function maxA(a){ return Math.max(...a); }
+/* =====================================================================
+   MATH
+   ===================================================================== */
+const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
+const std=a=>{const m=mean(a);return Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/Math.max(1,a.length-1));};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function erfc(x){const z=Math.abs(x),t=1/(1+.5*z);const poly=-z*z-1.26551223+t*(1.00002368+t*(.37409196+t*(.09678418+t*(-.18628806+t*(.27886807+t*(-1.13520398+t*(1.48851587+t*(-.82215223+t*.17087277))))))));const r=t*Math.exp(poly);return x>=0?r:2-r;}
+const normCdf=(x,mu,sd)=>.5*erfc(-((x-mu)/sd)/Math.SQRT2);
+function binPmf(n,k,p){if(k<0||k>n)return 0;let lc=0;for(let i=1;i<=k;i++)lc+=Math.log(n-k+i)-Math.log(i);return Math.exp(lc+k*Math.log(p)+(n-k)*Math.log(1-p));}
+function poisPmf(k,l){let p=Math.exp(-l);for(let i=1;i<=k;i++)p=p*l/i;return p;}
+function pearson(pts){
+  const n=pts.length,mx=mean(pts.map(p=>p[0])),my=mean(pts.map(p=>p[1]));
+  let sxy=0,sxx=0,syy=0;
+  pts.forEach(([x,y])=>{sxy+=(x-mx)*(y-my);sxx+=(x-mx)**2;syy+=(y-my)**2;});
+  const r=sxy/Math.sqrt(sxx*syy),b=sxy/sxx,a=my-b*mx;
+  return {n,r,a,b};
+}
+const T_TABLE=[null,12.706,4.303,3.182,2.776,2.571,2.447,2.365,2.306,2.262,2.228,2.201,2.179,2.160,2.145,2.131,2.120,2.110,2.101,2.093,2.086,2.080,2.074,2.069,2.064,2.060,2.056,2.052,2.048,2.045,2.042];
+const critT=df=>df>=1&&df<=30?T_TABLE[df]:1.96+2.4/Math.max(df,1);
+function randn(){let u=0;while(!u)u=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*Math.random());}
+function poisSample(l){const u=Math.random();let k=0,p=Math.exp(-l),c=p;while(u>c&&k<30){k++;p*=l/k;c+=p;}return k;}
+const pct=(x,d=1)=>(x*100).toFixed(d)+"%";
+const $=id=>document.getElementById(id);
 
-// ---------- probability formulas (same as the Java version) ----------
-function erfc(x){
-  const z = Math.abs(x);
-  const t = 1/(1+0.5*z);
-  const poly = -z*z -1.26551223 + t*(1.00002368 + t*(0.37409196 + t*(0.09678418 +
-    t*(-0.18628806 + t*(0.27886807 + t*(-1.13520398 + t*(1.48851587 +
-    t*(-0.82215223 + t*0.17087277))))))));
-  const r = t*Math.exp(poly);
-  return x >= 0 ? r : 2 - r;
-}
-function normalCdf(x, mu, sigma){
-  const z = (x - mu) / sigma;
-  return 0.5 * erfc(-z / Math.sqrt(2));
-}
-function binomialPmf(n, k, p){
-  if (k < 0 || k > n) return 0;
-  let logC = 0;
-  for (let i = 1; i <= k; i++) logC += Math.log(n - k + i) - Math.log(i);
-  return Math.exp(logC + k*Math.log(p) + (n-k)*Math.log(1-p));
-}
-function poissonPmf(k, lambda){
-  let p = Math.exp(-lambda);
-  for (let i = 1; i <= k; i++) p = p * lambda / i;
-  return p;
-}
-function pearson(xs, ys){
-  const n = xs.length;
-  const mx = mean(xs), my = mean(ys);
-  let sxy=0, sxx=0, syy=0;
-  for (let i=0;i<n;i++){ const dx=xs[i]-mx, dy=ys[i]-my; sxy+=dx*dy; sxx+=dx*dx; syy+=dy*dy; }
-  const r = sxy / Math.sqrt(sxx*syy);
-  const b = sxy / sxx;
-  const a = my - b*mx;
-  return { r, a, b, n };
-}
-// two-tailed critical t at alpha = 0.05, df 1..30; beyond that, 1.96 (normal approx)
-const T_TABLE = [null,12.706,4.303,3.182,2.776,2.571,2.447,2.365,2.306,2.262,2.228,
-  2.201,2.179,2.160,2.145,2.131,2.120,2.110,2.101,2.093,2.086,
-  2.080,2.074,2.069,2.064,2.060,2.056,2.052,2.048,2.045,2.042];
-function criticalT(df){ return df >= 1 && df <= 30 ? T_TABLE[df] : 1.96; }
+/* =====================================================================
+   DERIVED SURVEY MODEL
+   ===================================================================== */
+let D=null;
+const FACTOR_DESC={phone:"use their phone in class",job:"have a part-time job",coffee:"drink coffee or energy drinks daily"};
+const FACTOR_NAME={phone:"Phone in class",job:"Part-time job",coffee:"Daily coffee / energy"};
 
-function localeTag(){ return LANG === "en" ? "en-US" : LANG === "ru" ? "ru-RU" : "kk-KZ"; }
-function pct(x){ return (x*100).toLocaleString(localeTag(), {minimumFractionDigits:1, maximumFractionDigits:1}) + "%"; }
-function num(x, d=2){ return x.toLocaleString(localeTag(), {minimumFractionDigits:d, maximumFractionDigits:d}); }
+function computeAll(st){
+  const N=st.length,passed=st.filter(s=>s.passed).length;
+  const fac={};
+  for(const k in FACTOR_DESC){const w=st.filter(s=>s[k]);fac[k]={nB:w.length,nAB:w.filter(s=>s.passed).length};}
+  const types=[...new Set(st.map(s=>s.housing))].sort();
+  const housing=types.map(t=>{const g=st.filter(s=>s.housing===t);return{type:t,nH:g.length,nAH:g.filter(s=>s.passed).length};});
+  const withScore=st.filter(s=>s.score!==null);
+  const sc=withScore.map(s=>s.score);
+  D={N,passed,pA:clamp(passed/N,.02,.98),fac,housing,
+     scoreMu:sc.length>=3?mean(sc):70,scoreSd:Math.max(1,sc.length>=3?std(sc):12),scoreN:sc.length,
+     lateMean:Math.max(.1,mean(st.map(s=>s.late))),
+     pts:withScore.map(s=>[s.sleep,s.score])};
+}
 
-function bars(container, values, labels, values2, colors){
-  container.innerHTML = "";
-  const max = Math.max(...values, ...(values2||[0]), 0.0001);
-  values.forEach((v,i)=>{
-    const col = document.createElement("div"); col.className = "col";
-    const bar = document.createElement("div");
-    bar.className = "bar" + (colors && colors[i] === "b2" ? " b2" : "");
-    bar.style.height = Math.max(2, v/max*130) + "px";
-    col.appendChild(bar);
-    if (values2){
-      const bar2 = document.createElement("div"); bar2.className = "bar b2";
-      bar2.style.height = Math.max(2, values2[i]/max*130) + "px";
-      bar2.style.marginTop = "2px";
-      col.appendChild(bar2);
-    }
-    const k = document.createElement("div"); k.className = "k"; k.textContent = labels[i];
-    col.appendChild(k);
-    container.appendChild(col);
+/* ---- Naive Bayes: odds(A | profile) = prior odds x product of likelihood ratios ---- */
+function lrFactor(key,ans){
+  const f=D.fac[key],fail=D.N-D.passed;
+  const passYes=f.nAB,passNo=D.passed-f.nAB,failYes=f.nB-f.nAB,failNo=fail-failYes;
+  const pa=((ans?passYes:passNo)+.5)/(D.passed+1),pn=((ans?failYes:failNo)+.5)/(fail+1);
+  return pa/pn;
+}
+function lrHousing(type){
+  const h=D.housing.find(g=>g.type===type);if(!h)return 1;
+  const fail=D.N-D.passed;
+  return ((h.nAH+.5)/(D.passed+1))/(((h.nH-h.nAH)+.5)/(fail+1));
+}
+function bayesProfile(P){
+  const prior=D.pA/(1-D.pA);
+  const lrs=[["Phone",lrFactor("phone",P.phone)],["Job",lrFactor("job",P.job)],["Coffee",lrFactor("coffee",P.coffee)],["Housing",lrHousing(P.housing)]];
+  let odds=prior;lrs.forEach(x=>odds*=x[1]);
+  return {p:odds/(1+odds),prior,lrs,odds};
+}
+
+/* =====================================================================
+   SVG HELPERS
+   ===================================================================== */
+function barsSvg(vals,labels,cls){
+  const W=600,H=170,L=8,R=8,T=18,B=24,n=vals.length,max=Math.max(...vals,1e-9),bw=(W-L-R)/n;
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}">`;
+  vals.forEach((v,i)=>{
+    const h=(H-T-B)*v/max,x=L+i*bw;
+    s+=`<rect class="bar ${cls[i]||""}" x="${(x+bw*.12).toFixed(1)}" y="${(H-B-h).toFixed(1)}" width="${(bw*.76).toFixed(1)}" height="${Math.max(1,h).toFixed(1)}" rx="3"/>`;
+    if(n<=16||i%2===0)s+=`<text x="${(x+bw/2).toFixed(1)}" y="${H-8}" text-anchor="middle">${labels[i]}</text>`;
+    if(n<=10)s+=`<text x="${(x+bw/2).toFixed(1)}" y="${(H-B-h-4).toFixed(1)}" text-anchor="middle">${v.toFixed(0)}%</text>`;
+  });
+  return s+"</svg>";
+}
+function bellSvg(mu,sd,x,marker){
+  const W=600,H=190,L=14,R=14,T=14,B=26,w=W-L-R,h=H-T-B,k=1/(sd*Math.sqrt(2*Math.PI));
+  const X=v=>L+v/100*w,dens=v=>Math.exp(-.5*((v-mu)/sd)**2)*k,Y=d=>T+h-clamp(d/k,0,1)*h;
+  let curve="",area=`M${X(x).toFixed(1)} ${Y(0)} L${X(x).toFixed(1)} ${Y(dens(x)).toFixed(1)}`;
+  for(let v=0;v<=100;v++)curve+=(v?"L":"M")+X(v).toFixed(1)+" "+Y(dens(v)).toFixed(1);
+  for(let v=Math.ceil(x);v<=100;v++)area+=` L${X(v).toFixed(1)} ${Y(dens(v)).toFixed(1)}`;
+  area+=` L${X(100)} ${Y(0)} Z`;
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}"><path d="${area}" fill="rgba(77,240,194,.28)"/><path d="${curve}" fill="none" stroke="#6f80ff" stroke-width="3"/>`;
+  s+=`<line x1="${X(x)}" x2="${X(x)}" y1="${T}" y2="${H-B}" stroke="#ffd24a" stroke-width="3" stroke-dasharray="6 4"/><text x="${X(x)+5}" y="${T+10}" style="fill:#ffd24a">target ${x}</text>`;
+  if(marker!=null){const ok=marker>=x;s+=`<line x1="${X(marker)}" x2="${X(marker)}" y1="${T}" y2="${H-B}" stroke="${ok?"#4df0c2":"#ff4f8b"}" stroke-width="4"/><circle cx="${X(marker)}" cy="${Y(dens(marker))}" r="7" fill="${ok?"#4df0c2":"#ff4f8b"}"/>`;}
+  for(let v=0;v<=100;v+=25)s+=`<text x="${X(v)}" y="${H-8}" text-anchor="middle">${v}</text>`;
+  return s+"</svg>";
+}
+
+/* =====================================================================
+   GAME STATE + HUD
+   ===================================================================== */
+const DAYS=5, MAXHP=100;
+const COST={coffee:15,alarm:60,tutor:80,revive:70};
+const S={hp:100,money:100,pts:0,day:1,step:"profile",k:0,muEff:0,deaths:0,
+  items:{alarm:false,tutor:false,revive:0},slept:false,worked:false,
+  luckShift:0,pBayes:0,myEV:0,bestEV:0,earned:0,sessionDeaths:0,log:[],examDone:false,started:false};
+const P={housing:null,phone:false,job:false,coffee:false};
+const money=n=>"₸"+n;
+
+function hud(){
+  S.hp=clamp(Math.round(S.hp),0,MAXHP);
+  $("hpText").textContent=S.hp+"/"+MAXHP;
+  const f=$("hpFill");f.style.width=S.hp+"%";f.className=S.hp<=25?"low":S.hp<=55?"mid":"";
+  $("money").textContent=money(S.money);
+  $("dayH").textContent=S.started?S.day+"/"+DAYS:"–";
+  $("ptsH").textContent=S.pts;
+  $("deathsH").textContent=S.deaths;
+  const it=[];if(S.items.alarm)it.push("🔔");if(S.items.tutor)it.push("📚");if(S.items.revive)it.push("🎫×"+S.items.revive);
+  $("itemsH").textContent=it.length?it.join(" "):"nothing";
+}
+function logMsg(t){S.log.unshift(t);S.log=S.log.slice(0,8);$("logBox").innerHTML=S.log.map(x=>`<li>${x}</li>`).join("");}
+function gain(n){S.money+=n;S.earned+=Math.max(0,n);hud();}
+
+/* ---- damage & death ---- */
+let dead=false;
+function damage(n,why){
+  S.hp-=n;hud();
+  if(S.hp<=0){die(why);return true;}
+  return false;
+}
+function die(why){
+  dead=true;S.hp=0;hud();
+  $("deathWhy").textContent=why;
+  const loss=Math.floor(S.money*.3);
+  $("reviveBtn").classList.toggle("hidden",S.items.revive<1);
+  $("respawnNote").textContent=`Respawning without a token: you wake up with 50 HP, lose 30% of your money (−${money(loss)}), and today's exam is skipped.`;
+  $("death").classList.remove("hidden");
+}
+function respawn(useToken){
+  if(useToken&&S.items.revive>0){S.items.revive--;S.hp=MAXHP;logMsg("🎫 Revive Token used: back at full HP.");}
+  else{const loss=Math.floor(S.money*.3);S.money-=loss;S.hp=50;logMsg(`💀 Respawned at the dorm (−${money(loss)}).`);}
+  S.deaths++;S.sessionDeaths++;dead=false;
+  $("death").classList.add("hidden");
+  S.examDone=true;
+  hud();
+  goStep("evening");
+}
+
+/* =====================================================================
+   PROFILE (Bayes)
+   ===================================================================== */
+function seg(id,opts,get,set){
+  const el=$(id);el.innerHTML="";
+  opts.forEach(([val,label])=>{
+    const b=document.createElement("button");b.textContent=label;b.className=get()===val?"on":"";
+    b.onclick=()=>{set(val);[...el.children].forEach(c=>c.classList.remove("on"));b.classList.add("on");renderProfile();};
+    el.appendChild(b);
   });
 }
-
-// ---------- app state, populated once data is loaded ----------
-let N = 0, pA = 0, passedTotal = 0;
-let factors = {};      // phone/job/coffee -> {label, nB, nAB}
-let measures = {};     // sleep/commute/study -> {label, mu, sigma, min, max, def, data}
-let lateArr = [];
-let housingGroups = []; // [{type, nH, nAH}]
-let corrStats = null;   // {r, a, b, n, t, df, significant} or null
-
-function computeAll(students){
-  N = students.length;
-  const passedCount = students.filter(s => s.passed).length;
-  passedTotal = passedCount;
-  pA = passedCount / N;
-
-  function factorStats(label, key){
-    const withF = students.filter(s => s[key]);
-    return { label, nB: withF.length, nAB: withF.filter(s => s.passed).length };
-  }
-  factors = {
-    phone:  factorStats("Phone use in class", "phone"),
-    job:    factorStats("Has a part-time job", "job"),
-    coffee: factorStats("Coffee / energy drinks daily", "coffee")
-  };
-
-  function measureStats(label, key, min, max, def){
-    const data = students.map(s => s[key]);
-    return { label, mu: mean(data), sigma: std(data), min, max, def, data };
-  }
-  measures = {
-    sleep:   measureStats("Sleep, hours", "sleep", 2, 12, Math.round(mean(students.map(s=>s.sleep)))),
-    commute: measureStats("Commute to campus, min", "commute", 0, 140, 30),
-    study:   measureStats("Independent study, hrs/day", "study", 0, 6, 2)
-  };
-
-  lateArr = students.map(s => s.late);
-
-  const types = [...new Set(students.map(s => s.housing))].sort();
-  housingGroups = types.map(type => {
-    const inGroup = students.filter(s => s.housing === type);
-    return { type, nH: inGroup.length, nAH: inGroup.filter(s => s.passed).length };
-  });
-
-  const scoreable = students.filter(s => s.score !== null);
-  if (scoreable.length >= 8){
-    const xs = scoreable.map(s => s.sleep);
-    const ys = scoreable.map(s => s.score);
-    const { r, a, b, n } = pearson(xs, ys);
-    const df = n - 2;
-    const t = r * Math.sqrt(df / (1 - r*r));
-    const tc = criticalT(df);
-    corrStats = { r, a, b, n, t, df, tc, significant: Math.abs(t) > tc, xs, ys };
-  } else {
-    corrStats = { pending: true, have: scoreable.length, need: 8 };
-  }
+function setupProfile(){
+  if(P.housing===null||!D.housing.find(h=>h.type===P.housing))P.housing=D.housing[0].type;
+  seg("pHousing",D.housing.map(h=>[h.type,h.type]),()=>P.housing,v=>P.housing=v);
+  const yn=[[false,"No"],[true,"Yes"]];
+  seg("pPhone",yn,()=>P.phone,v=>P.phone=v);
+  seg("pJob",yn,()=>P.job,v=>P.job=v);
+  seg("pCoffee",yn,()=>P.coffee,v=>P.coffee=v);
+  renderProfile();
+}
+function renderProfile(){
+  const b=bayesProfile(P),shift=30*(b.p-D.pA);
+  $("pBig").textContent=pct(b.p)+" luck";
+  $("pFill").style.width=pct(b.p,0);
+  $("pMark").style.left=`calc(${pct(D.pA,0)} - 1px)`;
+  $("pNote").innerHTML=`Students like you passed ${pct(b.p,0)} of the time (white marker = everyone: ${pct(D.pA,0)}). <b>Your luck: ${shift>=0?"+":""}${shift.toFixed(1)} points</b> on every exam.`;
+  $("pFormula").innerHTML=`odds(pass | your profile) = prior odds × LR(phone) × LR(job) × LR(coffee) × LR(housing)
+prior = ${D.passed}/${D.N} pass → odds ${b.prior.toFixed(2)}
+`+b.lrs.map(l=>`LR(${l[0]}) = ${l[1].toFixed(2)}`).join("   ")+`
+odds = ${b.odds.toFixed(2)}  →  p = odds/(1+odds) = <b>${pct(b.p)}</b>
+(likelihood ratio LR = P(trait | passed) / P(trait | not passed), with +0.5 smoothing)`;
+}
+function sleepMyth(){
+  const r=pearson(D.pts),df=r.n-2,t=r.r*Math.sqrt(df/(1-r.r*r.r)),sig=Math.abs(t)>critT(df);
+  $("sleepMyth").innerHTML=`💡 <b>Why can't you "just sleep more" to score higher?</b> In this survey sleep and exam score have r = ${r.r.toFixed(2)} (n = ${r.n}), ${sig?"a statistically significant link":"not statistically significant"}. Sleeping in this game restores <i>health</i>, not exam scores, because the data doesn't support more. Test the claim yourself in <b>Quest: Lab</b>.`;
 }
 
-// ---------- rendering ----------
-function applyStatic(){
-  const s = S();
-  document.getElementById("hTitle").textContent = s.title;
-  document.getElementById("pLede").innerHTML = ""; // filled by renderChipsAndStats once data is ready
-  document.getElementById("ctaTop").textContent = s.takeSurvey;
-  document.getElementById("ctaBottom").textContent = s.takeSurvey;
-  document.getElementById("refreshBtn").textContent = s.refresh;
-
-  document.getElementById("hProblem").textContent = s.hProblem;
-  document.getElementById("pProblem").textContent = s.pProblem;
-
-  document.getElementById("hDescriptive").textContent = s.hDescriptive;
-  document.getElementById("pDescriptive").textContent = s.pDescriptive;
-  document.getElementById("thMeasure").textContent = s.thMeasure;
-  document.getElementById("thMean").textContent = s.thMean;
-  document.getElementById("thMedian").textContent = s.thMedian;
-  document.getElementById("thMin").textContent = s.thMin;
-  document.getElementById("thMax").textContent = s.thMax;
-  document.getElementById("thStd").textContent = s.thStd;
-  document.getElementById("rowSleep").textContent = tMeasure("sleep");
-  document.getElementById("rowCommute").textContent = tMeasure("commute");
-  document.getElementById("rowStudy").textContent = tMeasure("study");
-  document.getElementById("rowLate").textContent = s.rowLate;
-
-  document.getElementById("hConditional").textContent = s.hConditional;
-  document.getElementById("pConditionalLead").textContent = s.pConditionalLead;
-  document.getElementById("legWith").textContent = s.legWith;
-  document.getElementById("legWithout").textContent = s.legWithout;
-
-  document.getElementById("hBinomial").textContent = s.hBinomial;
-  document.getElementById("lblGroupSize").textContent = s.lblGroupSize;
-
-  document.getElementById("hPoisson").textContent = s.hPoisson;
-  document.getElementById("lblLambda").textContent = s.lblLambda;
-
-  document.getElementById("hNormal").textContent = s.hNormal;
-  document.getElementById("pNormalLead").textContent = s.pNormalLead;
-  document.getElementById("lblThreshold").textContent = s.lblThreshold;
-  document.getElementById("capNormalRule").textContent = s.capNormalRule;
-  document.getElementById("thMu").textContent = s.thMu;
-  document.getElementById("thSigma").textContent = s.thSigma;
-  document.getElementById("thWithin1").textContent = s.thWithin1;
-  document.getElementById("thWithin2").textContent = s.thWithin2;
-
-  document.getElementById("hCorrelation").textContent = s.hCorrelation;
-
-  document.getElementById("hCalculator").textContent = s.hCalculator;
-  document.getElementById("pCalculatorLead").textContent = s.pCalculatorLead;
-  document.getElementById("lblCalcHousing").textContent = s.lblCalcHousing;
-  document.getElementById("lblCalcPhone").textContent = s.lblCalcPhone;
-  document.getElementById("lblCalcJob").textContent = s.lblCalcJob;
-  document.getElementById("lblCalcCoffee").textContent = s.lblCalcCoffee;
-
-  document.getElementById("hConclusions").textContent = s.hConclusions;
-  document.getElementById("pConclusions1").textContent = s.pConclusions1;
-  document.getElementById("pConclusions2").textContent = s.pConclusions2;
-  document.getElementById("thHabit").textContent = s.thHabit;
-  document.getElementById("thShows").textContent = s.thShows;
-  document.getElementById("rowPhone").textContent = s.rowPhone;
-  document.getElementById("rowJob").textContent = s.rowJob;
-  document.getElementById("rowCoffee").textContent = s.rowCoffee;
-  document.getElementById("rowHousing").textContent = s.rowHousing;
-  document.getElementById("rowLateness").textContent = s.rowLateness;
-  document.getElementById("rowNormalRow").textContent = s.rowNormalRow;
-  document.getElementById("rowCorr").textContent = s.rowCorr;
-
-  document.getElementById("footerNote").textContent = s.footerNote;
+/* =====================================================================
+   PLAY FLOW
+   ===================================================================== */
+const lamEff=()=>D.lateMean*(S.items.alarm?.5:1);
+function goStep(step){
+  S.step=step;
+  $("stepCommute").classList.toggle("hidden",step!=="commute");
+  $("stepExam").classList.toggle("hidden",step!=="exam");
+  $("stepEvening").classList.toggle("hidden",step!=="evening");
+  const order=["commute","exam","evening"];
+  [1,2,3].forEach(i=>{const el=$("st"+i),cur=order.indexOf(step);el.className=i-1===cur?"on":(i-1<cur?"done":"");});
+  $("cDay").classList.remove("hidden");
+  if(step==="commute")renderCommute();
+  if(step==="exam")renderExam();
+  if(step==="evening")renderEvening();
+  hud();
+}
+function startSession(){
+  const b=bayesProfile(P);
+  S.pBayes=b.p;S.luckShift=30*(b.p-D.pA);
+  Object.assign(S,{day:1,pts:0,hp:Math.max(S.hp,60),myEV:0,bestEV:0,earned:0,sessionDeaths:0,started:true,log:[]});
+  S.hp=MAXHP;
+  $("cIntro").classList.add("hidden");$("cEnd").classList.add("hidden");
+  logMsg(`Exam week begins. Luck ${S.luckShift>=0?"+":""}${S.luckShift.toFixed(1)} pts.`);
+  newDay();
+}
+function newDay(){
+  S.slept=false;S.worked=false;S.examDone=false;S.k=0;
+  $("cRollBtn").disabled=false;$("toExamBtn").classList.add("hidden");$("cPoisOut").innerHTML="";
+  $("cSitBtn").disabled=false;$("cX").disabled=false;$("cResult").innerHTML="";$("toEveBtn").classList.add("hidden");
+  goStep("commute");
 }
 
-function renderChipsAndStats(){
-  const s = S();
-  const sleepUnit = LANG === "en" ? " hrs" : LANG === "ru" ? " ч." : " сағ";
-  document.getElementById("pLede").innerHTML = s.lede(N, pct(pA), num(measures.sleep.mu,1) + sleepUnit, num(mean(lateArr),2));
-
-  function fillRow(prefix, data){
-    document.getElementById(prefix+"Mean").textContent = num(mean(data),2);
-    document.getElementById(prefix+"Med").textContent = num(median(data),1);
-    document.getElementById(prefix+"Min").textContent = num(minA(data),1);
-    document.getElementById(prefix+"Max").textContent = num(maxA(data),1);
-    document.getElementById(prefix+"Sd").textContent = num(std(data),2);
-  }
-  fillRow("dsSleep", measures.sleep.data);
-  fillRow("dsCommute", measures.commute.data);
-  fillRow("dsStudy", measures.study.data);
-  fillRow("dsLate", lateArr);
-
-  document.getElementById("binLead").textContent = s.binLead(pct(pA));
-  document.getElementById("poisLead").textContent = s.poisLead(num(mean(lateArr),2));
+/* ---- step 1: commute (Poisson) ---- */
+function drawPois(hit){
+  const lam=lamEff(),vals=[],labels=[],cls=[];
+  for(let k=0;k<=8;k++){vals.push(poisPmf(k,lam)*100);labels.push(k);cls.push(hit===k?"hit":"");}
+  $("cPoisChart").innerHTML=barsSvg(vals,labels,cls);
+}
+function renderCommute(){
+  const lam=lamEff();
+  $("lamTxt").textContent=D.lateMean.toFixed(2)+(S.items.alarm?" (halved to "+lam.toFixed(2)+" by your 🔔 alarm clock)":"");
+  $("cPlain").innerHTML=`Each bar is the chance of being late that many times this week. Chance of <b>zero</b> lates: <b>${pct(poisPmf(0,lam))}</b>. Chance of <b>3 or more</b>: <b>${pct(1-poisPmf(0,lam)-poisPmf(1,lam)-poisPmf(2,lam))}</b>.`;
+  $("cPoisF").innerHTML=`P(K = k) = λ^k · e^(−λ) / k!
+λ = ${lam.toFixed(2)} (survey mean late arrivals per week${S.items.alarm?" × 0.5 for the alarm clock":""})
+P(K = 0) = e^(−${lam.toFixed(2)}) = ${pct(poisPmf(0,lam))}      mean = variance = λ`;
+  drawPois(null);
+}
+function rollCommute(){
+  const lam=lamEff(),k=poisSample(lam);
+  S.k=k;drawPois(k);$("cRollBtn").disabled=true;
+  $("cPoisOut").innerHTML=`<div class="result ${k===0?"win":"lose"}"><h4>${k===0?"ON TIME ALL WEEK!":"LATE ×"+k}</h4>That outcome had a <b>${pct(poisPmf(k,lam))}</b> chance. ${k?`Penalty: <b>−${4*k} HP</b> and <b>−${3*k} exam points</b>.`:"No penalty."}</div>`;
+  logMsg(`Day ${S.day}: late ×${k}${k?` (−${4*k} HP)`:""}.`);
+  if(k&&damage(4*k,`You were late ${k} times and the stress knocked you out.`))return;
+  $("toExamBtn").classList.remove("hidden");
 }
 
-let factorKey = "phone";
-function renderFactor(){
-  const s = S();
-  const f = factors[factorKey];
-  const pB = f.nB / N;
-  const pAB = f.nAB / N;
-  const pAgivenB = pB > 0 ? pAB / pB : 0;
-  const pAgivenNotB = (N - f.nB) > 0 ? (passedTotal - f.nAB) / (N - f.nB) : 0;
-  document.getElementById("condText").textContent = s.condText(tFactor(factorKey).toLowerCase(), pct(pAgivenB));
-  document.getElementById("condSub").textContent = s.condSub(pct(pAgivenNotB), pct(pA));
-  bars(document.getElementById("condBars"), [pAgivenB*100, pAgivenNotB*100], [s.legWith.split(" ")[0], s.legWithout.split(" ")[0]], null, [null, "b2"]);
+/* ---- step 2: exam (Normal) ---- */
+function computeMu(){
+  const fatigue=(MAXHP-S.hp)/10;
+  return {mu:D.scoreMu+S.luckShift+(S.items.tutor?5:0)-3*S.k-fatigue,fatigue};
+}
+function bestTarget(mu){
+  let bx=30,be=-1;
+  for(let x=30;x<=100;x++){const e=x*(1-normCdf(x,mu,D.scoreSd));if(e>be){be=e;bx=x;}}
+  return {x:bx,ev:be};
+}
+function renderExam(){
+  const m=computeMu();S.muEff=m.mu;
+  $("cX").value=clamp(Math.round(m.mu),30,100);
+  updateBell();
+}
+function updateBell(marker){
+  const x=+$("cX").value,sd=D.scoreSd,mu=S.muEff,pOk=1-normCdf(x,mu,sd),m=computeMu();
+  $("cXv").textContent=x;
+  $("cNormPlain").innerHTML=`Your average score today is <b>${mu.toFixed(0)}</b> (survey average ${D.scoreMu.toFixed(0)}, ${S.luckShift>=0?"+":"−"}${Math.abs(S.luckShift).toFixed(1)} luck${S.items.tutor?", +5 tutor":""}${S.k?`, −${3*S.k} lates`:""}${m.fatigue>0?`, −${m.fatigue.toFixed(1)} tiredness`:""}). The green area is where you hit your target.`;
+  $("cNormF").innerHTML=`score ~ Normal(μ, σ)   μ = ${mu.toFixed(1)}, σ = ${sd.toFixed(1)}
+P(score ≥ ${x}) = 1 − Φ((${x} − ${mu.toFixed(1)}) / ${sd.toFixed(1)}) = <b>${pct(pOk)}</b>
+Tiredness = (100 − HP)/10 = ${m.fatigue.toFixed(1)} pts.   Expected points = target × P = ${(x*pOk).toFixed(1)}`;
+  $("cBell").innerHTML=bellSvg(mu,sd,x,marker);
+  $("cStats").innerHTML=
+    `<div class="stat"><small>Chance to hit</small><b class="g">${pct(pOk)}</b></div>`+
+    `<div class="stat"><small>If you hit</small><b class="y">+${x} pts · +${money(Math.round(x/2))}</b></div>`+
+    `<div class="stat"><small>If you miss</small><b class="r">−25 HP</b></div>`+
+    `<div class="stat"><small>Average points (target × chance)</small><b>${(x*pOk).toFixed(1)}</b></div>`;
+}
+function sitExam(){
+  const x=+$("cX").value,sd=D.scoreSd,raw=S.muEff+sd*randn(),score=clamp(Math.round(raw),0,100),ok=raw>=x;
+  const pOk=1-normCdf(x,S.muEff,sd),best=bestTarget(S.muEff);
+  S.myEV+=x*pOk;S.bestEV+=best.ev;
+  $("cSitBtn").disabled=true;$("cX").disabled=true;S.examDone=true;
+  updateBell(clamp(raw,0,100));
+  const z=(raw-S.muEff)/sd;
+  let extra="";
+  if(ok){S.pts+=x;gain(Math.round(x/2));logMsg(`Day ${S.day}: scored ${score}, hit ${x}. +${x} pts, +${money(Math.round(x/2))}.`);}
+  else{logMsg(`Day ${S.day}: scored ${score}, missed ${x}. −25 HP.`);}
+  $("cResult").innerHTML=`<div class="result ${ok?"win":"lose"}"><h4>${ok?"TARGET HIT!  +"+x+" pts  +"+money(Math.round(x/2)):"MISSED!  −25 HP"}</h4>
+    You scored <b>${score}</b> (target ${x}), which is ${Math.abs(z).toFixed(2)} standard deviations ${z>=0?"above":"below"} your average.<br>
+    <span class="note">Best target today: ${best.x} (average ${best.ev.toFixed(1)} pts). Yours: ${(x*pOk).toFixed(1)}.</span></div>`;
+  hud();
+  if(!ok&&damage(25,`You failed the exam (${score} vs target ${x}) and collapsed from exhaustion.`))return;
+  $("toEveBtn").classList.remove("hidden");
 }
 
-function renderBinomial(){
-  const s = S();
-  const binN = document.getElementById("binN");
-  const n = parseInt(binN.value);
-  document.getElementById("binNVal").textContent = n;
-  const values = [], labels = [];
-  for (let k=0;k<=n;k++){ values.push(binomialPmf(n,k,pA)*100); labels.push(k); }
-  const expected = n*pA;
-  let mode = 0;
-  for (let k=1;k<=n;k++) if (values[k]>values[mode]) mode = k;
-  document.getElementById("binText").textContent = s.binText(num(expected,1), n);
-  document.getElementById("binSub").textContent = s.binSub(mode, pct(values[mode]/100), num(n*pA*(1-pA),2));
-  bars(document.getElementById("binBars"), values, labels);
+/* ---- step 3: evening (rest, work, shop) ---- */
+function renderEvening(){
+  $("eveLead").innerHTML=`${S.examDone&&$("cResult").innerHTML?"":"(You skipped today's exam.) "}HP <b>${S.hp}/${MAXHP}</b> · Money <b>${money(S.money)}</b>. Recover, earn, or upgrade, then end the day.`;
+  $("bSleep").disabled=S.slept||S.hp>=MAXHP;$("bSleep").textContent=S.slept?"DONE":"SLEEP +25 HP";
+  $("bWork").disabled=S.worked;$("bWork").textContent=S.worked?"DONE":(S.hp<=12?"WORK ⚠ DEADLY":"WORK +₸40");
+  const items=[
+    ["☕","Coffee",COST.coffee,"Instantly restore 10 HP. Buy as many as you like.",()=>false,"coffee"],
+    ["🔔","Alarm clock",COST.alarm,"Halves how often you are late (λ × 0.5) for the rest of the game.",()=>S.items.alarm,"alarm"],
+    ["📚","Private tutor",COST.tutor,"+5 to your average exam score permanently.",()=>S.items.tutor,"tutor"],
+    ["🎫","Revive Token",COST.revive,"If you collapse, come back at full HP and keep your money.",()=>false,"revive"]];
+  $("shop").innerHTML=items.map(([ic,nm,c,desc,owned,key])=>{
+    const o=owned();return `<div class="item"><span class="ic">${ic}</span><b>${nm}${o?" (owned)":""}${key==="revive"&&S.items.revive?" ×"+S.items.revive:""}</b><span>${desc}</span><button data-buy="${key}" ${(o||S.money<c)?"disabled":""}>${o?"OWNED":"BUY "+money(c)}</button></div>`;}).join("");
+  $("shop").querySelectorAll("button[data-buy]").forEach(b=>b.onclick=()=>buy(b.dataset.buy));
+  $("endDayBtn").textContent=S.day>=DAYS?"Finish the exam week →":"End the day →";
+}
+function buy(key){
+  const c=COST[key];if(S.money<c)return;
+  S.money-=c;
+  if(key==="coffee"){S.hp=Math.min(MAXHP,S.hp+10);logMsg("☕ Coffee: +10 HP.");}
+  if(key==="alarm"){S.items.alarm=true;logMsg("🔔 Bought an alarm clock.");}
+  if(key==="tutor"){S.items.tutor=true;logMsg("📚 Hired a tutor.");}
+  if(key==="revive"){S.items.revive++;logMsg("🎫 Bought a Revive Token.");}
+  hud();renderEvening();
+}
+function doSleep(){S.slept=true;S.hp=Math.min(MAXHP,S.hp+25);logMsg("😴 Slept: +25 HP.");hud();renderEvening();}
+function doWork(){
+  S.worked=true;gain(40);logMsg("💼 Worked a shift: +₸40, −12 HP.");
+  if(damage(12,"You worked a shift while exhausted and fainted at the counter."))return;
+  renderEvening();
+}
+function endDay(){
+  if(S.day>=DAYS){endSession();return;}
+  S.day++;newDay();
+}
+function endSession(){
+  $("cDay").classList.add("hidden");$("cEnd").classList.remove("hidden");
+  const eff=S.bestEV>0?S.myEV/S.bestEV:0;
+  const rank=S.sessionDeaths>=3?"Walking Ghost":eff>=.95?"Probability Wizard":eff>=.85?"Dean's List":eff>=.7?"Survivor":"Retake Candidate";
+  const bonus={"Probability Wizard":100,"Dean's List":60,"Survivor":30}[rank]||0;
+  if(bonus)gain(bonus);
+  S.started=false;hud();
+  $("cEnd").innerHTML=`<h2>EXAM WEEK COMPLETE</h2><div class="big">${rank}</div>
+    <div class="stats">
+      <div class="stat"><small>Exam points</small><b class="y">${S.pts}</b></div>
+      <div class="stat"><small>Money earned this week</small><b class="y">${money(S.earned)}</b></div>
+      <div class="stat"><small>Rank bonus</small><b class="g">+${money(bonus)}</b></div>
+      <div class="stat"><small>Deaths this week</small><b class="r">${S.sessionDeaths} 💀</b></div>
+      <div class="stat"><small>Strategy efficiency</small><b>${pct(eff,0)}</b></div>
+    </div>
+    <div class="plain"><b>How the rank works:</b> every day there was a best target score (the one that maximises <i>target × chance of hitting it</i>). Efficiency = your total average points ÷ the best possible = ${S.myEV.toFixed(1)} / ${S.bestEV.toFixed(1)}. Dice decide single exams; smart probability decides the average.</div>
+    <p class="note">Your money, upgrades and Revive Tokens carry over to the next week.</p>
+    <button class="btn" id="againBtn">New exam week ↺</button>`;
+  $("againBtn").onclick=()=>{$("cEnd").classList.add("hidden");$("cIntro").classList.remove("hidden");S.hp=MAXHP;hud();};
 }
 
-function renderPoisson(){
-  const s = S();
-  const lambdaR = document.getElementById("lambdaR");
-  const lambda = parseFloat(lambdaR.value);
-  document.getElementById("lambdaVal").textContent = num(lambda,2);
-  const values = [], labels = [];
-  for (let k=0;k<=7;k++){ values.push(poissonPmf(k,lambda)*100); labels.push(k); }
-  const p0 = poissonPmf(0,lambda);
-  document.getElementById("poisText").textContent = s.poisText(pct(p0));
-  document.getElementById("poisSub").textContent = s.poisSub(pct(1-p0), num(lambda,2));
-  bars(document.getElementById("poisBars"), values, labels);
+/* =====================================================================
+   CASINO (binomial) — bets real money
+   ===================================================================== */
+const G={groups:[],p:.5,pWin:.5,mult:1,lastX:null};
+function setupGroup(){
+  G.groups=[["Everyone surveyed",D.passed,D.N]];
+  for(const k in D.fac){const f=D.fac[k];
+    if(f.nB>0)G.groups.push([`Students who ${FACTOR_DESC[k]}`,f.nAB,f.nB]);
+    if(D.N-f.nB>0)G.groups.push([`Students who do NOT ${FACTOR_DESC[k]}`,D.passed-f.nAB,D.N-f.nB]);}
+  D.housing.forEach(h=>G.groups.push([`Housing: ${h.type}`,h.nAH,h.nH]));
+  $("gType").innerHTML=G.groups.map((g,i)=>`<option value="${i}">${g[0]} (${g[1]} of ${g[2]} passed)</option>`).join("");
+  ["gType","gN","gK","gS"].forEach(id=>$(id).oninput=()=>{G.lastX=null;renderGroup();});
+  renderGroup();
+}
+function renderGroup(){
+  const g=G.groups[+$("gType").value];
+  G.p=clamp(g[1]/g[2],.02,.98);
+  const n=+$("gN").value;
+  $("gK").max=n;if(+$("gK").value>n)$("gK").value=n;
+  const k=+$("gK").value;
+  $("gS").max=Math.max(5,Math.min(200,Math.floor(S.money/5)*5));
+  if(+$("gS").value>+$("gS").max)$("gS").value=$("gS").max;
+  const stake=Math.min(+$("gS").value,S.money);
+  $("gNv").textContent=n;$("gKv").textContent=k;$("gSv").textContent=money(stake);
+  let pw=0;const vals=[],labels=[],cls=[];
+  for(let j=0;j<=n;j++){const q=binPmf(n,j,G.p);vals.push(q*100);labels.push(j);cls.push(j>=k?"zone":"");if(j>=k)pw+=q;}
+  pw=clamp(pw,1e-6,1);G.pWin=pw;G.mult=Math.min(40,.9/pw);
+  if(G.lastX!==null&&G.lastX<=n)cls[G.lastX]=G.lastX>=k?"hit":"miss";
+  $("gChart").innerHTML=barsSvg(vals,labels,cls);
+  const win=Math.round(stake*(G.mult-1)),ev=stake*(pw*G.mult-1);
+  $("gPlain").innerHTML=`Each student in this group passes with probability <b>${pct(G.p)}</b>. Gold bars = you win (${k} or more pass). Win chance: <b>${pct(pw)}</b>. Win and you gain <b>${money(win)}</b>; lose and you lose <b>${money(stake)}</b>.`;
+  $("gFormula").innerHTML=`P(X = j) = C(n, j) · p^j · (1−p)^(n−j)    n = ${n}, p = ${G.p.toFixed(3)}
+P(X ≥ ${k}) = Σ P(X = j) for j = ${k}..${n} = <b>${pct(pw)}</b>
+Fair payout multiplier = 1/P = ×${(1/pw).toFixed(2)};  casino pays 0.9/P = ×${G.mult.toFixed(2)}
+Expected passers = n·p = ${(n*G.p).toFixed(2)},  σ = √(n·p·(1−p)) = ${Math.sqrt(n*G.p*(1-G.p)).toFixed(2)}`;
+  $("gStats").innerHTML=
+    `<div class="stat"><small>Expected passers</small><b>${(n*G.p).toFixed(1)}</b></div>`+
+    `<div class="stat"><small>Win chance</small><b class="g">${pct(pw)}</b></div>`+
+    `<div class="stat"><small>You win</small><b class="y">+${money(win)}</b></div>`+
+    `<div class="stat"><small>Average result per bet</small><b class="${ev<0?"r":"g"}">${ev>=0?"+":"−"}${money(Math.abs(ev).toFixed(1))}</b></div>`;
+  const broke=S.money<5;
+  $("gRoll").disabled=broke;$("gReset").classList.toggle("hidden",!broke);
+}
+function groupRoll(){
+  const n=+$("gN").value,k=+$("gK").value,stake=Math.min(+$("gS").value,S.money);
+  if(stake<5)return;
+  let x=0;const ppl=[];
+  for(let i=0;i<n;i++){const ok=Math.random()<G.p;if(ok)x++;ppl.push(ok);}
+  G.lastX=x;
+  $("gPeople").innerHTML=ppl.map((ok,i)=>`<span class="${ok?"ok":"no"}" style="animation-delay:${i*25}ms">${ok?"✓":"✗"}</span>`).join("");
+  const win=x>=k,delta=win?Math.round(stake*(G.mult-1)):-stake;
+  S.money=Math.max(0,S.money+delta);if(delta>0)S.earned+=delta;hud();
+  $("gResult").innerHTML=`<div class="result ${win?"win":"lose"}"><h4>${win?"YOU WIN +"+money(delta):"YOU LOSE −"+money(-delta)}</h4>${x} of ${n} passed (you needed ${k}). That exact result had a ${pct(binPmf(n,x,G.p))} chance.</div>`;
+  renderGroup();
+}
+function groupSim(){
+  const n=+$("gN").value,k=+$("gK").value;let w=0,tot=0;
+  for(let t=0;t<1000;t++){let x=0;for(let i=0;i<n;i++)if(Math.random()<G.p)x++;tot+=x;if(x>=k)w++;}
+  $("gResult").innerHTML=`<div class="result"><h4>1000 TEST GROUPS (no money used)</h4>Won ${w} times → <b>${pct(w/1000)}</b> observed vs <b>${pct(G.pWin)}</b> from the formula. Average passers: ${(tot/1000).toFixed(2)} vs n·p = ${(n*G.p).toFixed(2)}.<br><span class="note">Law of large numbers: play many times and reality hugs the formula, which is why the casino's 10% edge always wins in the long run.</span></div>`;
 }
 
-function shareBetween(data, a, b){
-  if (!data.length) return null;
-  let c = 0; data.forEach(v => { if (v>=a && v<=b) c++; });
-  return c/data.length;
+/* =====================================================================
+   QUEST: BAYES DETECTIVE — earns money
+   ===================================================================== */
+const DT={round:0,score:0,q:null,done:false};
+function makeQuestion(){
+  const keys=Object.keys(FACTOR_DESC).filter(k=>D.fac[k].nB>0&&D.N-D.fac[k].nB>0);
+  const key=keys[Math.floor(Math.random()*keys.length)];
+  const kind=["AgivenB","AgivenNotB","BgivenA"][Math.floor(Math.random()*3)];
+  const f=D.fac[key],nB=f.nB,nAB=f.nAB,nA=D.passed,N=D.N;
+  let text,truth;
+  if(kind==="AgivenB"){text=`Among students who ${FACTOR_DESC[key]}, what share passed the session with no retakes?`;truth=nAB/nB;}
+  else if(kind==="AgivenNotB"){text=`Among students who do NOT ${FACTOR_DESC[key]}, what share passed with no retakes?`;truth=(nA-nAB)/(N-nB);}
+  else{text=`Among students who PASSED with no retakes, what share ${FACTOR_DESC[key]}?`;truth=nAB/nA;}
+  return {key,kind,text,truth,nB,nAB,nA,N};
 }
-let measureKey = "sleep";
-function renderNormal(){
-  const s = S();
-  const threshR = document.getElementById("threshR");
-  const m = measures[measureKey];
-  const x = parseFloat(threshR.value);
-  document.getElementById("threshVal").textContent = num(x,1);
-  const p = normalCdf(x, m.mu, m.sigma);
-  document.getElementById("normText").textContent = s.normText(tMeasure(measureKey).toLowerCase(), num(x,1), pct(p));
-  const real = shareBetween(m.data, -Infinity, x);
-  document.getElementById("normSub").textContent = real !== null
-    ? s.normSubBoth(pct(p), pct(real))
-    : s.normSubModel(pct(p));
-  const one = normalCdf(m.mu+m.sigma,m.mu,m.sigma) - normalCdf(m.mu-m.sigma,m.mu,m.sigma);
-  const two = normalCdf(m.mu+2*m.sigma,m.mu,m.sigma) - normalCdf(m.mu-2*m.sigma,m.mu,m.sigma);
-  document.getElementById("normRow").innerHTML =
-    `<td>${num(m.mu,2)}</td><td>${num(m.sigma,2)}</td><td class="num">${pct(one)}</td><td class="num">${pct(two)}</td>`;
+function detectiveNew(){
+  if(DT.round>=5){detectiveEnd();return;}
+  DT.q=makeQuestion();DT.done=false;
+  $("dRound").textContent=`Case ${DT.round+1} / 5`;
+  $("dQ").textContent=DT.q.text;
+  $("dG").value=50;$("dG").disabled=false;$("dGv").textContent="50%";
+  $("dBtn").textContent="Lock in guess 🔍";$("dReveal").innerHTML="";
 }
-
-function renderCorrelation(){
-  const s = S();
-  const lead = document.getElementById("corrLead");
-  const body = document.getElementById("corrBody");
-  if (corrStats.pending){
-    lead.textContent = s.corrPending(corrStats.have, corrStats.need);
-    body.style.display = "none";
-    document.getElementById("ccCorrRow").style.display = "none";
-    return;
-  }
-  lead.textContent = s.corrReady(corrStats.n);
-  body.style.display = "";
-  const sign = corrStats.b >= 0 ? "+" : "−";
-  document.getElementById("corrText").textContent = s.corrText(num(corrStats.r,3), num(corrStats.a,1), sign, num(Math.abs(corrStats.b),2));
-  document.getElementById("corrSub").textContent = s.corrSub(
-    num(corrStats.t,2), corrStats.df, num(corrStats.tc,2),
-    corrStats.significant ? s.corrSignificant : s.corrNotSignificant
-  );
-  renderScatter();
-
-  document.getElementById("ccCorrRow").style.display = "";
-  document.getElementById("ccCorr").textContent = s.ccCorr(
-    num(corrStats.r,2),
-    corrStats.significant ? s.ccCorrSig : s.ccCorrNotSig,
-    corrStats.n,
-    corrStats.b >= 0 ? s.dirHigher : s.dirLower
-  );
+function detectiveBtn(){
+  if(DT.done){DT.round++;detectiveNew();return;}
+  const q=DT.q,guess=+$("dG").value/100,err=Math.abs(guess-q.truth),pts=Math.round(100*Math.max(0,1-err/.3));
+  DT.score+=pts;DT.done=true;$("dG").disabled=true;
+  $("dScore").textContent=DT.score;
+  const {nAB,nB,nA,N}=q,a=nAB,b=nB-nAB,c=nA-nAB,d=(N-nB)-(nA-nAB);
+  let f;
+  if(q.kind==="AgivenB")f=`P(A | B) = P(A ∩ B) / P(B) = (${nAB}/${N}) / (${nB}/${N}) = <b>${pct(q.truth)}</b>`;
+  else if(q.kind==="AgivenNotB")f=`P(A | not B) = P(A ∩ not B) / P(not B) = (${nA-nAB}/${N}) / (${N-nB}/${N}) = <b>${pct(q.truth)}</b>`;
+  else f=`Bayes: P(B | A) = P(A | B) · P(B) / P(A)
+= (${nAB}/${nB}) · (${nB}/${N}) / (${nA}/${N}) = ${pct(nAB/nB)} · ${pct(nB/N)} / ${pct(nA/N)} = <b>${pct(q.truth)}</b>`;
+  const sub=q.kind==="BgivenA"?`<p class="note">Notice the flip: P(passed | factor) = ${pct(nAB/nB)} but P(factor | passed) = ${pct(q.truth)}. Different questions, different answers.</p>`:"";
+  $("dReveal").innerHTML=`<div class="result ${pts>=70?"win":"lose"}"><h4>${pts>=70?"SHARP EYE":"CASE CLOSED"} · +${pts} pts</h4>You guessed ${pct(guess,0)}, the truth is <b>${pct(q.truth)}</b>.
+  <table class="t"><tr><th></th><th>Passed (A)</th><th>Not passed</th><th>Total</th></tr>
+  <tr><th>${FACTOR_NAME[q.key]}: yes (B)</th><td>${a}</td><td>${b}</td><td>${nB}</td></tr>
+  <tr><th>${FACTOR_NAME[q.key]}: no</th><td>${c}</td><td>${d}</td><td>${N-nB}</td></tr>
+  <tr><th>Total</th><td>${nA}</td><td>${N-nA}</td><td>${N}</td></tr></table>
+  <details class="math" open><summary>▸ The math</summary><div class="formula">${f}</div></details>${sub}</div>`;
+  $("dBtn").textContent=DT.round>=4?"Finish ▶":"Next case ▶";
 }
-
-function renderScatter(){
-  const s = S();
-  const svg = document.getElementById("scatterSvg");
-  const { xs, ys, a, b } = corrStats;
-  const W = 700, H = 320, M = 40;
-  const xMin = Math.min(...xs) - 0.5, xMax = Math.max(...xs) + 0.5;
-  const yMin = Math.min(...ys) - 5, yMax = Math.max(...ys) + 5;
-  const sx = x => M + (x - xMin) / (xMax - xMin) * (W - 2*M);
-  const sy = y => H - M - (y - yMin) / (yMax - yMin) * (H - 2*M);
-
-  let svgContent = `<line class="axis" x1="${M}" y1="${H-M}" x2="${W-M}" y2="${H-M}"/>`;
-  svgContent += `<line class="axis" x1="${M}" y1="${M}" x2="${M}" y2="${H-M}"/>`;
-  svgContent += `<text x="${W/2}" y="${H-8}" text-anchor="middle">${tMeasure("sleep")}</text>`;
-  svgContent += `<text x="14" y="${H/2}" text-anchor="middle" transform="rotate(-90 14 ${H/2})">${s.scoreAxis}</text>`;
-
-  const lx1 = xMin, lx2 = xMax;
-  svgContent += `<line class="line" x1="${sx(lx1)}" y1="${sy(a+b*lx1)}" x2="${sx(lx2)}" y2="${sy(a+b*lx2)}"/>`;
-
-  xs.forEach((x,i) => {
-    svgContent += `<circle class="pt" cx="${sx(x)}" cy="${sy(ys[i])}" r="5"/>`;
-  });
-  svg.innerHTML = svgContent;
+function detectiveEnd(){
+  const reward=Math.round(DT.score/5);
+  gain(reward);
+  const r=DT.score>=400?"Master Detective":DT.score>=250?"Sharp Inspector":"Rookie";
+  $("dQ").textContent=`Investigation over: ${r}!`;
+  $("dReveal").innerHTML=`<div class="result win"><h4>TOTAL ${DT.score} / 500 → +${money(reward)}</h4>The money is already in your wallet.</div>`;
+  $("dBtn").textContent="New investigation ↺";$("dG").disabled=true;DT.round=5;
+  $("dBtn").onclick=()=>{DT.round=0;DT.score=0;$("dScore").textContent=0;$("dBtn").onclick=detectiveBtn;detectiveNew();};
 }
 
-function renderConclusions(){
-  const s = S();
-  function line(key){
-    const f = factors[key];
-    const pB = f.nB / N;
-    const pAB = f.nAB / N;
-    const withF = pB > 0 ? pAB/pB : 0;
-    const withoutF = (N-f.nB) > 0 ? (passedTotal - f.nAB) / (N-f.nB) : 0;
-    return s.ccLine(pct(withF), pct(withoutF));
-  }
-  document.getElementById("ccPhone").textContent = line("phone");
-  document.getElementById("ccJob").textContent = line("job");
-  document.getElementById("ccCoffee").textContent = line("coffee");
-
-  const housingText = housingGroups.map(g => `${tHousing(g.type)}: ${pct(g.nAH/g.nH)}`).join(". ") + ".";
-  document.getElementById("ccHousing").textContent = housingText;
-
-  const lambda = mean(lateArr);
-  document.getElementById("ccLate").textContent = s.ccLate(num(lambda,2), pct(poissonPmf(0,lambda)));
-
-  function shape(key){
-    const m = measures[key];
-    const d = m.data;
-    const skewed = Math.abs(m.mu - median(d)) > 0.2 * m.sigma;
-    return skewed ? s.shapeSkewed(tMeasure(key)) : s.shapeSymmetric(tMeasure(key));
-  }
-  document.getElementById("ccNormal").textContent = s.ccNormal(shape("sleep"), shape("study"), shape("commute"));
-
-  const best = housingGroups.reduce((a,b) => (b.nAH/b.nH > a.nAH/a.nH ? b : a));
-  document.getElementById("ccSummary").textContent = s.ccSummary(tHousing(best.type), pct(best.nAH/best.nH), N);
+/* =====================================================================
+   QUEST: REGRESSION LAB — earns money
+   ===================================================================== */
+const LAB={fake:[],baseSig:false,won:false};
+const LW=600,LH=340,LM={l:46,r:14,t:14,b:36},XR=[3,12],YR=[0,100];
+function labStats(){
+  const pts=D.pts.concat(LAB.fake);
+  if(pts.length<4)return null;
+  const s=pearson(pts),df=s.n-2,t=s.r*Math.sqrt(df/Math.max(1e-9,1-s.r*s.r)),tc=critT(df);
+  return {...s,df,t,tc,sig:Math.abs(t)>tc};
 }
-
-// ---------- "check your own odds" calculator (Naive Bayes combination) ----------
-let calcState = { housing: null, phone: false, job: false, coffee: false };
-
-// Likelihood ratio P(answer | A) / P(answer | not A) for one yes/no factor.
-function factorLikelihoodRatio(key, answer){
-  const f = factors[key];
-  const failedTotal = N - passedTotal;
-  const passYes = f.nAB, passNo = passedTotal - f.nAB;
-  const failYes = f.nB - f.nAB, failNo = failedTotal - failYes; // bug fix: was (N - f.nB) - failYes, which used the wrong total
-  const pGivenA = (answer ? passYes : passNo) / passedTotal;
-  const pGivenNotA = (answer ? failYes : failNo) / failedTotal;
-  return pGivenNotA > 0 ? pGivenA / pGivenNotA : 1;
-}
-function housingLikelihoodRatio(rawType){
-  const h = housingGroups.find(g => g.type === rawType);
-  if (!h) return 1;
-  const passH = h.nAH, failH = h.nH - h.nAH;
-  const pGivenA = passH / passedTotal;
-  const pGivenNotA = failH / (N - passedTotal);
-  return pGivenNotA > 0 ? pGivenA / pGivenNotA : 1;
-}
-function computeCalculator(){
-  const priorOdds = pA / (1 - pA);
-  let odds = priorOdds;
-  const contributions = [];
-  ["phone","job","coffee"].forEach(key => {
-    const lr = factorLikelihoodRatio(key, calcState[key]);
-    odds *= lr;
-    contributions.push({ label: tFactor(key), lr });
-  });
-  const hLr = housingLikelihoodRatio(calcState.housing);
-  odds *= hLr;
-  contributions.push({ label: tHousing(calcState.housing), lr: hLr });
-  const p = odds / (1 + odds);
-  return { p, contributions };
-}
-function effectPhrase(s, c){
-  const logLr = Math.log(c.lr);
-  if (Math.abs(logLr) < 0.1) return s.effectNone(c.label);
-  if (logLr > 0) return logLr > 0.4 ? s.effectUpBig(c.label) : s.effectUpSmall(c.label);
-  return logLr < -0.4 ? s.effectDownBig(c.label) : s.effectDownSmall(c.label);
-}
-function renderCalculator(){
-  const s = S();
-  const { p, contributions } = computeCalculator();
-  document.getElementById("calcLabel").textContent = s.calcLabel;
-  document.getElementById("calcText").textContent = s.calcText(pct(p));
-  document.getElementById("calcSub").textContent = s.calcSub(pct(pA));
-  document.getElementById("calcNote").textContent = s.calcNote(contributions.map(c => effectPhrase(s, c)).join("; "));
-  document.getElementById("gaugeFill").style.width = Math.max(0, Math.min(100, p*100)) + "%";
-  document.getElementById("gaugeMarker").style.left = Math.max(0, Math.min(100, pA*100)) + "%";
-}
-function setupCalcControls(){
-  function buildToggle(containerId, key, isHousing){
-    const container = document.getElementById(containerId);
-    container.innerHTML = "";
-    const options = isHousing
-      ? housingGroups.map(g => g.type)
-      : [false, true];
-    options.forEach(opt => {
-      const btn = document.createElement("button");
-      btn.textContent = isHousing ? tHousing(opt) : (opt ? S().yesLabel : S().noLabel);
-      const isActive = isHousing ? (calcState.housing === opt) : (calcState[key] === opt);
-      btn.className = isActive ? "active" : "";
-      btn.onclick = () => {
-        if (isHousing) calcState.housing = opt; else calcState[key] = opt;
-        [...container.children].forEach(c => c.classList.remove("active"));
-        btn.classList.add("active");
-        renderCalculator();
-      };
-      container.appendChild(btn);
-    });
-  }
-  if (calcState.housing === null) calcState.housing = housingGroups[0].type;
-  buildToggle("calcHousingButtons", "housing", true);
-  buildToggle("calcPhoneButtons", "phone", false);
-  buildToggle("calcJobButtons", "job", false);
-  buildToggle("calcCoffeeButtons", "coffee", false);
-}
-
-function setupLangButtons(){
-  const langButtons = document.getElementById("langButtons");
-  const langs = [["en","EN"],["ru","RU"],["kk","KZ"]];
-  langButtons.innerHTML = "";
-  langs.forEach(([code,label]) => {
-    const btn = document.createElement("button");
-    btn.textContent = label;
-    btn.className = code === LANG ? "active" : "";
-    btn.onclick = () => {
-      LANG = code;
-      [...langButtons.children].forEach(c => c.classList.remove("active"));
-      btn.classList.add("active");
-      document.documentElement.lang = code;
-      renderAll();
-    };
-    langButtons.appendChild(btn);
-  });
-}
-
-function setupControls(){
-  const s = S();
-  const factorButtons = document.getElementById("factorButtons");
-  factorButtons.innerHTML = "";
-  Object.keys(factors).forEach(key => {
-    const btn = document.createElement("button");
-    btn.textContent = tFactor(key);
-    btn.className = key === factorKey ? "active" : "";
-    btn.onclick = () => {
-      factorKey = key;
-      renderFactor();
-      [...factorButtons.children].forEach(c => c.classList.remove("active"));
-      btn.classList.add("active");
-    };
-    factorButtons.appendChild(btn);
-  });
-
-  const measureButtons = document.getElementById("measureButtons");
-  measureButtons.innerHTML = "";
-  const threshR = document.getElementById("threshR");
-  Object.keys(measures).forEach(key => {
-    const btn = document.createElement("button");
-    btn.textContent = tMeasure(key);
-    btn.className = key === measureKey ? "active" : "";
-    btn.onclick = () => {
-      measureKey = key;
-      [...measureButtons.children].forEach(c => c.classList.remove("active"));
-      btn.classList.add("active");
-      const m = measures[key];
-      threshR.min = m.min; threshR.max = m.max; threshR.step = (m.max-m.min)/40;
-      threshR.value = m.def;
-      renderNormal();
-    };
-    measureButtons.appendChild(btn);
-  });
-
-  document.getElementById("binN").oninput = renderBinomial;
-  document.getElementById("lambdaR").oninput = renderPoisson;
-  threshR.oninput = renderNormal;
-  const m0 = measures[measureKey];
-  threshR.min = m0.min; threshR.max = m0.max; threshR.step = (m0.max-m0.min)/40; threshR.value = m0.def;
-  document.getElementById("lambdaR").value = mean(lateArr).toFixed(2);
-}
-
-function renderAll(){
-  setupLangButtons();
-  applyStatic();
-  setupControls();
-  renderChipsAndStats();
-  renderFactor();
-  renderBinomial();
-  renderPoisson();
-  renderNormal();
-  renderCorrelation();
-  setupCalcControls();
-  renderCalculator();
-  renderConclusions();
-}
-
-// ---------- load data: try the live Google Sheet, fall back to a cached snapshot ----------
-async function fetchWithTimeout(url, ms){
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), ms);
-  try {
-    const res = await fetch(url, { cache: "no-store", signal: controller.signal });
-    return res;
-  } finally {
-    clearTimeout(id);
+function renderLab(){
+  const St=labStats();
+  const X=v=>LM.l+(v-XR[0])/(XR[1]-XR[0])*(LW-LM.l-LM.r),Y=v=>LH-LM.b-(v-YR[0])/(YR[1]-YR[0])*(LH-LM.t-LM.b);
+  let s="";
+  for(let v=XR[0];v<=XR[1];v++)s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${LM.t}" y2="${LH-LM.b}" stroke="rgba(255,255,255,.06)"/><text x="${X(v)}" y="${LH-LM.b+16}" text-anchor="middle">${v}</text>`;
+  for(let v=0;v<=100;v+=20)s+=`<line x1="${LM.l}" x2="${LW-LM.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,.06)"/><text x="${LM.l-6}" y="${Y(v)+4}" text-anchor="end">${v}</text>`;
+  s+=`<text x="${LW/2}" y="${LH-4}" text-anchor="middle">Sleep, hours</text><text transform="rotate(-90 12 ${LH/2})" x="12" y="${LH/2}" text-anchor="middle">Exam score, %</text>`;
+  if(St)s+=`<line x1="${X(XR[0])}" x2="${X(XR[1])}" y1="${Y(clamp(St.a+St.b*XR[0],-30,130))}" y2="${Y(clamp(St.a+St.b*XR[1],-30,130))}" stroke="#ffd24a" stroke-width="3"/>`;
+  D.pts.forEach(p=>s+=`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="6" fill="rgba(111,128,255,.85)" stroke="#fff" stroke-width="1"/>`);
+  LAB.fake.forEach(p=>s+=`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="7" fill="#ff4f8b" stroke="#fff" stroke-width="2"/>`);
+  $("labSvg").innerHTML=s;
+  if(!St){$("labStats").innerHTML="";return;}
+  $("labStats").innerHTML=
+    `<div class="stat"><small>Correlation r (−1…+1)</small><b>${St.r.toFixed(3)}</b></div>`+
+    `<div class="stat"><small>Slope (points per extra hour)</small><b>${St.b.toFixed(2)}</b></div>`+
+    `<div class="stat"><small>t = ${St.t.toFixed(2)} vs needed ±${St.tc.toFixed(2)}</small><b class="${St.sig?"g":"r"}">${St.sig?"SIGNIFICANT":"not significant"}</b></div>`;
+  $("labFormula").innerHTML=`r = Σ(x−x̄)(y−ȳ) / √(Σ(x−x̄)² · Σ(y−ȳ)²) = ${St.r.toFixed(3)}
+t = r · √(df / (1 − r²)) = ${St.r.toFixed(3)} · √(${St.df} / ${(1-St.r*St.r).toFixed(3)}) = ${St.t.toFixed(2)}
+Critical t (df = ${St.df}, α = 0.05) = ${St.tc.toFixed(2)}   →   |t| ${St.sig?">":"≤"} critical ⇒ ${St.sig?"reject H₀: ρ = 0 (link is significant)":"cannot reject H₀: ρ = 0 (no proven link)"}`;
+  $("labCount").textContent=`Fake students: ${LAB.fake.length} / 5  (sample = ${D.pts.length} real + ${LAB.fake.length} fake)`;
+  if(!LAB.won&&LAB.fake.length>0&&St.sig!==LAB.baseSig){
+    LAB.won=true;gain(100);
+    const n=LAB.fake.length;
+    $("labResult").innerHTML=`<div class="result win"><h4>P-VALUE HACKED! +₸100</h4>With only <b>${n}</b> fake student${n>1?"s":""} (${pct(n/(D.pts.length+n),0)} of the sample) the verdict flipped from "${LAB.baseSig?"significant":"not significant"}" to "${St.sig?"significant":"not significant"}". Small samples are fragile: a few made-up or unusual points can rewrite the conclusion.</div>`;
   }
 }
+function labClick(e){
+  if(LAB.fake.length>=5)return;
+  const r=$("labSvg").getBoundingClientRect();
+  const px=(e.clientX-r.left)/r.width*LW,py=(e.clientY-r.top)/r.height*LH;
+  const x=XR[0]+(px-LM.l)/(LW-LM.l-LM.r)*(XR[1]-XR[0]),y=YR[0]+(LH-LM.b-py)/(LH-LM.t-LM.b)*(YR[1]-YR[0]);
+  if(x<XR[0]||x>XR[1]||y<YR[0]||y>YR[1])return;
+  LAB.fake.push([+x.toFixed(1),Math.round(y)]);
+  renderLab();
+}
+function labSetup(){
+  const base=pearson(D.pts),df=base.n-2,t=base.r*Math.sqrt(df/(1-base.r*base.r));
+  LAB.baseSig=Math.abs(t)>critT(df);LAB.fake=[];LAB.won=false;$("labResult").innerHTML="";
+  $("labGoal").innerHTML=`🎯 <b>Mission:</b> the real data is currently <b>${LAB.baseSig?"statistically significant":"not significant"}</b>. Click the chart to plant up to 5 fake students and make it <b>${LAB.baseSig?"not significant":"significant"}</b>. Hint: ${LAB.baseSig?"place points that break the trend.":"place points that form a clean diagonal line."}`;
+  renderLab();
+}
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+function showTab(name){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("hidden",t.id!=="tab-"+name));
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
+  if(name==="group")renderGroup();
+}
+function initGame(){
+  setupProfile();sleepMyth();setupGroup();DT.round=0;DT.score=0;detectiveNew();labSetup();hud();
+  $("loading").classList.add("hidden");$("app").classList.remove("hidden");
+}
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+$("startBtn").onclick=startSession;
+$("cRollBtn").onclick=rollCommute;
+$("toExamBtn").onclick=()=>goStep("exam");
+$("cX").oninput=()=>updateBell();
+$("cSitBtn").onclick=sitExam;
+$("toEveBtn").onclick=()=>goStep("evening");
+$("bSleep").onclick=doSleep;$("bWork").onclick=doWork;
+$("endDayBtn").onclick=endDay;
+$("respawnBtn").onclick=()=>respawn(false);
+$("reviveBtn").onclick=()=>respawn(true);
+$("gRoll").onclick=groupRoll;$("gSim").onclick=groupSim;
+$("gReset").onclick=()=>{S.money+=30;hud();renderGroup();};
+$("dG").oninput=e=>$("dGv").textContent=e.target.value+"%";
+$("dBtn").onclick=detectiveBtn;
+$("labSvg").addEventListener("click",labClick);
+$("labUndo").onclick=()=>{LAB.fake.pop();renderLab();};
+$("labReset").onclick=labSetup;
 
 async function fetchCsvText(){
-  const attempts = [
-    { name: "direct", url: CSV_URL },
-    { name: "allorigins", url: "https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_URL) },
-    { name: "corsproxy.io", url: "https://corsproxy.io/?url=" + encodeURIComponent(CSV_URL) },
-    { name: "codetabs", url: "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(CSV_URL) }
-  ];
-  let lastError = null;
-  for (const attempt of attempts){
-    try {
-      const res = await fetchWithTimeout(attempt.url, 7000);
-      if (!res.ok) { lastError = new Error(attempt.name + ": HTTP " + res.status); continue; }
-      const text = await res.text();
-      // sanity check: a real CSV should start with our header row, not an HTML error page
-      if (!text.trim().startsWith("Timestamp")) { lastError = new Error(attempt.name + ": unexpected content"); continue; }
-      return text;
-    } catch (e){
-      console.warn(attempt.name + " failed:", e);
-      lastError = e;
-    }
+  const tries=[CSV_URL,"https://api.allorigins.win/raw?url="+encodeURIComponent(CSV_URL)];
+  let err=null;
+  for(const u of tries){
+    const ctl=new AbortController(),id=setTimeout(()=>ctl.abort(),7000);
+    try{
+      const res=await fetch(u,{cache:"no-store",signal:ctl.signal});
+      if(!res.ok){err=new Error("HTTP "+res.status);continue;}
+      const t=await res.text();
+      if(!t.trim().startsWith("Timestamp")){err=new Error("unexpected content");continue;}
+      return t;
+    }catch(e){err=e;}finally{clearTimeout(id);}
   }
-  throw lastError || new Error("all fetch attempts failed");
+  throw err||new Error("fetch failed");
 }
-
+let firstLoad=true;
 async function loadData(){
-  const s = S();
-  const dot = document.getElementById("statusDot");
-  const text = document.getElementById("statusText");
-  text.textContent = s.statusConnecting;
-  dot.className = "dot";
-  try {
-    const csvText = await fetchCsvText();
-    const students = buildStudents(parseCsvText(csvText));
-    if (students.length < 5) throw new Error("too few rows");
-    computeAll(students);
-    renderAll();
-    const now = new Date();
-    text.textContent = S().statusLive(now.toLocaleTimeString(LANG === "en" ? "en-US" : LANG === "ru" ? "ru-RU" : "kk-KZ"), N);
-  } catch (e){
-    console.warn("Live fetch failed, using fallback data:", e);
-    const students = buildStudents(parseCsvText(FALLBACK_CSV));
-    computeAll(students);
-    renderAll();
-    dot.className = "dot stale";
-    text.textContent = S().statusStale(FALLBACK_NOTE[LANG], N);
-  }
+  $("statusText").textContent="Connecting to the live survey…";$("dot").className="dot";
+  let students,live=false;
+  try{
+    students=buildStudents(parseCsvText(await fetchCsvText()));
+    if(students.length<5)throw new Error("too few rows");
+    live=true;
+  }catch(e){students=buildStudents(parseCsvText(FALLBACK_CSV));}
+  computeAll(students);
+  $("dot").className="dot"+(live?"":" stale");
+  $("statusText").textContent=live?`Live from Google Sheets · ${D.N} responses · ${new Date().toLocaleTimeString()}`:`Couldn't reach the live sheet, using cached snapshot (${D.N} responses)`;
+  if(firstLoad){initGame();firstLoad=false;}
+  else{setupProfile();sleepMyth();setupGroup();labSetup();if(S.started)goStep(S.step);}
 }
-
-document.getElementById("refreshBtn").onclick = loadData;
+$("refresh").onclick=loadData;
 loadData();
 </script>
 </body>
