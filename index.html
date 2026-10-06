@@ -335,7 +335,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
       <div><h2>🎰 Study Group Casino</h2><p class="lead">Bet your money on how many students will pass. The game uses the <b>binomial distribution</b> and real survey probabilities.</p></div>
       <div class="casino-bank">💰 YOUR MONEY <b id="casinoMoney">₸100</b></div>
     </div>
-    <div class="casino-rules"><div><b>1. PICK</b><span>Choose a group.</span></div><div><b>2. SET</b><span>Set the odds and bet.</span></div><div><b>3. BET</b><span>Roll the group.</span></div></div>
+    <div class="casino-rules"><div><b>1. PICK</b><span>Choose a group.</span></div><div><b>2. SET</b><span>Set the odds and bet.</span></div><div><b>3. PULL</b><span>Pull the lever.</span></div></div>
     <div class="casino-table">
       <div class="slot-machine" id="slotMachine">
         <div class="slot-top">
@@ -343,7 +343,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
           <div class="slot-brand">★ STUDY JACKPOT ★</div>
           <div class="slot-subtitle">SPIN THE ODDS · WIN THE WEEK</div>
         </div>
-        <button class="slot-lever" id="slotLever" type="button" aria-label="Pull the slot lever"><span>PULL</span></button>
+        <button class="slot-lever" id="slotLever" type="button" aria-label="Pull to place the bet and spin"><span>PULL</span></button>
         <div class="slot-reel-frame">
           <div class="slot-reels">
             <div class="slot-reel-window"><div class="slot-value" id="slotLeft">7</div></div>
@@ -352,7 +352,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
           </div>
           <div class="slot-payline">— PASS LINE —</div>
         </div>
-        <div class="slot-message" id="slotMessage">READY TO SPIN</div>
+        <div class="slot-message" id="slotMessage">PULL THE LEVER TO PLAY</div>
       </div>
     </div>
     <div class="casino-controls">
@@ -363,7 +363,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
     </div>
     <div class="casino-summary"><div class="casino-summary-box"><small>CHANCE TO WIN</small><strong id="casinoWinChance">—</strong></div><div class="casino-summary-box"><small>IF YOU WIN</small><strong id="casinoWinAmount">—</strong></div><div class="casino-summary-box"><small>EXPECTED RESULT</small><strong id="casinoEV">—</strong></div></div>
     <div class="plain casino-note" id="gPlain"></div>
-    <div class="casino-actions"><button class="btn gold" id="gRoll">🎲 PLACE BET</button><button class="btn ghost casino-test-btn" id="gSim">🔬 Test the odds · 1000 groups</button><button class="btn ghost hidden" id="gReset">Borrow ₸30 from the dean</button></div>
+    <div class="casino-actions"><button class="btn ghost casino-test-btn" id="gSim">🔬 Test the odds · 1000 groups</button><button class="btn ghost hidden" id="gReset">Borrow ₸30 from the dean</button></div>
     <div class="people" id="gPeople"></div><div id="gResult"></div>
     <div class="casino-chart-title probability-title">📊 PROBABILITY OF EACH RESULT</div><div class="casino-chart-frame"><div id="gChart"></div></div>
     <div class="stats" id="gStats"></div>
@@ -1029,8 +1029,7 @@ Expected passers = n·p = ${(n*G.p).toFixed(2)},  σ = √(n·p·(1−p)) = ${Ma
     `<div class="stat"><small>You win</small><b class="y">+${money(win)}</b></div>`+
     `<div class="stat"><small>Average result per bet</small><b class="${ev<0?"r":"g"}">${ev>=0?"+":"−"}${money(Math.abs(ev).toFixed(1))}</b></div>`;
   const broke=S.money<5;
-  $("gRoll").disabled=broke||casinoBusy;$("slotLever").disabled=broke||casinoBusy;$("gSim").disabled=casinoBusy;
-  $("gRoll").textContent=casinoBusy?"🎰 SPINNING…":"🎲 PLACE BET";
+  $("slotLever").disabled=broke||casinoBusy;$("gSim").disabled=casinoBusy;
   ["gN","gK","gS"].forEach(id=>$(id).disabled=casinoBusy);
   $("gReset").classList.toggle("hidden",!broke||casinoBusy);
 }
@@ -1247,8 +1246,7 @@ $("bSleep").onclick=doSleep;$("bWork").onclick=doWork;
 $("endDayBtn").onclick=endDay;
 $("respawnBtn").onclick=()=>respawn(false);
 $("reviveBtn").onclick=()=>respawn(true);
-$("gRoll").onclick=groupRoll;$("gSim").onclick=groupSim;
-$("slotLever").onclick=()=>{if(!$("gRoll").disabled)groupRoll();};
+$("slotLever").onclick=groupRoll;$("gSim").onclick=groupSim;
 $("gReset").onclick=()=>{S.money+=30;hud();renderGroup();};
 $("casinoPopupClose").onclick=closeCasinoPopup;
 $("randomEventClose").onclick=closeRandomEventPopup;
