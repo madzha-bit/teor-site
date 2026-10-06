@@ -461,9 +461,17 @@ function bellSvg(mu,sd,x,marker){
    GAME STATE + HUD
    ===================================================================== */
 const DAYS=5, MAXHP=100;
-const COST={coffee:15,alarm:60,tutor:80,revive:70};
+const COST={
+  coffee:15,alarm:60,tutor:80,revive:70,
+  earpiece:450,answerKey:650,skipCard:900
+};
 const S={hp:100,money:100,pts:0,day:1,step:"profile",k:0,muEff:0,deaths:0,
-  items:{alarm:false,tutor:false,revive:0},slept:false,worked:false,
+  items:{
+    alarm:false,tutor:false,revive:0,
+    earpiece:0,answerKey:0,skipCard:0
+  },
+  quests:{detective:false,lab:false},
+  slept:false,worked:false,
   luckShift:0,pBayes:0,myEV:0,bestEV:0,earned:0,sessionDeaths:0,log:[],examDone:false,started:false};
 const P={housing:null,phone:false,job:false,coffee:false};
 const money=n=>"₸"+n;
@@ -476,7 +484,12 @@ function hud(){
   $("dayH").textContent=S.started?S.day+"/"+DAYS:"–";
   $("ptsH").textContent=S.pts;
   $("deathsH").textContent=S.deaths;
-  const it=[];if(S.items.alarm)it.push("🔔");if(S.items.tutor)it.push("📚");if(S.items.revive)it.push("🎫×"+S.items.revive);
+  const it=[];if(S.items.alarm)it.push("🔔");
+  if(S.items.tutor)it.push("📚");
+  if(S.items.revive)it.push("🎫×"+S.items.revive);
+  if(S.items.earpiece)it.push("🎧×"+S.items.earpiece);
+  if(S.items.answerKey)it.push("📝×"+S.items.answerKey);
+  if(S.items.skipCard)it.push("🪪×"+S.items.skipCard);
   $("itemsH").textContent=it.length?it.join(" "):"nothing";
 }
 function logMsg(t){S.log.unshift(t);S.log=S.log.slice(0,8);$("logBox").innerHTML=S.log.map(x=>`<li>${x}</li>`).join("");}
@@ -564,10 +577,15 @@ function goStep(step){
 function startSession(){
   const b=bayesProfile(P);
   S.pBayes=b.p;S.luckShift=30*(b.p-D.pA);
-  Object.assign(S,{day:1,pts:0,hp:Math.max(S.hp,60),myEV:0,bestEV:0,earned:0,sessionDeaths:0,started:true,log:[]});
+  Object.assign(S,{
+    day:1,pts:0,hp:Math.max(S.hp,60),myEV:0,bestEV:0,
+    earned:0,sessionDeaths:0,started:true,log:[],
+    quests:{detective:false,lab:false}
+  });
   S.hp=MAXHP;
   $("cIntro").classList.add("hidden");$("cEnd").classList.add("hidden");
   logMsg(`Exam week begins. Luck ${S.luckShift>=0?"+":""}${S.luckShift.toFixed(1)} pts.`);
+  renderQuestLocks();
   newDay();
 }
 function newDay(){
@@ -593,6 +611,17 @@ P(K = 0) = e^(−${lam.toFixed(2)}) = ${pct(poisPmf(0,lam))}      mean = varianc
   drawPois(null);
 }
 function rollCommute(){
+  if(S.items.skipCard>0){
+    S.items.skipCard--;
+    S.k=0;
+    drawPois(0);
+    $("cRollBtn").disabled=true;
+    $("cPoisOut").innerHTML=`<div class="result win"><h4>FAKE ID WORKED 🪪</h4>Security looked the other way. <b>0 lates</b> this week.</div>`;
+    logMsg(`Day ${S.day}: Fake Student ID used — zero lates.`);
+    $("toExamBtn").classList.remove("hidden");
+    hud();
+    return;
+  }
   const lam=lamEff(),k=poisSample(lam);
   S.k=k;drawPois(k);$("cRollBtn").disabled=true;
   $("cPoisOut").innerHTML=`<div class="result ${k===0?"win":"lose"}"><h4>${k===0?"ON TIME ALL WEEK!":"LATE ×"+k}</h4>That outcome had a <b>${pct(poisPmf(k,lam))}</b> chance. ${k?`Penalty: <b>−${4*k} HP</b> and <b>−${3*k} exam points</b>.`:"No penalty."}</div>`;
@@ -631,7 +660,13 @@ Tiredness = (100 − HP)/10 = ${m.fatigue.toFixed(1)} pts.   Expected points = t
     `<div class="stat"><small>Average points (target × chance)</small><b>${(x*pOk).toFixed(1)}</b></div>`;
 }
 function sitExam(){
-  const x=+$("cX").value,sd=D.scoreSd,raw=S.muEff+sd*randn(),score=clamp(Math.round(raw),0,100),ok=raw>=x;
+  const x=+$("cX").value,sd=D.scoreSd;
+  const usedEarpiece=S.items.earpiece>0;
+  const usedAnswerKey=!usedEarpiece && S.items.answerKey>0;
+  let raw=S.muEff+sd*randn();
+  if(usedEarpiece){raw=Math.max(raw,x);S.items.earpiece--;}
+  else if(usedAnswerKey){raw+=15;S.items.answerKey--;}
+  const score=clamp(Math.round(raw),0,100),ok=raw>=x;
   const pOk=1-normCdf(x,S.muEff,sd),best=bestTarget(S.muEff);
   S.myEV+=x*pOk;S.bestEV+=best.ev;
   $("cSitBtn").disabled=true;$("cX").disabled=true;S.examDone=true;
@@ -640,7 +675,8 @@ function sitExam(){
   let extra="";
   if(ok){S.pts+=x;gain(Math.round(x/2));logMsg(`Day ${S.day}: scored ${score}, hit ${x}. +${x} pts, +${money(Math.round(x/2))}.`);}
   else{logMsg(`Day ${S.day}: scored ${score}, missed ${x}. −25 HP.`);}
-  $("cResult").innerHTML=`<div class="result ${ok?"win":"lose"}"><h4>${ok?"TARGET HIT!  +"+x+" pts  +"+money(Math.round(x/2)):"MISSED!  −25 HP"}</h4>
+  const cheatNote=usedEarpiece?" 🎧 Earpiece cheat activated — guaranteed hit!":usedAnswerKey?" 📝 Answer Key activated — +15 raw points!":"";
+  $("cResult").innerHTML=`<div class="result ${ok?"win":"lose"}"><h4>${ok?"TARGET HIT!  +"+x+" pts  +"+money(Math.round(x/2)):"MISSED!  −25 HP"}${cheatNote}</h4>
     You scored <b>${score}</b> (target ${x}), which is ${Math.abs(z).toFixed(2)} standard deviations ${z>=0?"above":"below"} your average.<br>
     <span class="note">Best target today: ${best.x} (average ${best.ev.toFixed(1)} pts). Yours: ${(x*pOk).toFixed(1)}.</span></div>`;
   hud();
@@ -657,7 +693,10 @@ function renderEvening(){
     ["☕","Coffee",COST.coffee,"Instantly restore 10 HP. Buy as many as you like.",()=>false,"coffee"],
     ["🔔","Alarm clock",COST.alarm,"Halves how often you are late (λ × 0.5) for the rest of the game.",()=>S.items.alarm,"alarm"],
     ["📚","Private tutor",COST.tutor,"+5 to your average exam score permanently.",()=>S.items.tutor,"tutor"],
-    ["🎫","Revive Token",COST.revive,"If you collapse, come back at full HP and keep your money.",()=>false,"revive"]];
+    ["🎫","Revive Token",COST.revive,"If you collapse, come back at full HP and keep your money.",()=>false,"revive"],
+    ["🎧","Hidden Earpiece",COST.earpiece,"CHEAT: your next exam target is guaranteed. One use. Very illegal. Very expensive.",()=>false,"earpiece"],
+    ["📝","Answer Key",COST.answerKey,"CHEAT: +15 to your next raw exam score. One use.",()=>false,"answerKey"],
+    ["🪪","Fake Student ID",COST.skipCard,"CHEAT: your next commute is automatically perfect — zero lates. One use.",()=>false,"skipCard"]];
   $("shop").innerHTML=items.map(([ic,nm,c,desc,owned,key])=>{
     const o=owned();return `<div class="item"><span class="ic">${ic}</span><b>${nm}${o?" (owned)":""}${key==="revive"&&S.items.revive?" ×"+S.items.revive:""}</b><span>${desc}</span><button data-buy="${key}" ${(o||S.money<c)?"disabled":""}>${o?"OWNED":"BUY "+money(c)}</button></div>`;}).join("");
   $("shop").querySelectorAll("button[data-buy]").forEach(b=>b.onclick=()=>buy(b.dataset.buy));
@@ -670,6 +709,9 @@ function buy(key){
   if(key==="alarm"){S.items.alarm=true;logMsg("🔔 Bought an alarm clock.");}
   if(key==="tutor"){S.items.tutor=true;logMsg("📚 Hired a tutor.");}
   if(key==="revive"){S.items.revive++;logMsg("🎫 Bought a Revive Token.");}
+  if(key==="earpiece"){S.items.earpiece++;logMsg("🎧 Bought a Hidden Earpiece: next exam target guaranteed.");}
+  if(key==="answerKey"){S.items.answerKey++;logMsg("📝 Bought an Answer Key: next exam gets +15 raw points.");}
+  if(key==="skipCard"){S.items.skipCard++;logMsg("🪪 Bought a Fake Student ID: next commute is automatically perfect.");}
   hud();renderEvening();
 }
 function doSleep(){S.slept=true;S.hp=Math.min(MAXHP,S.hp+25);logMsg("😴 Slept: +25 HP.");hud();renderEvening();}
@@ -700,7 +742,7 @@ function endSession(){
     <div class="plain"><b>How the rank works:</b> every day there was a best target score (the one that maximises <i>target × chance of hitting it</i>). Efficiency = your total average points ÷ the best possible = ${S.myEV.toFixed(1)} / ${S.bestEV.toFixed(1)}. Dice decide single exams; smart probability decides the average.</div>
     <p class="note">Your money, upgrades and Revive Tokens carry over to the next week.</p>
     <button class="btn" id="againBtn">New exam week ↺</button>`;
-  $("againBtn").onclick=()=>{$("cEnd").classList.add("hidden");$("cIntro").classList.remove("hidden");S.hp=MAXHP;hud();};
+  $("againBtn").onclick=()=>{$("cEnd").classList.add("hidden");$("cIntro").classList.remove("hidden");S.hp=MAXHP;S.quests={detective:false,lab:false};renderQuestLocks();hud();};
 }
 
 /* =====================================================================
@@ -779,7 +821,36 @@ function makeQuestion(){
   else{text=`Among students who PASSED with no retakes, what share ${FACTOR_DESC[key]}?`;truth=nAB/nA;}
   return {key,kind,text,truth,nB,nAB,nA,N};
 }
+function questLocked(name){
+  return S.started && S.quests && S.quests[name];
+}
+function renderQuestLocks(){
+  const dBtn=document.querySelector('#nav button[data-tab="detective"]');
+  const lBtn=document.querySelector('#nav button[data-tab="lab"]');
+  if(dBtn){
+    dBtn.disabled=!!(S.started && S.quests.detective);
+    dBtn.textContent=S.started&&S.quests.detective?"3 · Detective ✓":"3 · Quest: Detective";
+  }
+  if(lBtn){
+    lBtn.disabled=!!(S.started && S.quests.lab);
+    lBtn.textContent=S.started&&S.quests.lab?"4 · Lab ✓":"4 · Quest: Lab";
+  }
+}
+function showQuestLock(name,title){
+  if(!S.started){
+    return false;
+  }
+  if(S.quests[name]){
+    const tab=name==="detective"?"dReveal":"labResult";
+    const el=$(tab);
+    el.innerHTML=`<div class="result win"><h4>QUEST COMPLETE ✓</h4>${title} can only be completed once per 5-day exam week. Start a new week to play it again.</div>`;
+    return true;
+  }
+  return false;
+}
+
 function detectiveNew(){
+  if(showQuestLock("detective","Bayes Detective"))return;
   if(DT.round>=5){detectiveEnd();return;}
   DT.q=makeQuestion();DT.done=false;
   $("dRound").textContent=`Case ${DT.round+1} / 5`;
@@ -808,8 +879,11 @@ function detectiveBtn(){
   $("dBtn").textContent=DT.round>=4?"Finish ▶":"Next case ▶";
 }
 function detectiveEnd(){
+  if(S.started && S.quests.detective)return;
   const reward=Math.round(DT.score/5);
   gain(reward);
+  if(S.started)S.quests.detective=true;
+  renderQuestLocks();
   const r=DT.score>=400?"Master Detective":DT.score>=250?"Sharp Inspector":"Rookie";
   $("dQ").textContent=`Investigation over: ${r}!`;
   $("dReveal").innerHTML=`<div class="result win"><h4>TOTAL ${DT.score} / 500 → +${money(reward)}</h4>The money is already in your wallet.</div>`;
@@ -850,6 +924,8 @@ Critical t (df = ${St.df}, α = 0.05) = ${St.tc.toFixed(2)}   →   |t| ${St.sig
   $("labCount").textContent=`Fake students: ${LAB.fake.length} / 5  (sample = ${D.pts.length} real + ${LAB.fake.length} fake)`;
   if(!LAB.won&&LAB.fake.length>0&&St.sig!==LAB.baseSig){
     LAB.won=true;gain(100);
+    if(S.started)S.quests.lab=true;
+    renderQuestLocks();
     const n=LAB.fake.length;
     $("labResult").innerHTML=`<div class="result win"><h4>P-VALUE HACKED! +₸100</h4>With only <b>${n}</b> fake student${n>1?"s":""} (${pct(n/(D.pts.length+n),0)} of the sample) the verdict flipped from "${LAB.baseSig?"significant":"not significant"}" to "${St.sig?"significant":"not significant"}". Small samples are fragile: a few made-up or unusual points can rewrite the conclusion.</div>`;
   }
@@ -864,6 +940,11 @@ function labClick(e){
   renderLab();
 }
 function labSetup(){
+  if(S.started && S.quests.lab){
+    $("labGoal").innerHTML=`🎯 <b>Quest complete.</b> Regression Lab can only be completed once per 5-day exam week.`;
+    $("labResult").innerHTML=`<div class="result win"><h4>QUEST COMPLETE ✓</h4>Come back next round to hack the p-value again.</div>`;
+    return;
+  }
   const base=pearson(D.pts),df=base.n-2,t=base.r*Math.sqrt(df/(1-base.r*base.r));
   LAB.baseSig=Math.abs(t)>critT(df);LAB.fake=[];LAB.won=false;$("labResult").innerHTML="";
   $("labGoal").innerHTML=`🎯 <b>Mission:</b> the real data is currently <b>${LAB.baseSig?"statistically significant":"not significant"}</b>. Click the chart to plant up to 5 fake students and make it <b>${LAB.baseSig?"not significant":"significant"}</b>. Hint: ${LAB.baseSig?"place points that break the trend.":"place points that form a clean diagonal line."}`;
@@ -874,12 +955,15 @@ function labSetup(){
    BOOT
    ===================================================================== */
 function showTab(name){
+  if(S.started && ((name==="detective"&&S.quests.detective)||(name==="lab"&&S.quests.lab))){
+    return;
+  }
   document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("hidden",t.id!=="tab-"+name));
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
   if(name==="group")renderGroup();
 }
 function initGame(){
-  setupProfile();sleepMyth();setupGroup();DT.round=0;DT.score=0;detectiveNew();labSetup();hud();
+  setupProfile();sleepMyth();setupGroup();DT.round=0;DT.score=0;detectiveNew();labSetup();renderQuestLocks();hud();
   $("loading").classList.add("hidden");$("app").classList.remove("hidden");
 }
 document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
