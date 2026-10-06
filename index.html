@@ -45,10 +45,6 @@ h1 small{display:block;font-size:.42em;color:var(--mute);margin-top:10px;text-sh
 .status{font:500 12px "IBM Plex Mono",monospace;color:var(--mute);margin:10px 0 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
 .dot.stale{background:var(--hot);box-shadow:0 0 8px var(--hot)}
-.survey-link{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 13px;border:2px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);font:9px "Press Start 2P",monospace;text-decoration:none;box-shadow:0 4px 0 #0c0f2b;transition:.08s;white-space:nowrap;letter-spacing:.2px}
-.survey-link:hover{border-color:var(--blue);background:#151a3b;transform:translateY(-1px);box-shadow:0 5px 0 #0c0f2b}
-.survey-link:active{transform:translateY(3px);box-shadow:0 1px 0 #0c0f2b}
-@media(max-width:600px){.survey-link{margin-left:0;width:auto;justify-content:center}}
 
 .how{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:16px 0 4px}
 .how div{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--mute)}
@@ -133,6 +129,66 @@ table.t th{color:var(--mute);font-weight:500;background:#0b0e28}
 .log{margin:14px 0 0;padding:0;list-style:none;font:500 12px "IBM Plex Mono",monospace;color:var(--mute)}
 .log li{padding:3px 0;border-bottom:1px dashed var(--line)}
 
+
+/* casino: full-screen arcade / roulette style */
+.casino-card{position:relative;overflow:hidden;background:radial-gradient(circle at 50% 25%,#25163d 0,#0d1026 42%,#070913 100%);border:3px solid #d4a928;box-shadow:0 0 0 4px #17142b,0 12px 0 #05060b,0 0 45px rgba(212,169,40,.16)}
+.casino-card:before{content:"";position:absolute;inset:8px;pointer-events:none;border:1px dashed rgba(255,210,74,.25)}
+.casino-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;position:relative;z-index:1}
+.casino-head h2{font-size:20px;text-shadow:3px 3px #000}
+.casino-bank{background:#090a15;border:3px solid var(--gold);color:var(--gold);padding:11px 14px;border-radius:4px;font:9px "Press Start 2P",monospace;white-space:nowrap;box-shadow:4px 4px 0 #000}
+.casino-bank b{display:block;font-size:15px;margin-top:8px;color:#fff}
+.casino-rules{display:none}
+.casino-table{margin:18px auto 16px;max-width:650px;background:radial-gradient(circle,#0b3b2d,#061d17);border:5px solid var(--gold);box-shadow:0 0 0 5px #12132a,6px 8px 0 #000;border-radius:50%;padding:16px;position:relative}
+.roulette{width:min(430px,78vw);aspect-ratio:1;margin:auto;border-radius:50%;position:relative;background:repeating-conic-gradient(from -7.5deg,#b73548 0deg 15deg,#181a32 15deg 30deg);border:11px solid #e1b52f;box-shadow:inset 0 0 0 5px #080916,0 0 0 3px #765d15,0 0 30px rgba(225,181,47,.2);overflow:hidden}
+.roulette:before{content:"";position:absolute;inset:15%;border-radius:50%;border:5px solid #e1b52f;background:radial-gradient(circle,#211738 0 12%,#0e1026 13% 28%,#d1a62a 29% 32%,#111329 33% 100%);box-shadow:inset 0 0 0 4px #070811}
+.roulette:after{content:"";position:absolute;left:50%;top:50%;width:38px;height:38px;transform:translate(-50%,-50%);border-radius:50%;background:#f5d96b;border:5px solid #1a1830;box-shadow:0 0 0 3px #b58a1e;z-index:3}
+.roulette.spin{animation:rouletteSpin 1.15s cubic-bezier(.12,.65,.2,1)}
+@keyframes rouletteSpin{0%{transform:rotate(0)}100%{transform:rotate(720deg)}}
+.roulette-labels{position:absolute;inset:0;z-index:2;pointer-events:none}
+.roulette-labels span{position:absolute;left:50%;top:50%;width:30px;margin-left:-15px;margin-top:-7px;text-align:center;color:#fff;font:9px "Press Start 2P",monospace;text-shadow:2px 2px #000}
+.roulette-pointer{position:absolute;left:50%;top:-3px;transform:translateX(-50%);z-index:6;width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:23px solid #ffdf5a;filter:drop-shadow(2px 3px #000)}
+.roulette-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;text-align:center;width:115px;color:var(--gold);font:8px "Press Start 2P",monospace;text-shadow:2px 2px #000;pointer-events:none}
+.roulette-center b{display:block;font-size:13px;margin-top:6px;color:#fff}
+.casino-controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+.casino-control{background:#090b19;border:2px solid #4b416b;border-radius:4px;padding:12px;box-shadow:3px 3px 0 #000}
+.casino-control input{width:100%;min-width:0;margin-top:10px}
+.casino-label{display:flex;justify-content:space-between;gap:8px;color:#c7c4d8;font:9px "Press Start 2P",monospace}
+.casino-label b{color:var(--gold);font:600 15px "IBM Plex Mono",monospace}
+.casino-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:10px 0 14px}
+.casino-summary-box{background:linear-gradient(180deg,#17152b,#0a0b17);border:3px solid #66551f;border-radius:4px;padding:13px 8px;text-align:center;box-shadow:3px 3px 0 #000}
+.casino-summary-box small{display:block;color:#aaa6bd;font:8px "Press Start 2P",monospace;margin-bottom:8px}
+.casino-summary-box strong{font:600 22px "IBM Plex Mono",monospace;color:var(--gold);text-shadow:2px 2px #000}
+.casino-note{margin-top:8px;background:#0a0b18;border:2px solid #3e3659;box-shadow:3px 3px 0 #000;color:#aaa6bd}
+.casino-actions{display:flex;flex-direction:column;align-items:center;gap:9px;margin:14px 0 18px}
+.casino-actions .gold{width:min(520px,100%);font-size:14px;letter-spacing:.5px;padding:20px 22px;border-width:3px;box-shadow:5px 5px 0 #000,0 0 20px rgba(212,169,40,.18)}
+.casino-actions .gold:hover{transform:translateY(-2px);box-shadow:6px 7px 0 #000,0 0 28px rgba(212,169,40,.28)}
+.casino-test-btn{width:min(320px,82%);font-size:8px!important;padding:9px 12px!important;opacity:.78;box-shadow:3px 3px 0 #000!important}
+.casino-chart-title{font:9px "Press Start 2P",monospace;color:#9fa9ff;margin:22px 0 8px;padding:9px 10px;background:#101126;border:2px solid #38345a;box-shadow:3px 3px 0 #000;text-align:center}
+.casino-chart-frame{background:#080a16;border:2px solid #302a49;padding:8px;box-shadow:3px 3px 0 #000;margin-bottom:12px}
+@media(max-width:760px){.casino-actions .gold{font-size:12px;padding:17px 14px}.casino-test-btn{width:88%}.casino-chart-title{font-size:8px}.casino-summary-box strong{font-size:18px}}
+.casino-popup{position:fixed;inset:0;z-index:100;background:rgba(3,3,10,.86);display:grid;place-items:center;padding:20px;backdrop-filter:blur(3px)}
+.casino-popup-box{width:min(430px,92vw);background:linear-gradient(180deg,#211537,#0b0d20);border:4px solid var(--gold);box-shadow:0 0 0 5px #111329,10px 10px 0 #000,0 0 70px rgba(212,169,40,.25);padding:28px 22px;text-align:center;animation:casinoPop .25s ease}
+@keyframes casinoPop{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
+.popup-flash{font-size:58px;line-height:1;margin-bottom:14px;animation:flash 1s infinite alternate}
+@keyframes flash{to{transform:scale(1.12)}}
+.popup-title{font:16px "Press Start 2P",monospace;color:#fff;text-shadow:3px 3px #000;margin-bottom:12px}.popup-title.win{color:var(--gold)}.popup-title.lose{color:var(--hot)}
+.popup-money{font:700 28px "IBM Plex Mono",monospace;margin-bottom:16px;text-shadow:3px 3px #000}.popup-money.win{color:var(--mint)}.popup-money.lose{color:var(--hot)}
+.popup-detail{background:#090b18;border:2px solid #403955;padding:13px;color:#d7d3e3;font:12px "IBM Plex Mono",monospace;line-height:1.7;margin-bottom:18px}
+.random-event{border-style:solid;box-shadow:0 0 0 2px rgba(255,210,74,.12)}.random-event h4{color:var(--gold)}
+.random-popup{position:fixed;inset:0;z-index:90;background:rgba(3,3,10,.84);display:grid;place-items:center;padding:20px;backdrop-filter:blur(3px)}
+.random-popup-box{width:min(500px,94vw);background:linear-gradient(180deg,#1b1830,#090b18);border:4px solid #6f5a20;box-shadow:0 0 0 5px #10101d,10px 10px 0 #000,0 0 70px rgba(166,107,176,.2);padding:22px 20px 20px;text-align:center;animation:eventPop .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes eventPop{from{transform:translateY(18px) scale(.82);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.random-popup-tag{display:inline-block;background:#111126;border:2px solid #403955;color:#9fa9ff;padding:7px 10px;font:8px "Press Start 2P",monospace;box-shadow:3px 3px 0 #000;margin-bottom:12px}
+.random-popup-art{width:min(220px,60vw);height:150px;margin:0 auto 12px;background:#080a16;border:3px solid #4a4260;box-shadow:5px 5px 0 #000;display:grid;place-items:center;overflow:hidden}
+.random-popup-art svg{width:100%;height:100%;image-rendering:pixelated;shape-rendering:crispEdges}
+.random-popup-title{font:15px "Press Start 2P",monospace;color:var(--gold);text-shadow:3px 3px #000;margin:8px 0 12px}
+.random-popup-text{background:#0b0d19;border:2px solid #3e3659;box-shadow:3px 3px 0 #000;padding:12px 13px;color:#d7d3e3;font:12px "IBM Plex Mono",monospace;line-height:1.65}
+.random-popup-effect{margin:12px 0 16px;color:#fff;font:10px "Press Start 2P",monospace;line-height:1.7}
+.random-popup-close{width:min(360px,100%);font-size:10px!important}
+@media(max-width:760px){.random-popup-box{padding:18px 14px}.random-popup-art{height:125px}.random-popup-title{font-size:12px}.random-popup-text{font-size:11px}.random-popup-effect{font-size:8px}}
+
+@media(max-width:760px){.casino-head{flex-direction:column}.casino-controls,.casino-summary{grid-template-columns:1fr}.casino-bank{width:100%}.casino-table{padding:10px}.roulette{width:min(340px,82vw)}}
+
 /* death overlay */
 #death{position:fixed;inset:0;z-index:50;background:rgba(5,0,10,.92);display:grid;place-items:center;padding:20px}
 #death .box{max-width:460px;text-align:center;background:var(--panel);border:3px solid var(--hot);border-radius:14px;padding:26px;box-shadow:0 0 60px rgba(255,79,139,.35);animation:pop .3s ease}
@@ -140,6 +196,10 @@ table.t th{color:var(--mute);font-weight:500;background:#0b0e28}
 #death .skull{font-size:60px}
 #death .btns{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
+
+.roulette-wheel.spinning{animation:rouletteSpin 2.4s cubic-bezier(.12,.7,.18,1)}
+@keyframes rouletteSpin{0%{transform:rotate(0deg)}15%{transform:rotate(120deg)}45%{transform:rotate(720deg)}75%{transform:rotate(1260deg)}100%{transform:rotate(1440deg)}}
+.probability-title{margin-top:28px;border-top:3px dashed rgba(255,255,255,.15);padding-top:22px}
 </style>
 </head>
 <body>
@@ -155,7 +215,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 
 <div class="wrap">
 <h1>SESSION SURVIVOR<small>An exam-week RPG where every dice roll is a real probability formula</small></h1>
-<div class="status"><span class="dot" id="dot"></span><span id="statusText">Loading survey data…</span><button class="btn ghost" id="refresh" style="font-size:8px;padding:6px 10px;box-shadow:none">Reload data</button><a class="survey-link" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener noreferrer">📝 SURVEY</a></div>
+<div class="status"><span class="dot" id="dot"></span><span id="statusText">Loading survey data…</span><button class="btn ghost" id="refresh" style="font-size:8px;padding:6px 10px;box-shadow:none">Reload data</button><a class="btn ghost" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener" style="font-size:8px;padding:6px 10px;box-shadow:none;text-decoration:none">📝 SURVEY</a></div>
 
 <div class="how">
   <div><b>🎯 Goal</b>Survive 5 exam days, earn points and money.</div>
@@ -189,7 +249,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
     <div class="note" id="pNote"></div>
     <details class="math"><summary>▸ Show the math (Bayes' rule)</summary><div class="formula" id="pFormula"></div></details>
     <div class="myth" id="sleepMyth"></div>
-    <div class="row"><button class="btn" id="startBtn">Start the exam week ▶</button></div>
+    <button class="btn" id="startBtn">Start the exam week ▶</button>
   </div>
 
   <div class="card hidden" id="cDay">
@@ -198,7 +258,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
     <!-- step 1 -->
     <div id="stepCommute">
       <h3>Morning commute <small>Poisson</small></h3>
-      <p class="lead">Traffic, snow, alarm clocks… each day you can be late a <i>random</i> number of times. The survey gives a weekly average, which the game converts to a <b>daily rate</b> for each of the 5 exam days: about <b id="lamTxt"></b> lates per day. Each late arrival costs <b>4 HP</b> and <b>3 exam points</b>.</p>
+      <p class="lead">Traffic, snow, alarm clocks… every week you are late a <i>random</i> number of times. The survey says students are late about <b id="lamTxt"></b> times today on average. Each late arrival costs <b>4 HP</b> and <b>3 exam points</b>.</p>
       <div class="plain" id="cPlain"></div>
       <div id="cPoisChart"></div>
       <details class="math"><summary>▸ Show the math (Poisson distribution)</summary><div class="formula" id="cPoisF"></div></details>
@@ -226,8 +286,8 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
       <h3>Evening 🌙</h3>
       <p class="lead" id="eveLead"></p>
       <div class="acts">
-        <div class="item"><span class="ic">😴</span><b>Sleep</b><span>Restore 25 HP. Free. Once per evening.</span><button id="bSleep">SLEEP</button></div>
-        <div class="item"><span class="ic">💼</span><b>Work a shift</b><span>Earn ₸40 but lose 12 HP. Once per evening.</span><button id="bWork">WORK</button></div>
+        <div class="item"><span class="ic">😴</span><b>Sleep</b><span>Restore 15 HP. Free. Choose once per evening.</span><button id="bSleep">SLEEP</button></div>
+        <div class="item"><span class="ic">💼</span><b>Work a shift</b><span>Earn ₸40 but lose 12 HP. Choose once per evening.</span><button id="bWork">WORK</button></div>
       </div>
       <h3 style="margin-top:16px">🛒 Campus shop</h3>
       <div class="shop" id="shop"></div>
@@ -242,24 +302,32 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 
 <!-- ================= CASINO ================= -->
 <section id="tab-group" class="tab hidden">
-  <div class="card">
-    <h2>Study Group Casino</h2>
-    <p class="lead">Bet <b>your money</b> on how many students in a group will pass the session. The casino prices every bet using the <b>binomial distribution</b> and the survey's real pass rates, and keeps a 10% edge. Rare outcomes pay more.</p>
-    <div class="row"><label>Which group?</label><select id="gType"></select></div>
-    <div class="row"><label>Group size: <b id="gNv">12</b> students</label><input type="range" id="gN" min="3" max="30" value="12"></div>
-    <div class="row"><label>You win if at least <b id="gKv">6</b> pass</label><input type="range" id="gK" min="1" max="12" value="6"></div>
-    <div class="row"><label>Your bet: <b id="gSv">₸10</b></label><input type="range" id="gS" min="5" max="100" step="5" value="10"></div>
-    <div class="plain" id="gPlain"></div>
-    <div id="gChart"></div>
-    <div class="stats" id="gStats"></div>
-    <details class="math"><summary>▸ Show the math (Binomial distribution)</summary><div class="formula" id="gFormula"></div></details>
-    <div class="row">
-      <button class="btn" id="gRoll">Place bet 🎲</button>
-      <button class="btn ghost" id="gSim">Test the odds: 1000 groups</button>
-      <button class="btn ghost hidden" id="gReset">Borrow ₸30 from the dean</button>
+  <div class="card casino-card">
+    <div class="casino-head">
+      <div><h2>🎰 Study Group Casino</h2><p class="lead">Bet your money on how many students will pass. The game uses the <b>binomial distribution</b> and real survey probabilities.</p></div>
+      <div class="casino-bank">💰 YOUR MONEY <b id="casinoMoney">₸100</b></div>
     </div>
-    <div class="people" id="gPeople"></div>
-    <div id="gResult"></div>
+    <div class="casino-rules"><div><b>1. PICK</b><span>Choose a group.</span></div><div><b>2. SET</b><span>Set the odds and bet.</span></div><div><b>3. BET</b><span>Roll the group.</span></div></div>
+    <div class="casino-table">
+      <div class="roulette-pointer"></div>
+      <div class="roulette" id="rouletteWheel">
+        <div class="roulette-labels" id="rouletteLabels"></div>
+        <div class="roulette-center">STUDY<br><b>ROULETTE</b></div>
+      </div>
+    </div>
+    <div class="casino-controls">
+      <select id="gType" style="display:none"><option value="0">Everyone surveyed</option></select>
+      <div class="casino-control"><div class="casino-label"><span>👥 GROUP SIZE</span><b id="gNv">12</b></div><input type="range" id="gN" min="3" max="30" value="12"></div>
+      <div class="casino-control"><div class="casino-label"><span>🎯 Win if at least</span><b id="gKv">6</b></div><input type="range" id="gK" min="1" max="12" value="6"><small>students pass</small></div>
+      <div class="casino-control"><div class="casino-label"><span>💸 Your bet</span><b id="gSv">₸10</b></div><input type="range" id="gS" min="5" max="100" step="5" value="10"></div>
+    </div>
+    <div class="casino-summary"><div class="casino-summary-box"><small>CHANCE TO WIN</small><strong id="casinoWinChance">—</strong></div><div class="casino-summary-box"><small>IF YOU WIN</small><strong id="casinoWinAmount">—</strong></div><div class="casino-summary-box"><small>EXPECTED RESULT</small><strong id="casinoEV">—</strong></div></div>
+    <div class="plain casino-note" id="gPlain"></div>
+    <div class="casino-actions"><button class="btn gold" id="gRoll">🎲 PLACE BET</button><button class="btn ghost casino-test-btn" id="gSim">🔬 Test the odds · 1000 groups</button><button class="btn ghost hidden" id="gReset">Borrow ₸30 from the dean</button></div>
+    <div class="people" id="gPeople"></div><div id="gResult"></div>
+    <div class="casino-chart-title probability-title">📊 PROBABILITY OF EACH RESULT</div><div class="casino-chart-frame"><div id="gChart"></div></div>
+    <div class="stats" id="gStats"></div>
+    <details class="math"><summary>▸ SHOW THE MATH · BINOMIAL DISTRIBUTION</summary><div class="formula" id="gFormula"></div></details>
   </div>
 </section>
 
@@ -309,6 +377,27 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
   </div>
   <p class="note" id="respawnNote" style="margin-top:12px"></p>
 </div></div>
+
+<div id="randomEventPopup" class="random-popup hidden">
+  <div class="random-popup-box">
+    <div class="random-popup-tag">🎲 RANDOM EVENT</div>
+    <div class="random-popup-art" id="randomEventArt"></div>
+    <div class="random-popup-title" id="randomEventTitle">EVENT</div>
+    <div class="random-popup-text" id="randomEventText"></div>
+    <div class="random-popup-effect" id="randomEventEffect"></div>
+    <button class="btn gold random-popup-close" id="randomEventClose">CONTINUE</button>
+  </div>
+</div>
+
+<div id="casinoPopup" class="casino-popup hidden">
+  <div class="casino-popup-box">
+    <div class="popup-flash" id="casinoPopupFlash">🎰</div>
+    <div class="popup-title" id="casinoPopupTitle">YOU WIN!</div>
+    <div class="popup-money" id="casinoPopupMoney">+₸0</div>
+    <div class="popup-detail" id="casinoPopupDetail"></div>
+    <button class="btn gold" id="casinoPopupClose">CONTINUE</button>
+  </div>
+</div>
 
 <script>
 /* =====================================================================
@@ -466,17 +555,22 @@ function bellSvg(mu,sd,x,marker){
    ===================================================================== */
 const DAYS=5, MAXHP=100;
 const COST={
-  coffee:15,alarm:60,tutor:80,revive:70,
-  earpiece:450,answerKey:650,skipCard:900
+  coffee:20,alarm:150,tutor:600,revive:1500,
+  earpiece:1000,answerKey:750,skipCard:250
 };
+const STOCK={
+  coffee:3,alarm:1,tutor:1,revive:2,
+  earpiece:1,answerKey:1,skipCard:2
+};
+const SHOP_STOCK={...STOCK};
 const S={hp:100,money:100,pts:0,day:1,step:"profile",k:0,muEff:0,deaths:0,
   items:{
-    alarm:false,tutor:false,revive:0,
+    coffee:0,alarm:false,tutor:false,revive:0,
     earpiece:0,answerKey:0,skipCard:0
   },
   quests:{detective:false,lab:false},
   slept:false,worked:false,
-  luckShift:0,pBayes:0,myEV:0,bestEV:0,earned:0,sessionDeaths:0,log:[],examDone:false,started:false};
+  luckShift:0,pBayes:0,myEV:0,bestEV:0,earned:0,sessionDeaths:0,log:[],examDone:false,started:false,eventCount:0};
 const P={housing:null,phone:false,job:false,coffee:false};
 const money=n=>"₸"+n;
 
@@ -493,6 +587,7 @@ function hud(){
   if(S.items.revive)it.push("🎫×"+S.items.revive);
   if(S.items.earpiece)it.push("🎧×"+S.items.earpiece);
   if(S.items.answerKey)it.push("📝×"+S.items.answerKey);
+  if(S.items.coffee)it.push("☕×"+S.items.coffee);
   if(S.items.skipCard)it.push("🪪×"+S.items.skipCard);
   $("itemsH").textContent=it.length?it.join(" "):"nothing";
 }
@@ -564,7 +659,7 @@ function sleepMyth(){
 /* =====================================================================
    PLAY FLOW
    ===================================================================== */
-const lamEff=()=>D.lateMean/DAYS*(S.items.alarm?.5:1);
+const lamEff=()=>((D.lateMean/5)*(S.items.alarm?.5:1));
 function goStep(step){
   S.step=step;
   $("stepCommute").classList.toggle("hidden",step!=="commute");
@@ -584,7 +679,7 @@ function startSession(){
   Object.assign(S,{
     day:1,pts:0,hp:Math.max(S.hp,60),myEV:0,bestEV:0,
     earned:0,sessionDeaths:0,started:true,log:[],
-    quests:{detective:false,lab:false}
+    quests:{detective:false,lab:false},eventCount:0
   });
   S.hp=MAXHP;
   $("cIntro").classList.add("hidden");$("cEnd").classList.add("hidden");
@@ -607,15 +702,56 @@ function drawPois(hit){
 }
 function renderCommute(){
   const lam=lamEff();
-  const dailyBase=D.lateMean/DAYS;
-  $("lamTxt").textContent=lam.toFixed(2)+(S.items.alarm?" (halved by your 🔔 alarm clock)":"");
-  $("cPlain").innerHTML=`The survey reports <b>${D.lateMean.toFixed(2)} lates per week</b>. The game spreads that across the ${DAYS} exam days, so today's Poisson rate is <b>λ = ${lam.toFixed(2)}</b>. Chance of <b>zero</b> lates today: <b>${pct(poisPmf(0,lam))}</b>. Chance of <b>3 or more today</b>: <b>${pct(1-poisPmf(0,lam)-poisPmf(1,lam)-poisPmf(2,lam))}</b>.`;
+  $("lamTxt").textContent=D.lateMean.toFixed(2)+(S.items.alarm?" (halved to "+lam.toFixed(2)+" by your 🔔 alarm clock)":"");
+  $("cPlain").innerHTML=`Each bar is the chance of being late that many times today. Chance of <b>zero</b> lates: <b>${pct(poisPmf(0,lam))}</b>. Chance of <b>3 or more</b>: <b>${pct(1-poisPmf(0,lam)-poisPmf(1,lam)-poisPmf(2,lam))}</b>.`;
   $("cPoisF").innerHTML=`P(K = k) = λ^k · e^(−λ) / k!
-λ = ${D.lateMean.toFixed(2)} / ${DAYS} = ${dailyBase.toFixed(2)} lates per day${S.items.alarm?" × 0.5 for the alarm clock":""}
-Today's λ = ${lam.toFixed(2)}
+λ = ${lam.toFixed(2)} (survey mean late arrivals per day${S.items.alarm?" × 0.5 for the alarm clock":""})
 P(K = 0) = e^(−${lam.toFixed(2)}) = ${pct(poisPmf(0,lam))}      mean = variance = λ`;
   drawPois(null);
 }
+function randomDailyEvent(){
+  // Calm most days: 15% chance. If none happened by day 5, force one event
+  // so every 5-day week contains at least one surprise.
+  const guaranteed = S.day===DAYS && S.eventCount===0;
+  if(!guaranteed && Math.random()>=0.15)return null;
+  const events=[
+    {icon:"🐈",title:"INJURED CAT",text:"You found an injured cat and stopped to help. You were late, but at least the cat is okay.",late:1},
+    {icon:"🚌",title:"WRONG BUS",text:"The bus took a completely wrong turn. You lost extra time getting back on route.",late:1},
+    {icon:"🐕",title:"RUNAWAY DOG",text:"A runaway dog needed your help. You chased it down before heading to campus.",late:1},
+    {icon:"📦",title:"FRESHMAN IN TROUBLE",text:"A lost freshman asked for directions. You helped them, but the clock did not wait.",late:1},
+    {icon:"☕",title:"FREE COFFEE",text:"A cafe gave you a free coffee for being the first student there.",money:20},
+    {icon:"💸",title:"LUCKY FIND",text:"You found some cash on the sidewalk and handed it to nobody in particular.",money:30},
+    {icon:"🛗",title:"ELEVATOR CHAOS",text:"The elevator stopped at every floor. Somehow you survived the journey.",late:1},
+    {icon:"🍀",title:"LUCKY MORNING",text:"Someone held the doors, your bus arrived instantly, and the morning went perfectly.",hp:5}
+  ];
+  return events[Math.floor(Math.random()*events.length)];
+}
+function eventArt(type){
+  const common=`<svg viewBox="0 0 220 150" aria-hidden="true">`,end=`</svg>`,bg=`<rect width="220" height="150" fill="#080a16"/>`,px=(x,y,w,h,c)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`;
+  if(type==="INJURED CAT") return common+bg+px(55,48,70,54,"#b9a0c9")+px(43,62,12,30,"#b9a0c9")+px(125,62,12,30,"#b9a0c9")+px(64,34,16,16,"#b9a0c9")+px(100,34,16,16,"#b9a0c9")+px(69,64,8,8,"#151426")+px(103,64,8,8,"#151426")+px(84,76,14,7,"#d4a928")+px(78,91,28,6,"#6f5a20")+px(126,91,25,7,"#ff4f8b")+end;
+  if(type==="WRONG BUS") return common+bg+px(38,48,145,66,"#d4a928")+px(48,58,34,25,"#101126")+px(88,58,34,25,"#101126")+px(128,58,34,25,"#101126")+px(55,106,24,24,"#161525")+px(143,106,24,24,"#161525")+px(49,102,128,7,"#6f5a20")+px(178,75,12,20,"#ff4f8b")+end;
+  if(type==="RUNAWAY DOG") return common+bg+px(62,53,82,52,"#b9875b")+px(48,61,22,30,"#b9875b")+px(78,42,16,18,"#b9875b")+px(119,42,16,18,"#b9875b")+px(72,67,8,8,"#151426")+px(112,67,8,8,"#151426")+px(87,79,15,7,"#ff4f8b")+px(140,53,30,8,"#b9875b")+px(154,45,22,8,"#b9875b")+px(67,104,10,18,"#b9875b")+px(126,104,10,18,"#b9875b")+end;
+  if(type==="FRESHMAN IN TROUBLE") return common+bg+px(72,43,30,25,"#d9a77a")+px(67,68,40,47,"#5f79b5")+px(78,31,18,12,"#5b432f")+px(62,80,12,34,"#d9a77a")+px(100,80,12,34,"#d9a77a")+px(80,57,6,6,"#151426")+px(94,57,6,6,"#151426")+px(130,72,42,32,"#d4a928")+px(138,80,26,8,"#101126")+px(138,94,26,5,"#101126")+end;
+  if(type==="FREE COFFEE") return common+bg+px(75,48,65,66,"#d4a928")+px(85,36,45,18,"#8f3e97")+px(86,62,43,38,"#101126")+px(137,63,24,31,"#d4a928")+px(151,68,12,21,"#080a16")+px(88,42,8,8,"#f1d38a")+px(104,42,8,8,"#f1d38a")+px(120,42,8,8,"#f1d38a")+end;
+  if(type==="LUCKY FIND") return common+bg+px(78,48,64,70,"#2f2a4b")+px(70,55,80,10,"#d4a928")+px(92,70,36,8,"#d4a928")+px(86,88,48,8,"#d4a928")+px(103,104,14,8,"#6f5a20")+end;
+  if(type==="ELEVATOR CHAOS") return common+bg+px(65,25,90,105,"#38345a")+px(78,40,64,70,"#101126")+px(86,50,14,50,"#9fa9ff")+px(120,50,14,50,"#9fa9ff")+px(101,70,18,18,"#d4a928")+px(93,28,34,8,"#d4a928")+px(40,115,28,8,"#ff4f8b")+px(152,115,28,8,"#ff4f8b")+end;
+  return common+bg+px(92,48,36,36,"#79d7a5")+px(74,66,72,18,"#79d7a5")+px(82,88,56,18,"#79d7a5")+px(103,38,14,70,"#d4a928")+end;
+}
+function showRandomEventPopup(e){
+  const pop=$("randomEventPopup"); if(!pop||!e)return;
+  $("randomEventArt").innerHTML=eventArt(e.title); $("randomEventTitle").textContent=e.title; $("randomEventText").textContent=e.text;
+  let effect=""; if(e.late)effect=`+${e.late} LATE · −${4*e.late} HP · −${3*e.late} EXAM POINTS`; if(e.money)effect=`+${money(e.money)} CASH`; if(e.hp)effect=`+${e.hp} HP`;
+  $("randomEventEffect").textContent=effect; pop.classList.remove("hidden");
+}
+function closeRandomEventPopup(){ $("randomEventPopup").classList.add("hidden"); }
+function applyDailyEvent(){
+  const e=randomDailyEvent(); if(!e)return null; S.eventCount++;
+  if(e.late){S.k+=e.late;logMsg(`Day ${S.day}: ${e.title} — +${e.late} late.`);}
+  if(e.money){gain(e.money);logMsg(`Day ${S.day}: ${e.title} — +${money(e.money)}.`);}
+  if(e.hp){S.hp=Math.min(MAXHP,S.hp+e.hp);logMsg(`Day ${S.day}: ${e.title} — +${e.hp} HP.`);}
+  return e;
+}
+
 function rollCommute(){
   if(S.items.skipCard>0){
     S.items.skipCard--;
@@ -623,17 +759,21 @@ function rollCommute(){
     drawPois(0);
     $("cRollBtn").disabled=true;
     $("cPoisOut").innerHTML=`<div class="result win"><h4>FAKE ID WORKED 🪪</h4>Security looked the other way. <b>0 lates</b> today.</div>`;
-    logMsg(`Day ${S.day}: Fake Student ID used — zero lates today.`);
+    logMsg(`Day ${S.day}: Fake Student ID used — zero commute lates.`);
     $("toExamBtn").classList.remove("hidden");
     hud();
     return;
   }
   const lam=lamEff(),k=poisSample(lam);
   S.k=k;drawPois(k);$("cRollBtn").disabled=true;
-  $("cPoisOut").innerHTML=`<div class="result ${k===0?"win":"lose"}"><h4>${k===0?"ON TIME TODAY!":"LATE ×"+k}</h4>That outcome had a <b>${pct(poisPmf(k,lam))}</b> chance. ${k?`Penalty: <b>−${4*k} HP</b> and <b>−${3*k} exam points</b>.`:"No penalty."}</div>`;
-  logMsg(`Day ${S.day}: late ×${k}${k?` (−${4*k} HP)`:""}.`);
-  if(k&&damage(4*k,`You were late ${k} times and the stress knocked you out.`))return;
+  const event=applyDailyEvent();
+  const totalK=S.k;
+  drawPois(totalK);
+  $("cPoisOut").innerHTML=`<div class="result ${totalK===0?"win":"lose"}"><h4>${totalK===0?"ON TIME TODAY!":"LATE ×"+totalK}</h4>Base commute outcome had a <b>${pct(poisPmf(k,lam))}</b> chance. ${totalK?`Total penalty: <b>−${4*totalK} HP</b> and <b>−${3*totalK} exam points</b>.`:"No penalty."}</div>`+(eventHtml||"");
+  if(totalK&&damage(4*totalK,`You were late ${totalK} time${totalK===1?"":"s"} today and the stress knocked you out.`))return;
+  if(totalK)S.pts=Math.max(0,S.pts-3*totalK);
   $("toExamBtn").classList.remove("hidden");
+  hud();
 }
 
 /* ---- step 2: exam (Normal) ---- */
@@ -693,25 +833,31 @@ function sitExam(){
 /* ---- step 3: evening (rest, work, shop) ---- */
 function renderEvening(){
   $("eveLead").innerHTML=`${S.examDone&&$("cResult").innerHTML?"":"(You skipped today's exam.) "}HP <b>${S.hp}/${MAXHP}</b> · Money <b>${money(S.money)}</b>. Recover, earn, or upgrade, then end the day.`;
-  $("bSleep").disabled=S.slept||S.hp>=MAXHP;$("bSleep").textContent=S.slept?"DONE":"SLEEP +25 HP";
-  $("bWork").disabled=S.worked;$("bWork").textContent=S.worked?"DONE":(S.hp<=12?"WORK ⚠ DEADLY":"WORK +₸40");
+  // Evening is a mandatory choice: sleep OR work. Once one is chosen, the other is disabled.
+  $("bSleep").disabled=S.slept||S.worked;$("bSleep").textContent=S.slept?"DONE":"SLEEP +15 HP";
+  $("bWork").disabled=S.worked||S.slept;$("bWork").textContent=S.worked?"DONE":(S.hp<=12?"WORK ⚠ DEADLY":"WORK +₸40");
   const items=[
     ["☕","Coffee",COST.coffee,"Instantly restore 10 HP. Buy as many as you like.",()=>false,"coffee"],
-    ["🔔","Alarm clock",COST.alarm,"Halves your daily late rate (λ × 0.5) for the rest of the game.",()=>S.items.alarm,"alarm"],
+    ["🔔","Alarm clock",COST.alarm,"Halves how often you are late (λ × 0.5) for the rest of the game.",()=>S.items.alarm,"alarm"],
+    ["🪪","Fake Student ID",COST.skipCard,"CHEAT: your next commute is automatically perfect — zero lates. One use.",()=>false,"skipCard"],
     ["📚","Private tutor",COST.tutor,"+5 to your average exam score permanently.",()=>S.items.tutor,"tutor"],
-    ["🎫","Revive Token",COST.revive,"If you collapse, come back at full HP and keep your money.",()=>false,"revive"],
-    ["🎧","Hidden Earpiece",COST.earpiece,"CHEAT: your next exam target is guaranteed. One use. Very illegal. Very expensive.",()=>false,"earpiece"],
     ["📝","Answer Key",COST.answerKey,"CHEAT: +15 to your next raw exam score. One use.",()=>false,"answerKey"],
-    ["🪪","Fake Student ID",COST.skipCard,"CHEAT: your next commute is automatically perfect — zero lates. One use.",()=>false,"skipCard"]];
+    ["🎧","Hidden Earpiece",COST.earpiece,"CHEAT: your next exam target is guaranteed. One use. Very illegal. Very expensive.",()=>false,"earpiece"],
+    ["🎫","Revive Token",COST.revive,"If you collapse, come back at full HP and keep your money.",()=>false,"revive"]].sort((a,b)=>a[2]-b[2]);
   $("shop").innerHTML=items.map(([ic,nm,c,desc,owned,key])=>{
-    const o=owned();return `<div class="item"><span class="ic">${ic}</span><b>${nm}${o?" (owned)":""}${key==="revive"&&S.items.revive?" ×"+S.items.revive:""}</b><span>${desc}</span><button data-buy="${key}" ${(o||S.money<c)?"disabled":""}>${o?"OWNED":"BUY "+money(c)}</button></div>`;}).join("");
+    const o=owned();
+    const left=Math.max(0,SHOP_STOCK[key]-(S.items[key]||0));
+    const soldOut=left<=0;
+    return `<div class="item ${soldOut?"sold-out":""}"><span class="ic">${ic}</span><b>${nm}${o?" (owned)":""}${key==="revive"&&S.items.revive?" ×"+S.items.revive:""}</b><span>${desc}</span><small class="stock">${soldOut?"SOLD OUT":"STOCK: "+left}</small><button data-buy="${key}" ${(soldOut||o||S.money<c)?"disabled":""}>${soldOut?"SOLD OUT":o?"OWNED":"BUY "+money(c)}</button></div>`;}).join("");
   $("shop").querySelectorAll("button[data-buy]").forEach(b=>b.onclick=()=>buy(b.dataset.buy));
   $("endDayBtn").textContent=S.day>=DAYS?"Finish the exam week →":"End the day →";
 }
 function buy(key){
+  const used=(S.items[key]||0);
+  if(used>=SHOP_STOCK[key]){logMsg("🏪 " + key + " is sold out.");renderEvening();return;}
   const c=COST[key];if(S.money<c)return;
   S.money-=c;
-  if(key==="coffee"){S.hp=Math.min(MAXHP,S.hp+10);logMsg("☕ Coffee: +10 HP.");}
+  if(key==="coffee"){S.items.coffee++;S.hp=Math.min(MAXHP,S.hp+10);logMsg("☕ Coffee: +10 HP.");}
   if(key==="alarm"){S.items.alarm=true;logMsg("🔔 Bought an alarm clock.");}
   if(key==="tutor"){S.items.tutor=true;logMsg("📚 Hired a tutor.");}
   if(key==="revive"){S.items.revive++;logMsg("🎫 Bought a Revive Token.");}
@@ -720,13 +866,22 @@ function buy(key){
   if(key==="skipCard"){S.items.skipCard++;logMsg("🪪 Bought a Fake Student ID: next commute is automatically perfect.");}
   hud();renderEvening();
 }
-function doSleep(){S.slept=true;S.hp=Math.min(MAXHP,S.hp+25);logMsg("😴 Slept: +25 HP.");hud();renderEvening();}
+function doSleep(){
+  if(S.slept||S.worked)return;
+  S.slept=true;S.hp=Math.min(MAXHP,S.hp+15);logMsg("😴 Slept: +15 HP.");hud();renderEvening();
+}
 function doWork(){
+  if(S.slept||S.worked)return;
   S.worked=true;gain(40);logMsg("💼 Worked a shift: +₸40, −12 HP.");
   if(damage(12,"You worked a shift while exhausted and fainted at the counter."))return;
   renderEvening();
 }
 function endDay(){
+  if(!S.slept&&!S.worked){
+    logMsg("⚠ Choose either sleep or work before ending the day.");
+    renderEvening();
+    return;
+  }
   if(S.day>=DAYS){endSession();return;}
   S.day++;newDay();
 }
@@ -757,14 +912,34 @@ function endSession(){
 const G={groups:[],p:.5,pWin:.5,mult:1,lastX:null};
 function setupGroup(){
   G.groups=[["Everyone surveyed",D.passed,D.N]];
-  for(const k in D.fac){const f=D.fac[k];
-    if(f.nB>0)G.groups.push([`Students who ${FACTOR_DESC[k]}`,f.nAB,f.nB]);
-    if(D.N-f.nB>0)G.groups.push([`Students who do NOT ${FACTOR_DESC[k]}`,D.passed-f.nAB,D.N-f.nB]);}
-  D.housing.forEach(h=>G.groups.push([`Housing: ${h.type}`,h.nAH,h.nH]));
-  $("gType").innerHTML=G.groups.map((g,i)=>`<option value="${i}">${g[0]} (${g[1]} of ${g[2]} passed)</option>`).join("");
-  ["gType","gN","gK","gS"].forEach(id=>$(id).oninput=()=>{G.lastX=null;renderGroup();});
+  $("gType").value="0";
+  ["gN","gK","gS"].forEach(id=>$(id).oninput=()=>{G.lastX=null;renderGroup();});
   renderGroup();
 }
+
+function renderRoulette(n,k){
+  const el=$("rouletteLabels");
+  if(!el)return;
+  const count=Math.min(n+1,16);
+  const labels=[];
+  for(let i=0;i<count;i++){
+    const value=Math.round(i*n/(count-1||1));
+    const angle=i*360/count-90;
+    labels.push(`<span style="transform:rotate(${angle}deg) translateY(-${Math.min(150,Math.max(85,n*4))}px) rotate(${-angle}deg)">${value}</span>`);
+  }
+  el.innerHTML=labels.join("");
+  const wheel=$("rouletteWheel");
+  wheel.classList.remove("spin");
+}
+function spinRoulette(){
+  const wheel=$("rouletteWheel");
+  if(!wheel)return;
+  wheel.classList.remove("spin");
+  void wheel.offsetWidth;
+  wheel.classList.add("spin");
+  setTimeout(()=>wheel.classList.remove("spin"),1200);
+}
+
 function renderGroup(){
   const g=G.groups[+$("gType").value];
   G.p=clamp(g[1]/g[2],.02,.98);
@@ -775,12 +950,17 @@ function renderGroup(){
   if(+$("gS").value>+$("gS").max)$("gS").value=$("gS").max;
   const stake=Math.min(+$("gS").value,S.money);
   $("gNv").textContent=n;$("gKv").textContent=k;$("gSv").textContent=money(stake);
+  $("casinoMoney").textContent=money(S.money);
+  renderRoulette(n,k);
   let pw=0;const vals=[],labels=[],cls=[];
   for(let j=0;j<=n;j++){const q=binPmf(n,j,G.p);vals.push(q*100);labels.push(j);cls.push(j>=k?"zone":"");if(j>=k)pw+=q;}
   pw=clamp(pw,1e-6,1);G.pWin=pw;G.mult=Math.min(40,.9/pw);
   if(G.lastX!==null&&G.lastX<=n)cls[G.lastX]=G.lastX>=k?"hit":"miss";
   $("gChart").innerHTML=barsSvg(vals,labels,cls);
   const win=Math.round(stake*(G.mult-1)),ev=stake*(pw*G.mult-1);
+  $("casinoWinChance").textContent=pct(pw);
+  $("casinoWinAmount").textContent="+"+money(win);
+  $("casinoEV").textContent=(ev>=0?"+":"−")+money(Math.abs(ev).toFixed(1));
   $("gPlain").innerHTML=`Each student in this group passes with probability <b>${pct(G.p)}</b>. Gold bars = you win (${k} or more pass). Win chance: <b>${pct(pw)}</b>. Win and you gain <b>${money(win)}</b>; lose and you lose <b>${money(stake)}</b>.`;
   $("gFormula").innerHTML=`P(X = j) = C(n, j) · p^j · (1−p)^(n−j)    n = ${n}, p = ${G.p.toFixed(3)}
 P(X ≥ ${k}) = Σ P(X = j) for j = ${k}..${n} = <b>${pct(pw)}</b>
@@ -794,7 +974,19 @@ Expected passers = n·p = ${(n*G.p).toFixed(2)},  σ = √(n·p·(1−p)) = ${Ma
   const broke=S.money<5;
   $("gRoll").disabled=broke;$("gReset").classList.toggle("hidden",!broke);
 }
+function showCasinoPopup(win,delta,x,n,k,exactChance){
+  const pop=$("casinoPopup");
+  $("casinoPopupFlash").textContent=win?"🎉":"💥";
+  $("casinoPopupTitle").textContent=win?"YOU WIN!":"YOU LOSE!";
+  $("casinoPopupTitle").className="popup-title "+(win?"win":"lose");
+  $("casinoPopupMoney").textContent=(delta>=0?"+":"−")+money(Math.abs(delta));
+  $("casinoPopupMoney").className="popup-money "+(win?"win":"lose");
+  $("casinoPopupDetail").innerHTML=`<b>${x} / ${n}</b> students passed.<br>You needed <b>${k}</b>.<br><span>Exact result chance: <b>${pct(exactChance)}</b></span>`;
+  pop.classList.remove("hidden");
+}
+function closeCasinoPopup(){ $("casinoPopup").classList.add("hidden"); }
 function groupRoll(){
+  spinRoulette();
   const n=+$("gN").value,k=+$("gK").value,stake=Math.min(+$("gS").value,S.money);
   if(stake<5)return;
   let x=0;const ppl=[];
@@ -803,9 +995,11 @@ function groupRoll(){
   $("gPeople").innerHTML=ppl.map((ok,i)=>`<span class="${ok?"ok":"no"}" style="animation-delay:${i*25}ms">${ok?"✓":"✗"}</span>`).join("");
   const win=x>=k,delta=win?Math.round(stake*(G.mult-1)):-stake;
   S.money=Math.max(0,S.money+delta);if(delta>0)S.earned+=delta;hud();
-  $("gResult").innerHTML=`<div class="result ${win?"win":"lose"}"><h4>${win?"YOU WIN +"+money(delta):"YOU LOSE −"+money(-delta)}</h4>${x} of ${n} passed (you needed ${k}). That exact result had a ${pct(binPmf(n,x,G.p))} chance.</div>`;
+  const exactChance=binPmf(n,x,G.p);
   renderGroup();
+  setTimeout(()=>showCasinoPopup(win,delta,x,n,k,exactChance),450);
 }
+
 function groupSim(){
   const n=+$("gN").value,k=+$("gK").value;let w=0,tot=0;
   for(let t=0;t<1000;t++){let x=0;for(let i=0;i<n;i++)if(Math.random()<G.p)x++;tot+=x;if(x>=k)w++;}
@@ -992,6 +1186,10 @@ $("respawnBtn").onclick=()=>respawn(false);
 $("reviveBtn").onclick=()=>respawn(true);
 $("gRoll").onclick=groupRoll;$("gSim").onclick=groupSim;
 $("gReset").onclick=()=>{S.money+=30;hud();renderGroup();};
+$("casinoPopupClose").onclick=closeCasinoPopup;
+$("randomEventClose").onclick=closeRandomEventPopup;
+$("randomEventPopup").onclick=e=>{if(e.target.id==="randomEventPopup")closeRandomEventPopup();};
+$("casinoPopup").onclick=e=>{if(e.target.id==="casinoPopup")closeCasinoPopup();};
 $("dG").oninput=e=>$("dGv").textContent=e.target.value+"%";
 $("dBtn").onclick=detectiveBtn;
 $("labSvg").addEventListener("click",labClick);
