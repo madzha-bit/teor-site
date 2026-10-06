@@ -223,6 +223,7 @@ table.t th{color:var(--mute);font-weight:500;background:#0b0e28}
 #death .btns{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 
+.achievement-panel{margin-top:16px;background:#090b18;border:3px solid #4b416b;box-shadow:4px 4px 0 #000;padding:14px}.achievement-panel h3{font:10px "Press Start 2P",monospace;color:var(--gold);margin:0 0 12px}.achievement-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.achievement{background:#111126;border:2px solid #332d4c;padding:10px;box-shadow:2px 2px 0 #000}.achievement.unlocked{border-color:var(--gold);background:linear-gradient(180deg,#211a2f,#0d0d1b)}.achievement b{display:block;font:8px "Press Start 2P",monospace;color:#77738a;margin-bottom:6px;line-height:1.5}.achievement.unlocked b{color:#fff}.achievement small{font:11px "IBM Plex Mono",monospace;color:#aaa6bd;line-height:1.45}.final-title{font:14px "Press Start 2P",monospace;color:var(--gold);text-shadow:3px 3px #000;text-align:center;margin:12px 0 18px;line-height:1.7}.achievement-toast{position:fixed;right:18px;bottom:18px;z-index:120;background:#161128;border:3px solid var(--gold);box-shadow:5px 5px 0 #000,0 0 28px rgba(212,169,40,.25);padding:12px 14px;width:min(340px,calc(100vw - 36px));animation:toastIn .3s steps(2,end)}.achievement-toast b{display:block;font:9px "Press Start 2P",monospace;color:var(--gold);margin-bottom:6px}.achievement-toast span{font:12px "IBM Plex Mono",monospace;color:#fff}@keyframes toastIn{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}@media(max-width:760px){.achievement-grid{grid-template-columns:1fr}.final-title{font-size:11px}}
 .probability-title{margin-top:28px;border-top:3px dashed rgba(255,255,255,.15);padding-top:22px}
 </style>
 </head>
@@ -610,7 +611,7 @@ const S={hp:100,money:100,pts:0,day:1,step:"profile",k:0,muEff:0,deaths:0,
   },
   quests:{detective:false,lab:false},
   slept:false,worked:false,
-  luckShift:0,pBayes:0,myEV:0,bestEV:0,earned:0,sessionDeaths:0,log:[],examDone:false,started:false,eventCount:0};
+  luckShift:0,pBayes:0,myEV:0,bestEV:0,earned:0,sessionDeaths:0,log:[],examDone:false,started:false,eventCount:0,achievements:{},cheatsUsed:false,casinoProfit:0};
 const P={housing:null,phone:false,job:false,coffee:false};
 const money=n=>"₸"+n;
 
@@ -633,6 +634,12 @@ function hud(){
 }
 function logMsg(t){S.log.unshift(t);S.log=S.log.slice(0,8);$("logBox").innerHTML=S.log.map(x=>`<li>${x}</li>`).join("");}
 function gain(n){S.money+=n;S.earned+=Math.max(0,n);hud();}
+
+const ACH={labMinimalist:["🏆","ONE-POINT WONDER","Flip Regression Lab with exactly 1 fake point."],caffeine:["☕","CAFFEINE ADDICT","Buy 3 coffees in one exam week."],highRoller:["🎰","HIGH ROLLER","Win ₸500+ total in the casino."],bareSurvivor:["💀","FINAL BOSS","Finish the week with 10 HP or less."],honest:["🧠","HONEST SCHOLAR","Finish a week without using a cheat item."],broke:["💸","BROKE STUDENT","Drop to ₸10 or less."],jackpot:["⭐","STUDY JACKPOT","Get every student in your bet to pass."],survivor:["👑","SESSION SURVIVOR","Complete all 5 exam days."]};
+function unlockAchievement(id){if(S.achievements[id])return;S.achievements[id]=true;const a=ACH[id];logMsg(`${a[0]} ACHIEVEMENT: ${a[1]}`);const old=document.getElementById("achievementToast");if(old)old.remove();const d=document.createElement("div");d.id="achievementToast";d.className="achievement-toast";d.innerHTML=`<b>🏆 ACHIEVEMENT UNLOCKED</b><span>${a[0]} ${a[1]}<br>${a[2]}</span>`;document.body.appendChild(d);setTimeout(()=>d.remove(),3600);}
+function checkAchievements(){if(S.items.coffee>=3)unlockAchievement("caffeine");if(S.money<=10)unlockAchievement("broke");}
+function achievementHTML(){return `<div class="achievement-panel"><h3>🏆 ACHIEVEMENTS ${Object.keys(S.achievements).length}/${Object.keys(ACH).length}</h3><div class="achievement-grid">${Object.entries(ACH).map(([id,a])=>`<div class="achievement ${S.achievements[id]?"unlocked":""}"><b>${S.achievements[id]?a[0]:"???"} ${S.achievements[id]?a[1]:"LOCKED"}</b><small>${S.achievements[id]?a[2]:"Hidden achievement — discover the condition."}</small></div>`).join("")}</div></div>`;}
+function finalTitle(){const n=Object.keys(S.achievements).length;if(n>=7)return "🏆 STATISTICAL LEGEND";if(S.sessionDeaths>=3)return "💀 WALKING GHOST";if(S.casinoProfit>=500)return "🎰 PROFESSIONAL GAMBLER";if(S.items.coffee>=3)return "☕ CAFFEINE SCHOLAR";if(S.sessionDeaths===0&&!S.cheatsUsed)return "🧠 HONEST SCHOLAR";if(S.hp<=10)return "💀 BARELY ALIVE";if(S.pts>=250)return "📚 ACADEMIC SURVIVOR";return "🎓 SESSION SURVIVOR";}
 
 /* ---- damage & death ---- */
 let dead=false;
@@ -793,7 +800,7 @@ function applyDailyEvent(){
 }
 
 function rollCommute(){
-  if(S.items.skipCard>0){
+  if(S.items.skipCard>0){S.cheatsUsed=true;
     S.items.skipCard--;
     S.k=0;
     drawPois(0);
@@ -851,8 +858,8 @@ function sitExam(){
   const usedEarpiece=S.items.earpiece>0;
   const usedAnswerKey=!usedEarpiece && S.items.answerKey>0;
   let raw=S.muEff+sd*randn();
-  if(usedEarpiece){raw=Math.max(raw,x);S.items.earpiece--;}
-  else if(usedAnswerKey){raw+=15;S.items.answerKey--;}
+  if(usedEarpiece){S.cheatsUsed=true;raw=Math.max(raw,x);S.items.earpiece--;}
+  else if(usedAnswerKey){S.cheatsUsed=true;raw+=15;S.items.answerKey--;}
   const score=clamp(Math.round(raw),0,100),ok=raw>=x;
   const pOk=1-normCdf(x,S.muEff,sd),best=bestTarget(S.muEff);
   S.myEV+=x*pOk;S.bestEV+=best.ev;
@@ -927,22 +934,28 @@ function endDay(){
   S.day++;newDay();
 }
 function endSession(){
+  if(S.hp<=10)unlockAchievement("bareSurvivor");
+  if(!S.cheatsUsed)unlockAchievement("honest");
+  unlockAchievement("survivor");
+  checkAchievements();
   $("cDay").classList.add("hidden");$("cEnd").classList.remove("hidden");
   const eff=S.bestEV>0?S.myEV/S.bestEV:0;
   const rank=S.sessionDeaths>=3?"Walking Ghost":eff>=.95?"Probability Wizard":eff>=.85?"Dean's List":eff>=.7?"Survivor":"Retake Candidate";
   const bonus={"Probability Wizard":100,"Dean's List":60,"Survivor":30}[rank]||0;
   if(bonus)gain(bonus);
   S.started=false;hud();
-  $("cEnd").innerHTML=`<h2>EXAM WEEK COMPLETE</h2><div class="big">${rank}</div>
+  $("cEnd").innerHTML=`<h2>EXAM WEEK COMPLETE</h2><div class="final-title">${finalTitle()}</div><div class="big">${rank}</div>
     <div class="stats">
       <div class="stat"><small>Exam points</small><b class="y">${S.pts}</b></div>
       <div class="stat"><small>Money earned this week</small><b class="y">${money(S.earned)}</b></div>
       <div class="stat"><small>Rank bonus</small><b class="g">+${money(bonus)}</b></div>
       <div class="stat"><small>Deaths this week</small><b class="r">${S.sessionDeaths} 💀</b></div>
+      <div class="stat"><small>Casino profit</small><b class="${S.casinoProfit>=0?"g":"r"}">${S.casinoProfit>=0?"+":"−"}${money(Math.abs(S.casinoProfit))}</b></div>
+      <div class="stat"><small>Achievements</small><b class="y">${Object.keys(S.achievements).length}/${Object.keys(ACH).length}</b></div>
       <div class="stat"><small>Strategy efficiency</small><b>${pct(eff,0)}</b></div>
     </div>
     <div class="plain"><b>How the rank works:</b> every day there was a best target score (the one that maximises <i>target × chance of hitting it</i>). Efficiency = your total average points ÷ the best possible = ${S.myEV.toFixed(1)} / ${S.bestEV.toFixed(1)}. Dice decide single exams; smart probability decides the average.</div>
-    <p class="note">Your money, upgrades and Revive Tokens carry over to the next week.</p>
+    ${achievementHTML()}<p class="note">Your money, upgrades and Revive Tokens carry over to the next week.</p>
     <button class="btn" id="againBtn">New exam week ↺</button>`;
   $("againBtn").onclick=()=>{$("cEnd").classList.add("hidden");$("cIntro").classList.remove("hidden");S.hp=MAXHP;S.quests={detective:false,lab:false};renderQuestLocks();hud();};
 }
@@ -990,10 +1003,11 @@ function setSlotResult(x,n,k,win){
   if(!machine||!left||!center||!right)return;
   machine.classList.remove("spinning","win","lose");
   machine.classList.add(win?"win":"lose","result-pop");
+  const jackpot=win&&x===n;
   left.textContent=win?"7":"×";
-  center.textContent=String(x).padStart(2,"0");
+  center.textContent=jackpot?"★":String(x).padStart(2,"0");
   right.textContent=win?"7":"×";
-  if(msg)msg.textContent=win?`JACKPOT! ${x} / ${n} PASSED`:`MISS! ${x} / ${n} PASSED`;
+  if(msg)msg.textContent=jackpot?`★ STUDY JACKPOT ★ ${x} / ${n} PASSED`:win?`JACKPOT! ${x} / ${n} PASSED`:`MISS! ${x} / ${n} PASSED`;
   setTimeout(()=>machine.classList.remove("result-pop"),260);
 }
 
@@ -1054,7 +1068,9 @@ function groupRoll(){
   G.lastX=x;
   $("gPeople").innerHTML=ppl.map((ok,i)=>`<span class="${ok?"ok":"no"}" style="animation-delay:${i*25}ms">${ok?"✓":"✗"}</span>`).join("");
   const win=x>=k,delta=win?Math.round(stake*(G.mult-1)):-stake;
-  S.money=Math.max(0,S.money+delta);if(delta>0)S.earned+=delta;hud();
+  S.money=Math.max(0,S.money+delta);if(delta>0){S.earned+=delta;S.casinoProfit+=delta;if(S.casinoProfit>=500)unlockAchievement("highRoller");}
+  if(win&&x===n)unlockAchievement("jackpot");
+  checkAchievements();hud();
   const exactChance=binPmf(n,x,G.p);
   renderGroup();
   spinSlotMachine(n);
@@ -1185,11 +1201,30 @@ t = r · √(df / (1 − r²)) = ${St.r.toFixed(3)} · √(${St.df} / ${(1-St.r*
 Critical t (df = ${St.df}, α = 0.05) = ${St.tc.toFixed(2)}   →   |t| ${St.sig?">":"≤"} critical ⇒ ${St.sig?"reject H₀: ρ = 0 (link is significant)":"cannot reject H₀: ρ = 0 (no proven link)"}`;
   $("labCount").textContent=`Fake students: ${LAB.fake.length} / 5  (sample = ${D.pts.length} real + ${LAB.fake.length} fake)`;
   if(!LAB.won&&LAB.fake.length>0&&St.sig!==LAB.baseSig){
-    LAB.won=true;gain(100);
+    LAB.won=true;
+    const n=LAB.fake.length;
+    const bonus=(5-n)*25;
+    const achievementBonus=n===1?50:0;
+    const totalReward=100+bonus+achievementBonus;
+    gain(totalReward);
+    if(n===1){S.achievements.labMinimalist=true;unlockAchievement("labMinimalist");}
     if(S.started)S.quests.lab=true;
     renderQuestLocks();
-    const n=LAB.fake.length;
-    $("labResult").innerHTML=`<div class="result win"><h4>P-VALUE HACKED! +₸100</h4>With only <b>${n}</b> fake student${n>1?"s":""} (${pct(n/(D.pts.length+n),0)} of the sample) the verdict flipped from "${LAB.baseSig?"significant":"not significant"}" to "${St.sig?"significant":"not significant"}". Small samples are fragile: a few made-up or unusual points can rewrite the conclusion.</div>`;
+
+    const bonusText=bonus>0
+      ? `<div class="note" style="margin-top:8px">🎯 FEWER POINTS BONUS: +${money(bonus)} · ${n}/5 fake students</div>`
+      : `<div class="note" style="margin-top:8px">Standard reward · all 5 fake-student slots used</div>`;
+    const achievementText=n===1
+      ? `<div class="myth" style="margin-top:10px">🏆 <b>HIDDEN ACHIEVEMENT UNLOCKED</b><br><span style="font-family:'Press Start 2P',monospace;font-size:9px">ONE-POINT WONDER</span><br><span class="note">You flipped the verdict with exactly one fake student. +${money(achievementBonus)} secret bonus.</span></div>`
+      : "";
+
+    $("labResult").innerHTML=`<div class="result win">
+      <h4>P-VALUE HACKED! +${money(totalReward)}</h4>
+      With only <b>${n}</b> fake student${n>1?"s":""} (${pct(n/(D.pts.length+n),0)} of the sample) the verdict flipped from "${LAB.baseSig?"significant":"not significant"}" to "${St.sig?"significant":"not significant"}".
+      <br><span class="note">Base reward: ${money(100)} · efficiency bonus: ${money(bonus)}${achievementBonus?` · secret achievement: ${money(achievementBonus)}`:""}</span>
+      ${bonusText}${achievementText}
+      <br><span class="note">Small samples are fragile: a few made-up or unusual points can rewrite the conclusion.</span>
+    </div>`;
   }
 }
 function labClick(e){
@@ -1216,7 +1251,7 @@ function labSetup(){
   }
   const base=pearson(D.pts),df=base.n-2,t=base.r*Math.sqrt(df/(1-base.r*base.r));
   LAB.baseSig=Math.abs(t)>critT(df);LAB.fake=[];LAB.won=false;$("labResult").innerHTML="";
-  $("labGoal").innerHTML=`🎯 <b>Mission:</b> the real data is currently <b>${LAB.baseSig?"statistically significant":"not significant"}</b>. Click the chart to plant up to 5 fake students and make it <b>${LAB.baseSig?"not significant":"significant"}</b>. Hint: ${LAB.baseSig?"place points that break the trend.":"place points that form a clean diagonal line."}`;
+  $("labGoal").innerHTML=`🎯 <b>Mission:</b> the real data is currently <b>${LAB.baseSig?"statistically significant":"not significant"}</b>. Click the chart to plant up to 5 fake students and make it <b>${LAB.baseSig?"not significant":"significant"}</b>. Hint: ${LAB.baseSig?"place points that break the trend.":"place points that form a clean diagonal line."} <b>Fewer fake points = a bigger reward.</b>`;
   renderLab();
 }
 
