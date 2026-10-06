@@ -45,9 +45,10 @@ h1 small{display:block;font-size:.42em;color:var(--mute);margin-top:10px;text-sh
 .status{font:500 12px "IBM Plex Mono",monospace;color:var(--mute);margin:10px 0 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
 .dot.stale{background:var(--hot);box-shadow:0 0 8px var(--hot)}
-.survey-link{margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:rgba(111,128,255,.10);color:var(--ink);font:600 10px "IBM Plex Mono",monospace;text-decoration:none;transition:.12s;white-space:nowrap}
-.survey-link:hover{border-color:var(--blue);background:rgba(111,128,255,.20);transform:translateY(-1px)}
-@media(max-width:600px){.survey-link{margin-left:0;width:100%;justify-content:center}}
+.survey-link{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 13px;border:2px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);font:9px "Press Start 2P",monospace;text-decoration:none;box-shadow:0 4px 0 #0c0f2b;transition:.08s;white-space:nowrap;letter-spacing:.2px}
+.survey-link:hover{border-color:var(--blue);background:#151a3b;transform:translateY(-1px);box-shadow:0 5px 0 #0c0f2b}
+.survey-link:active{transform:translateY(3px);box-shadow:0 1px 0 #0c0f2b}
+@media(max-width:600px){.survey-link{margin-left:0;width:auto;justify-content:center}}
 
 .how{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:16px 0 4px}
 .how div{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--mute)}
@@ -154,7 +155,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 
 <div class="wrap">
 <h1>SESSION SURVIVOR<small>An exam-week RPG where every dice roll is a real probability formula</small></h1>
-<div class="status"><span class="dot" id="dot"></span><span id="statusText">Loading survey data…</span><button class="btn ghost" id="refresh" style="font-size:8px;padding:6px 10px;box-shadow:none">Reload data</button><a class="survey-link" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener noreferrer">📝 TAKE THE SURVEY ↗</a></div>
+<div class="status"><span class="dot" id="dot"></span><span id="statusText">Loading survey data…</span><button class="btn ghost" id="refresh" style="font-size:8px;padding:6px 10px;box-shadow:none">Reload data</button><a class="survey-link" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener noreferrer">📝 SURVEY</a></div>
 
 <div class="how">
   <div><b>🎯 Goal</b>Survive 5 exam days, earn points and money.</div>
