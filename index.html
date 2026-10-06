@@ -152,6 +152,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 <div class="wrap">
 <h1>SESSION SURVIVOR<small>An exam-week RPG where every dice roll is a real probability formula</small></h1>
 <div class="status"><span class="dot" id="dot"></span><span id="statusText">Loading survey data…</span><button class="btn ghost" id="refresh" style="font-size:8px;padding:6px 10px;box-shadow:none">Reload data</button></div>
+<div style="margin:10px 0 14px"><a class="btn gold" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener noreferrer" style="display:inline-block;text-decoration:none">📝 Take the survey</a></div>
 
 <div class="how">
   <div><b>🎯 Goal</b>Survive 5 exam days, earn points and money.</div>
@@ -185,7 +186,10 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
     <div class="note" id="pNote"></div>
     <details class="math"><summary>▸ Show the math (Bayes' rule)</summary><div class="formula" id="pFormula"></div></details>
     <div class="myth" id="sleepMyth"></div>
-    <button class="btn" id="startBtn">Start the exam week ▶</button>
+    <div class="row" style="gap:10px;flex-wrap:wrap">
+      <a class="btn gold" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener noreferrer" style="display:inline-block;text-decoration:none">📝 Take the survey</a>
+      <button class="btn" id="startBtn">Start the exam week ▶</button>
+    </div>
   </div>
 
   <div class="card hidden" id="cDay">
@@ -194,7 +198,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
     <!-- step 1 -->
     <div id="stepCommute">
       <h3>Morning commute <small>Poisson</small></h3>
-      <p class="lead">Traffic, snow, alarm clocks… every week you are late a <i>random</i> number of times. The survey says students are late about <b id="lamTxt"></b> times a week. Each late arrival costs <b>4 HP</b> and <b>3 exam points</b>.</p>
+      <p class="lead">Traffic, snow, alarm clocks… each day you can be late a <i>random</i> number of times. The survey gives a weekly average, which the game converts to a <b>daily rate</b> for each of the 5 exam days: about <b id="lamTxt"></b> lates per day. Each late arrival costs <b>4 HP</b> and <b>3 exam points</b>.</p>
       <div class="plain" id="cPlain"></div>
       <div id="cPoisChart"></div>
       <details class="math"><summary>▸ Show the math (Poisson distribution)</summary><div class="formula" id="cPoisF"></div></details>
@@ -560,7 +564,7 @@ function sleepMyth(){
 /* =====================================================================
    PLAY FLOW
    ===================================================================== */
-const lamEff=()=>D.lateMean*(S.items.alarm?.5:1);
+const lamEff=()=>D.lateMean/DAYS*(S.items.alarm?.5:1);
 function goStep(step){
   S.step=step;
   $("stepCommute").classList.toggle("hidden",step!=="commute");
@@ -603,10 +607,12 @@ function drawPois(hit){
 }
 function renderCommute(){
   const lam=lamEff();
-  $("lamTxt").textContent=D.lateMean.toFixed(2)+(S.items.alarm?" (halved to "+lam.toFixed(2)+" by your 🔔 alarm clock)":"");
-  $("cPlain").innerHTML=`Each bar is the chance of being late that many times this week. Chance of <b>zero</b> lates: <b>${pct(poisPmf(0,lam))}</b>. Chance of <b>3 or more</b>: <b>${pct(1-poisPmf(0,lam)-poisPmf(1,lam)-poisPmf(2,lam))}</b>.`;
+  const dailyBase=D.lateMean/DAYS;
+  $("lamTxt").textContent=lam.toFixed(2)+(S.items.alarm?" (halved by your 🔔 alarm clock)":"");
+  $("cPlain").innerHTML=`The survey reports <b>${D.lateMean.toFixed(2)} lates per week</b>. The game spreads that across the ${DAYS} exam days, so today's Poisson rate is <b>λ = ${lam.toFixed(2)}</b>. Chance of <b>zero</b> lates today: <b>${pct(poisPmf(0,lam))}</b>. Chance of <b>3 or more today</b>: <b>${pct(1-poisPmf(0,lam)-poisPmf(1,lam)-poisPmf(2,lam))}</b>.`;
   $("cPoisF").innerHTML=`P(K = k) = λ^k · e^(−λ) / k!
-λ = ${lam.toFixed(2)} (survey mean late arrivals per week${S.items.alarm?" × 0.5 for the alarm clock":""})
+λ = ${D.lateMean.toFixed(2)} / ${DAYS} = ${dailyBase.toFixed(2)} lates per day${S.items.alarm?" × 0.5 for the alarm clock":""}
+Today's λ = ${lam.toFixed(2)}
 P(K = 0) = e^(−${lam.toFixed(2)}) = ${pct(poisPmf(0,lam))}      mean = variance = λ`;
   drawPois(null);
 }
@@ -616,15 +622,15 @@ function rollCommute(){
     S.k=0;
     drawPois(0);
     $("cRollBtn").disabled=true;
-    $("cPoisOut").innerHTML=`<div class="result win"><h4>FAKE ID WORKED 🪪</h4>Security looked the other way. <b>0 lates</b> this week.</div>`;
-    logMsg(`Day ${S.day}: Fake Student ID used — zero lates.`);
+    $("cPoisOut").innerHTML=`<div class="result win"><h4>FAKE ID WORKED 🪪</h4>Security looked the other way. <b>0 lates</b> today.</div>`;
+    logMsg(`Day ${S.day}: Fake Student ID used — zero lates today.`);
     $("toExamBtn").classList.remove("hidden");
     hud();
     return;
   }
   const lam=lamEff(),k=poisSample(lam);
   S.k=k;drawPois(k);$("cRollBtn").disabled=true;
-  $("cPoisOut").innerHTML=`<div class="result ${k===0?"win":"lose"}"><h4>${k===0?"ON TIME ALL WEEK!":"LATE ×"+k}</h4>That outcome had a <b>${pct(poisPmf(k,lam))}</b> chance. ${k?`Penalty: <b>−${4*k} HP</b> and <b>−${3*k} exam points</b>.`:"No penalty."}</div>`;
+  $("cPoisOut").innerHTML=`<div class="result ${k===0?"win":"lose"}"><h4>${k===0?"ON TIME TODAY!":"LATE ×"+k}</h4>That outcome had a <b>${pct(poisPmf(k,lam))}</b> chance. ${k?`Penalty: <b>−${4*k} HP</b> and <b>−${3*k} exam points</b>.`:"No penalty."}</div>`;
   logMsg(`Day ${S.day}: late ×${k}${k?` (−${4*k} HP)`:""}.`);
   if(k&&damage(4*k,`You were late ${k} times and the stress knocked you out.`))return;
   $("toExamBtn").classList.remove("hidden");
@@ -691,7 +697,7 @@ function renderEvening(){
   $("bWork").disabled=S.worked;$("bWork").textContent=S.worked?"DONE":(S.hp<=12?"WORK ⚠ DEADLY":"WORK +₸40");
   const items=[
     ["☕","Coffee",COST.coffee,"Instantly restore 10 HP. Buy as many as you like.",()=>false,"coffee"],
-    ["🔔","Alarm clock",COST.alarm,"Halves how often you are late (λ × 0.5) for the rest of the game.",()=>S.items.alarm,"alarm"],
+    ["🔔","Alarm clock",COST.alarm,"Halves your daily late rate (λ × 0.5) for the rest of the game.",()=>S.items.alarm,"alarm"],
     ["📚","Private tutor",COST.tutor,"+5 to your average exam score permanently.",()=>S.items.tutor,"tutor"],
     ["🎫","Revive Token",COST.revive,"If you collapse, come back at full HP and keep your money.",()=>false,"revive"],
     ["🎧","Hidden Earpiece",COST.earpiece,"CHEAT: your next exam target is guaranteed. One use. Very illegal. Very expensive.",()=>false,"earpiece"],
@@ -932,9 +938,16 @@ Critical t (df = ${St.df}, α = 0.05) = ${St.tc.toFixed(2)}   →   |t| ${St.sig
 }
 function labClick(e){
   if(LAB.fake.length>=5)return;
-  const r=$("labSvg").getBoundingClientRect();
-  const px=(e.clientX-r.left)/r.width*LW,py=(e.clientY-r.top)/r.height*LH;
-  const x=XR[0]+(px-LM.l)/(LW-LM.l-LM.r)*(XR[1]-XR[0]),y=YR[0]+(LH-LM.b-py)/(LH-LM.t-LM.b)*(YR[1]-YR[0]);
+  const svg=$("labSvg");
+  // Convert the mouse position to the SVG's real viewBox coordinates.
+  // This is important because the responsive chart can be displayed at a
+  // different aspect ratio/size than its 600x340 internal coordinate system.
+  const pt=svg.createSVGPoint();
+  pt.x=e.clientX; pt.y=e.clientY;
+  const svgPt=pt.matrixTransform(svg.getScreenCTM().inverse());
+  const px=svgPt.x,py=svgPt.y;
+  const x=XR[0]+(px-LM.l)/(LW-LM.l-LM.r)*(XR[1]-XR[0]);
+  const y=YR[0]+(LH-LM.b-py)/(LH-LM.t-LM.b)*(YR[1]-YR[0]);
   if(x<XR[0]||x>XR[1]||y<YR[0]||y>YR[1])return;
   LAB.fake.push([+x.toFixed(1),Math.round(y)]);
   renderLab();
