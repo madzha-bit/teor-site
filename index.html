@@ -43,6 +43,10 @@ body{
 h1{font-family:"Press Start 2P",monospace;font-size:clamp(16px,3.6vw,26px);line-height:1.35;margin:6px 0 0;color:var(--mint);text-shadow:0 0 18px rgba(77,240,194,.45)}
 h1 small{display:block;font-size:.42em;color:var(--mute);margin-top:10px;text-shadow:none}
 .status{font:500 12px "IBM Plex Mono",monospace;color:var(--mute);margin:10px 0 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.survey-banner{margin:12px 0 4px;background:var(--panel);border:2px solid var(--line);border-radius:12px;box-shadow:4px 4px 0 #000;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px}
+.survey-banner-copy{display:flex;flex-direction:column;gap:4px;min-width:0}.survey-banner-copy b{font:12px "Press Start 2P",monospace;color:var(--ink)}.survey-banner-copy small{font:12px "IBM Plex Mono",monospace;color:var(--mute);line-height:1.45}.survey-kicker{font:8px "Press Start 2P",monospace;color:var(--gold)}
+.survey-btn{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;font-family:"Press Start 2P",monospace;font-size:10px;padding:13px 18px;background:var(--gold);color:#2b2100;border:0;border-radius:8px;cursor:pointer;text-decoration:none;box-shadow:0 5px 0 #b38d17;transition:.08s;white-space:nowrap}.survey-btn:hover{filter:brightness(1.08)}.survey-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b38d17}
+@media(max-width:600px){.survey-banner{align-items:stretch;flex-direction:column}.survey-btn{width:100%;text-align:center}}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
 .dot.stale{background:var(--hot);box-shadow:0 0 8px var(--hot)}
 
@@ -130,25 +134,47 @@ table.t th{color:var(--mute);font-weight:500;background:#0b0e28}
 .log li{padding:3px 0;border-bottom:1px dashed var(--line)}
 
 
-/* casino: full-screen arcade / roulette style */
-.casino-card{position:relative;overflow:hidden;background:radial-gradient(circle at 50% 25%,#25163d 0,#0d1026 42%,#070913 100%);border:3px solid #d4a928;box-shadow:0 0 0 4px #17142b,0 12px 0 #05060b,0 0 45px rgba(212,169,40,.16)}
+/* casino: pixel-art slot machine */
+.casino-card{position:relative;overflow:hidden;background:radial-gradient(circle at 50% 18%,#25163d 0,#0d1026 42%,#070913 100%);border:3px solid #d4a928;box-shadow:0 0 0 4px #17142b,0 12px 0 #05060b,0 0 45px rgba(212,169,40,.16)}
 .casino-card:before{content:"";position:absolute;inset:8px;pointer-events:none;border:1px dashed rgba(255,210,74,.25)}
 .casino-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;position:relative;z-index:1}
 .casino-head h2{font-size:20px;text-shadow:3px 3px #000}
 .casino-bank{background:#090a15;border:3px solid var(--gold);color:var(--gold);padding:11px 14px;border-radius:4px;font:9px "Press Start 2P",monospace;white-space:nowrap;box-shadow:4px 4px 0 #000}
 .casino-bank b{display:block;font-size:15px;margin-top:8px;color:#fff}
 .casino-rules{display:none}
-.casino-table{margin:18px auto 16px;max-width:650px;background:radial-gradient(circle,#0b3b2d,#061d17);border:5px solid var(--gold);box-shadow:0 0 0 5px #12132a,6px 8px 0 #000;border-radius:50%;padding:16px;position:relative}
-.roulette{width:min(430px,78vw);aspect-ratio:1;margin:auto;border-radius:50%;position:relative;background:repeating-conic-gradient(from -7.5deg,#b73548 0deg 15deg,#181a32 15deg 30deg);border:11px solid #e1b52f;box-shadow:inset 0 0 0 5px #080916,0 0 0 3px #765d15,0 0 30px rgba(225,181,47,.2);overflow:hidden}
-.roulette:before{content:"";position:absolute;inset:15%;border-radius:50%;border:5px solid #e1b52f;background:radial-gradient(circle,#211738 0 12%,#0e1026 13% 28%,#d1a62a 29% 32%,#111329 33% 100%);box-shadow:inset 0 0 0 4px #070811}
-.roulette:after{content:"";position:absolute;left:50%;top:50%;width:38px;height:38px;transform:translate(-50%,-50%);border-radius:50%;background:#f5d96b;border:5px solid #1a1830;box-shadow:0 0 0 3px #b58a1e;z-index:3}
-.roulette.spin{animation:rouletteSpin 1.15s cubic-bezier(.12,.65,.2,1)}
-@keyframes rouletteSpin{0%{transform:rotate(0)}100%{transform:rotate(720deg)}}
-.roulette-labels{position:absolute;inset:0;z-index:2;pointer-events:none}
-.roulette-labels span{position:absolute;left:50%;top:50%;width:30px;margin-left:-15px;margin-top:-7px;text-align:center;color:#fff;font:9px "Press Start 2P",monospace;text-shadow:2px 2px #000}
-.roulette-pointer{position:absolute;left:50%;top:-3px;transform:translateX(-50%);z-index:6;width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:23px solid #ffdf5a;filter:drop-shadow(2px 3px #000)}
-.roulette-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;text-align:center;width:115px;color:var(--gold);font:8px "Press Start 2P",monospace;text-shadow:2px 2px #000;pointer-events:none}
-.roulette-center b{display:block;font-size:13px;margin-top:6px;color:#fff}
+.casino-table{display:flex;justify-content:center;margin:18px auto 18px;max-width:760px;padding:6px 8px;position:relative}
+.slot-machine{width:min(590px,92vw);position:relative;background:linear-gradient(180deg,#6d2d60 0,#321a48 18%,#171329 72%,#0b0d1b 100%);border:5px solid #d9b443;box-shadow:0 0 0 4px #17142b,8px 10px 0 #000,0 0 35px rgba(212,169,40,.2);padding:18px 18px 22px;border-radius:8px}
+.slot-machine:before{content:"";position:absolute;inset:7px;border:2px solid rgba(255,236,139,.22);pointer-events:none;border-radius:4px}
+.slot-top{position:relative;text-align:center;margin-bottom:12px}
+.slot-lights{display:flex;justify-content:center;gap:7px;margin-bottom:10px}
+.slot-lights i{display:block;width:9px;height:9px;background:#f6d55b;border:2px solid #8d6a15;border-radius:50%;box-shadow:0 0 8px rgba(255,220,90,.55)}
+.slot-lights i:nth-child(3n){background:#e65d6c}.slot-lights i:nth-child(3n+1){background:#9b7cff}
+.slot-brand{display:inline-block;color:#fff4bc;font:12px "Press Start 2P",monospace;letter-spacing:1px;text-shadow:3px 3px #120b1d}
+.slot-subtitle{margin-top:8px;color:#cfc6df;font:8px "Press Start 2P",monospace}
+.slot-reel-frame{position:relative;background:#0a0a11;border:5px solid #17131f;box-shadow:inset 0 0 0 3px #5e532e,7px 7px 0 #000;padding:12px;margin:8px auto 14px;max-width:520px}
+.slot-reel-frame:before,.slot-reel-frame:after{content:"";position:absolute;top:50%;width:18px;height:34px;transform:translateY(-50%);background:#25212f;border:2px solid #7d6a2e;box-shadow:2px 2px 0 #000}
+.slot-reel-frame:before{left:-28px}.slot-reel-frame:after{right:-28px}
+.slot-reels{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:8px;background:#20202b;border:4px solid #8e7f4a;padding:8px;box-shadow:inset 0 0 0 2px #07070d}
+.slot-reel-window{height:112px;overflow:hidden;background:linear-gradient(180deg,#ddd7c5,#fffdf0 50%,#c8c1af);border:4px solid #5b5660;box-shadow:inset 0 8px 0 rgba(255,255,255,.65),inset 0 -8px 0 rgba(0,0,0,.16);display:grid;place-items:center;position:relative}
+.slot-reel-window:after{content:"";position:absolute;left:5px;right:5px;top:50%;height:2px;background:#7b162c;box-shadow:0 -48px 0 rgba(123,22,44,.12),0 48px 0 rgba(123,22,44,.12);pointer-events:none}
+.slot-value{position:relative;z-index:2;color:#20202a;font:22px "Press Start 2P",monospace;text-shadow:2px 2px #fff;line-height:1}
+.slot-reel-window.center .slot-value{font-size:27px;color:#8c182d}
+.slot-machine.spinning .slot-value{animation:slotJitter .07s steps(2,end) infinite;filter:blur(.4px)}
+.slot-machine.spinning{filter:saturate(.92)}
+.slot-machine.win{box-shadow:0 0 0 4px #17142b,8px 10px 0 #000,0 0 35px rgba(212,169,40,.38),0 0 60px rgba(77,240,194,.12)}
+.slot-machine.lose{box-shadow:0 0 0 4px #17142b,8px 10px 0 #000,0 0 35px rgba(255,79,139,.24)}
+@keyframes slotJitter{0%{transform:translateY(-4px)}50%{transform:translateY(4px)}}
+.slot-machine.win .slot-reel-window{box-shadow:inset 0 0 0 4px rgba(205,168,43,.75),inset 0 8px 0 rgba(255,255,255,.65),inset 0 -8px 0 rgba(0,0,0,.16),0 0 18px rgba(215,171,54,.22)}
+.slot-machine.lose .slot-reel-window{box-shadow:inset 0 0 0 4px rgba(199,61,84,.6),inset 0 8px 0 rgba(255,255,255,.65),inset 0 -8px 0 rgba(0,0,0,.16)}
+.slot-payline{margin:10px auto 0;color:#7c1730;font:8px "Press Start 2P",monospace;text-align:center;background:#eee8d9;border:2px solid #756d62;padding:6px;box-shadow:2px 2px 0 #000;max-width:260px}
+.slot-message{min-height:20px;text-align:center;color:var(--gold);font:9px "Press Start 2P",monospace;text-shadow:2px 2px #000;margin:6px 0 2px}
+.slot-lever{position:absolute;right:-31px;top:84px;width:33px;height:92px;background:#2b2936;border:3px solid #a28a45;box-shadow:4px 4px 0 #000;padding:0;border-radius:4px;cursor:pointer}
+.slot-lever:before{content:"";position:absolute;left:50%;top:8px;bottom:19px;width:7px;transform:translateX(-50%);background:#ad9a73;border:2px solid #5c4e3a;box-shadow:2px 2px 0 #000}
+.slot-lever:after{content:"";position:absolute;left:50%;top:1px;width:21px;height:21px;transform:translateX(-50%);border-radius:50%;background:#e05b69;border:3px solid #772437;box-shadow:2px 3px 0 #000}
+.slot-lever:active{transform:translateY(4px)}
+.slot-lever span{position:absolute;bottom:3px;left:0;right:0;font:6px "Press Start 2P",monospace;color:#f4d97a;writing-mode:vertical-rl;transform:rotate(180deg);margin:auto}
+.slot-machine.result-pop{animation:slotResultPop .22s steps(2,end)}
+@keyframes slotResultPop{50%{transform:scale(1.015)}}
 .casino-controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
 .casino-control{background:#090b19;border:2px solid #4b416b;border-radius:4px;padding:12px;box-shadow:3px 3px 0 #000}
 .casino-control input{width:100%;min-width:0;margin-top:10px}
@@ -165,7 +191,7 @@ table.t th{color:var(--mute);font-weight:500;background:#0b0e28}
 .casino-test-btn{width:min(320px,82%);font-size:8px!important;padding:9px 12px!important;opacity:.78;box-shadow:3px 3px 0 #000!important}
 .casino-chart-title{font:9px "Press Start 2P",monospace;color:#9fa9ff;margin:22px 0 8px;padding:9px 10px;background:#101126;border:2px solid #38345a;box-shadow:3px 3px 0 #000;text-align:center}
 .casino-chart-frame{background:#080a16;border:2px solid #302a49;padding:8px;box-shadow:3px 3px 0 #000;margin-bottom:12px}
-@media(max-width:760px){.casino-actions .gold{font-size:12px;padding:17px 14px}.casino-test-btn{width:88%}.casino-chart-title{font-size:8px}.casino-summary-box strong{font-size:18px}}
+@media(max-width:760px){.casino-actions .gold{font-size:12px;padding:17px 14px}.casino-test-btn{width:88%}.casino-chart-title{font-size:8px}.casino-summary-box strong{font-size:18px}.slot-machine{width:min(540px,100%);padding:15px 12px 18px}.slot-reel-window{height:88px}.slot-value{font-size:16px}.slot-reel-window.center .slot-value{font-size:20px}.slot-reel-frame:before,.slot-reel-frame:after{display:none}.slot-lever{right:7px;top:50%;width:28px;height:78px;transform:translateY(-50%) scale(.78);transform-origin:center}}
 .casino-popup{position:fixed;inset:0;z-index:100;background:rgba(3,3,10,.86);display:grid;place-items:center;padding:20px;backdrop-filter:blur(3px)}
 .casino-popup-box{width:min(430px,92vw);background:linear-gradient(180deg,#211537,#0b0d20);border:4px solid var(--gold);box-shadow:0 0 0 5px #111329,10px 10px 0 #000,0 0 70px rgba(212,169,40,.25);padding:28px 22px;text-align:center;animation:casinoPop .25s ease}
 @keyframes casinoPop{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
@@ -187,7 +213,7 @@ table.t th{color:var(--mute);font-weight:500;background:#0b0e28}
 .random-popup-close{width:min(360px,100%);font-size:10px!important}
 @media(max-width:760px){.random-popup-box{padding:18px 14px}.random-popup-art{height:125px}.random-popup-title{font-size:12px}.random-popup-text{font-size:11px}.random-popup-effect{font-size:8px}}
 
-@media(max-width:760px){.casino-head{flex-direction:column}.casino-controls,.casino-summary{grid-template-columns:1fr}.casino-bank{width:100%}.casino-table{padding:10px}.roulette{width:min(340px,82vw)}}
+@media(max-width:760px){.casino-head{flex-direction:column}.casino-controls,.casino-summary{grid-template-columns:1fr}.casino-bank{width:100%}.casino-table{padding:10px}}
 
 /* death overlay */
 #death{position:fixed;inset:0;z-index:50;background:rgba(5,0,10,.92);display:grid;place-items:center;padding:20px}
@@ -197,8 +223,6 @@ table.t th{color:var(--mute);font-weight:500;background:#0b0e28}
 #death .btns{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 
-.roulette-wheel.spinning{animation:rouletteSpin 2.4s cubic-bezier(.12,.7,.18,1)}
-@keyframes rouletteSpin{0%{transform:rotate(0deg)}15%{transform:rotate(120deg)}45%{transform:rotate(720deg)}75%{transform:rotate(1260deg)}100%{transform:rotate(1440deg)}}
 .probability-title{margin-top:28px;border-top:3px dashed rgba(255,255,255,.15);padding-top:22px}
 </style>
 </head>
@@ -215,7 +239,11 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 
 <div class="wrap">
 <h1>SESSION SURVIVOR<small>An exam-week RPG where every dice roll is a real probability formula</small></h1>
-<div class="status"><span class="dot" id="dot"></span><span id="statusText">Loading survey data…</span><button class="btn ghost" id="refresh" style="font-size:8px;padding:6px 10px;box-shadow:none">Reload data</button><a class="btn ghost" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener" style="font-size:8px;padding:6px 10px;box-shadow:none;text-decoration:none">📝 SURVEY</a></div>
+<div class="status"><span class="dot" id="dot"></span><span id="statusText">Loading survey data…</span><button class="btn ghost" id="refresh" style="font-size:8px;padding:6px 10px;box-shadow:none">Reload data</button></div>
+<div class="survey-banner">
+  <div class="survey-banner-copy"><span class="survey-kicker">📊 REAL STUDENT DATA</span><b>Help improve the game</b><small>Take the anonymous student survey — its results power the probabilities in Session Survivor.</small></div>
+  <a class="btn survey-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSe8vIm-Ac4PqDQh3gOO8uwKwrbBwjTgTFyBGlQRmkBmRiVUyA/viewform?usp=header" target="_blank" rel="noopener">📝 TAKE THE SURVEY</a>
+</div>
 
 <div class="how">
   <div><b>🎯 Goal</b>Survive 5 exam days, earn points and money.</div>
@@ -258,7 +286,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
     <!-- step 1 -->
     <div id="stepCommute">
       <h3>Morning commute <small>Poisson</small></h3>
-      <p class="lead">Traffic, snow, alarm clocks… every week you are late a <i>random</i> number of times. The survey says students are late about <b id="lamTxt"></b> times today on average. Each late arrival costs <b>4 HP</b> and <b>3 exam points</b>.</p>
+      <p class="lead">Traffic, snow, alarm clocks… every week you are late a <i>random</i> number of times. The survey says students are late about <b id="lamTxt"></b> times per week. The game converts that weekly survey number into a daily Poisson rate. Each late arrival costs <b>4 HP</b> and <b>3 exam points</b>.</p>
       <div class="plain" id="cPlain"></div>
       <div id="cPoisChart"></div>
       <details class="math"><summary>▸ Show the math (Poisson distribution)</summary><div class="formula" id="cPoisF"></div></details>
@@ -309,10 +337,22 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
     </div>
     <div class="casino-rules"><div><b>1. PICK</b><span>Choose a group.</span></div><div><b>2. SET</b><span>Set the odds and bet.</span></div><div><b>3. BET</b><span>Roll the group.</span></div></div>
     <div class="casino-table">
-      <div class="roulette-pointer"></div>
-      <div class="roulette" id="rouletteWheel">
-        <div class="roulette-labels" id="rouletteLabels"></div>
-        <div class="roulette-center">STUDY<br><b>ROULETTE</b></div>
+      <div class="slot-machine" id="slotMachine">
+        <div class="slot-top">
+          <div class="slot-lights"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="slot-brand">★ STUDY JACKPOT ★</div>
+          <div class="slot-subtitle">SPIN THE ODDS · WIN THE WEEK</div>
+        </div>
+        <button class="slot-lever" id="slotLever" type="button" aria-label="Pull the slot lever"><span>PULL</span></button>
+        <div class="slot-reel-frame">
+          <div class="slot-reels">
+            <div class="slot-reel-window"><div class="slot-value" id="slotLeft">7</div></div>
+            <div class="slot-reel-window center"><div class="slot-value" id="slotCenter">12</div></div>
+            <div class="slot-reel-window"><div class="slot-value" id="slotRight">7</div></div>
+          </div>
+          <div class="slot-payline">— PASS LINE —</div>
+        </div>
+        <div class="slot-message" id="slotMessage">READY TO SPIN</div>
       </div>
     </div>
     <div class="casino-controls">
@@ -702,10 +742,10 @@ function drawPois(hit){
 }
 function renderCommute(){
   const lam=lamEff();
-  $("lamTxt").textContent=D.lateMean.toFixed(2)+(S.items.alarm?" (halved to "+lam.toFixed(2)+" by your 🔔 alarm clock)":"");
-  $("cPlain").innerHTML=`Each bar is the chance of being late that many times today. Chance of <b>zero</b> lates: <b>${pct(poisPmf(0,lam))}</b>. Chance of <b>3 or more</b>: <b>${pct(1-poisPmf(0,lam)-poisPmf(1,lam)-poisPmf(2,lam))}</b>.`;
+  $("lamTxt").textContent=D.lateMean.toFixed(2);
+  $("cPlain").innerHTML=`Each bar is the chance of being late that many times today. The daily rate is <b>λ = ${lam.toFixed(2)}</b>${S.items.alarm?" after the 🔔 alarm clock halves it":""}. Chance of <b>zero</b> lates: <b>${pct(poisPmf(0,lam))}</b>. Chance of <b>3 or more</b>: <b>${pct(1-poisPmf(0,lam)-poisPmf(1,lam)-poisPmf(2,lam))}</b>.`;
   $("cPoisF").innerHTML=`P(K = k) = λ^k · e^(−λ) / k!
-λ = ${lam.toFixed(2)} (survey mean late arrivals per day${S.items.alarm?" × 0.5 for the alarm clock":""})
+λ = ${lam.toFixed(2)} per day = ${D.lateMean.toFixed(2)} / 5${S.items.alarm?" × 0.5 for the alarm clock":""}
 P(K = 0) = e^(−${lam.toFixed(2)}) = ${pct(poisPmf(0,lam))}      mean = variance = λ`;
   drawPois(null);
 }
@@ -719,7 +759,7 @@ function randomDailyEvent(){
     {icon:"🚌",title:"WRONG BUS",text:"The bus took a completely wrong turn. You lost extra time getting back on route.",late:1},
     {icon:"🐕",title:"RUNAWAY DOG",text:"A runaway dog needed your help. You chased it down before heading to campus.",late:1},
     {icon:"📦",title:"FRESHMAN IN TROUBLE",text:"A lost freshman asked for directions. You helped them, but the clock did not wait.",late:1},
-    {icon:"☕",title:"FREE COFFEE",text:"A cafe gave you a free coffee for being the first student there.",money:20},
+    {icon:"☕",title:"FREE COFFEE",text:"A cafe gave you a free coffee and a ₸20 student perk for being the first student there.",money:20},
     {icon:"💸",title:"LUCKY FIND",text:"You found some cash on the sidewalk and handed it to nobody in particular.",money:30},
     {icon:"🛗",title:"ELEVATOR CHAOS",text:"The elevator stopped at every floor. Somehow you survived the journey.",late:1},
     {icon:"🍀",title:"LUCKY MORNING",text:"Someone held the doors, your bus arrived instantly, and the morning went perfectly.",hp:5}
@@ -769,7 +809,8 @@ function rollCommute(){
   const event=applyDailyEvent();
   const totalK=S.k;
   drawPois(totalK);
-  $("cPoisOut").innerHTML=`<div class="result ${totalK===0?"win":"lose"}"><h4>${totalK===0?"ON TIME TODAY!":"LATE ×"+totalK}</h4>Base commute outcome had a <b>${pct(poisPmf(k,lam))}</b> chance. ${totalK?`Total penalty: <b>−${4*totalK} HP</b> and <b>−${3*totalK} exam points</b>.`:"No penalty."}</div>`+(eventHtml||"");
+  $("cPoisOut").innerHTML=`<div class="result ${totalK===0?"win":"lose"}"><h4>${totalK===0?"ON TIME TODAY!":"LATE ×"+totalK}</h4>Base commute outcome had a <b>${pct(poisPmf(k,lam))}</b> chance. ${totalK?`Total penalty: <b>−${4*totalK} HP</b> and <b>−${3*totalK} exam points</b>.`:"No penalty."}</div>`;
+  if(event)showRandomEventPopup(event);
   if(totalK&&damage(4*totalK,`You were late ${totalK} time${totalK===1?"":"s"} today and the stress knocked you out.`))return;
   if(totalK)S.pts=Math.max(0,S.pts-3*totalK);
   $("toExamBtn").classList.remove("hidden");
@@ -917,27 +958,43 @@ function setupGroup(){
   renderGroup();
 }
 
-function renderRoulette(n,k){
-  const el=$("rouletteLabels");
-  if(!el)return;
-  const count=Math.min(n+1,16);
-  const labels=[];
-  for(let i=0;i<count;i++){
-    const value=Math.round(i*n/(count-1||1));
-    const angle=i*360/count-90;
-    labels.push(`<span style="transform:rotate(${angle}deg) translateY(-${Math.min(150,Math.max(85,n*4))}px) rotate(${-angle}deg)">${value}</span>`);
-  }
-  el.innerHTML=labels.join("");
-  const wheel=$("rouletteWheel");
-  wheel.classList.remove("spin");
+let slotTimer=null;
+let casinoBusy=false;
+function renderSlotMachine(n,k){
+  const left=$("slotLeft"),center=$("slotCenter"),right=$("slotRight"),msg=$("slotMessage"),machine=$("slotMachine");
+  if(!left||!center||!right||!machine)return;
+  const target=Math.min(n,Math.max(1,k));
+  left.textContent="7";center.textContent=String(target).padStart(2,"0");right.textContent="7";
+  machine.classList.remove("win","lose","result-pop","spinning");
+  if(msg)msg.textContent=`TARGET: ≥ ${k} STUDENTS`;
 }
-function spinRoulette(){
-  const wheel=$("rouletteWheel");
-  if(!wheel)return;
-  wheel.classList.remove("spin");
-  void wheel.offsetWidth;
-  wheel.classList.add("spin");
-  setTimeout(()=>wheel.classList.remove("spin"),1200);
+function spinSlotMachine(n){
+  const machine=$("slotMachine"),els=[$("slotLeft"),$("slotCenter"),$("slotRight")];
+  if(!machine||els.some(x=>!x))return;
+  clearInterval(slotTimer);
+  machine.classList.remove("win","lose","result-pop");
+  machine.classList.add("spinning");
+  if($("slotMessage"))$("slotMessage").textContent="SPINNING…";
+  const symbols=["7","★","BAR","PASS","×","$","00","11","21","27"];
+  slotTimer=setInterval(()=>{
+    els.forEach((el,i)=>{
+      const v=Math.random()<.52?Math.floor(Math.random()*(n+1)):symbols[Math.floor(Math.random()*symbols.length)];
+      el.textContent=i===1?(typeof v==="number"?String(v).padStart(2,"0"):v):v;
+    });
+  },70);
+}
+function setSlotResult(x,n,k,win){
+  const machine=$("slotMachine"),left=$("slotLeft"),center=$("slotCenter"),right=$("slotRight"),msg=$("slotMessage");
+  clearInterval(slotTimer);
+  slotTimer=null;
+  if(!machine||!left||!center||!right)return;
+  machine.classList.remove("spinning","win","lose");
+  machine.classList.add(win?"win":"lose","result-pop");
+  left.textContent=win?"7":"×";
+  center.textContent=String(x).padStart(2,"0");
+  right.textContent=win?"7":"×";
+  if(msg)msg.textContent=win?`JACKPOT! ${x} / ${n} PASSED`:`MISS! ${x} / ${n} PASSED`;
+  setTimeout(()=>machine.classList.remove("result-pop"),260);
 }
 
 function renderGroup(){
@@ -951,7 +1008,7 @@ function renderGroup(){
   const stake=Math.min(+$("gS").value,S.money);
   $("gNv").textContent=n;$("gKv").textContent=k;$("gSv").textContent=money(stake);
   $("casinoMoney").textContent=money(S.money);
-  renderRoulette(n,k);
+  renderSlotMachine(n,k);
   let pw=0;const vals=[],labels=[],cls=[];
   for(let j=0;j<=n;j++){const q=binPmf(n,j,G.p);vals.push(q*100);labels.push(j);cls.push(j>=k?"zone":"");if(j>=k)pw+=q;}
   pw=clamp(pw,1e-6,1);G.pWin=pw;G.mult=Math.min(40,.9/pw);
@@ -972,7 +1029,10 @@ Expected passers = n·p = ${(n*G.p).toFixed(2)},  σ = √(n·p·(1−p)) = ${Ma
     `<div class="stat"><small>You win</small><b class="y">+${money(win)}</b></div>`+
     `<div class="stat"><small>Average result per bet</small><b class="${ev<0?"r":"g"}">${ev>=0?"+":"−"}${money(Math.abs(ev).toFixed(1))}</b></div>`;
   const broke=S.money<5;
-  $("gRoll").disabled=broke;$("gReset").classList.toggle("hidden",!broke);
+  $("gRoll").disabled=broke||casinoBusy;$("slotLever").disabled=broke||casinoBusy;$("gSim").disabled=casinoBusy;
+  $("gRoll").textContent=casinoBusy?"🎰 SPINNING…":"🎲 PLACE BET";
+  ["gN","gK","gS"].forEach(id=>$(id).disabled=casinoBusy);
+  $("gReset").classList.toggle("hidden",!broke||casinoBusy);
 }
 function showCasinoPopup(win,delta,x,n,k,exactChance){
   const pop=$("casinoPopup");
@@ -986,9 +1046,10 @@ function showCasinoPopup(win,delta,x,n,k,exactChance){
 }
 function closeCasinoPopup(){ $("casinoPopup").classList.add("hidden"); }
 function groupRoll(){
-  spinRoulette();
+  if(casinoBusy)return;
   const n=+$("gN").value,k=+$("gK").value,stake=Math.min(+$("gS").value,S.money);
   if(stake<5)return;
+  casinoBusy=true;
   let x=0;const ppl=[];
   for(let i=0;i<n;i++){const ok=Math.random()<G.p;if(ok)x++;ppl.push(ok);}
   G.lastX=x;
@@ -997,7 +1058,9 @@ function groupRoll(){
   S.money=Math.max(0,S.money+delta);if(delta>0)S.earned+=delta;hud();
   const exactChance=binPmf(n,x,G.p);
   renderGroup();
-  setTimeout(()=>showCasinoPopup(win,delta,x,n,k,exactChance),450);
+  spinSlotMachine(n);
+  setTimeout(()=>setSlotResult(x,n,k,win),520);
+  setTimeout(()=>{showCasinoPopup(win,delta,x,n,k,exactChance);casinoBusy=false;renderGroup();},900);
 }
 
 function groupSim(){
@@ -1185,6 +1248,7 @@ $("endDayBtn").onclick=endDay;
 $("respawnBtn").onclick=()=>respawn(false);
 $("reviveBtn").onclick=()=>respawn(true);
 $("gRoll").onclick=groupRoll;$("gSim").onclick=groupSim;
+$("slotLever").onclick=()=>{if(!$("gRoll").disabled)groupRoll();};
 $("gReset").onclick=()=>{S.money+=30;hud();renderGroup();};
 $("casinoPopupClose").onclick=closeCasinoPopup;
 $("randomEventClose").onclick=closeRandomEventPopup;
