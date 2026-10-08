@@ -568,7 +568,7 @@ function computeAll(st){
 function profileProbability(P){
   const matches=D.students.filter(s=>s.housing===P.housing&&s.phone===P.phone&&s.job===P.job&&s.coffee===P.coffee);
   const passed=matches.filter(s=>s.passed).length;
-  const p=(passed+0.5)/(matches.length+1);
+  const p=matches.length?passed/matches:D.pA;
   return {p,matches:matches.length,passed,overall:D.pA};
 }
 
@@ -631,7 +631,7 @@ function hud(){
 function logMsg(t){S.log.unshift(t);S.log=S.log.slice(0,8);$("logBox").innerHTML=S.log.map(x=>`<li>${x}</li>`).join("");}
 function gain(n){S.money+=n;S.earned+=Math.max(0,n);hud();}
 
-const ACH={labMinimalist:["🏆","ONE-POINT WONDER","Flip Regression Lab with exactly 1 fake point."],caffeine:["☕","CAFFEINE ADDICT","Buy 3 coffees in one exam week."],highRoller:["🎰","HIGH ROLLER","Win ₸500+ total in the casino."],bareSurvivor:["💀","FINAL BOSS","Finish the week with 10 HP or less."],honest:["🧠","HONEST SCHOLAR","Finish a week without using a cheat item."],broke:["💸","BROKE STUDENT","Drop to ₸10 or less."],jackpot:["⭐","STUDY JACKPOT","Get every student in your bet to pass."],survivor:["👑","SESSION SURVIVOR","Complete all 5 exam days."]};
+const ACH={labMinimalist:["🏆","ONE-POINT WONDER","Flip Frequency Lab with exactly 1 fake point."],caffeine:["☕","CAFFEINE ADDICT","Buy 3 coffees in one exam week."],highRoller:["🎰","HIGH ROLLER","Win ₸500+ total in the casino."],bareSurvivor:["💀","FINAL BOSS","Finish the week with 10 HP or less."],honest:["🧠","HONEST SCHOLAR","Finish a week without using a cheat item."],broke:["💸","BROKE STUDENT","Drop to ₸10 or less."],jackpot:["⭐","STUDY JACKPOT","Get every student in your bet to pass."],survivor:["👑","SESSION SURVIVOR","Complete all 5 exam days."]};
 function unlockAchievement(id){if(S.achievements[id])return;S.achievements[id]=true;const a=ACH[id];logMsg(`${a[0]} ACHIEVEMENT: ${a[1]}`);const old=document.getElementById("achievementToast");if(old)old.remove();const d=document.createElement("div");d.id="achievementToast";d.className="achievement-toast";d.innerHTML=`<b>🏆 ACHIEVEMENT UNLOCKED</b><span>${a[0]} ${a[1]}<br>${a[2]}</span>`;document.body.appendChild(d);setTimeout(()=>d.remove(),3600);}
 function checkAchievements(){if(S.sessionCoffees>=3)unlockAchievement("caffeine");if(S.money<=10)unlockAchievement("broke");}
 function achievementHTML(){return `<div class="achievement-panel"><h3>🏆 ACHIEVEMENTS ${Object.keys(S.achievements).length}/${Object.keys(ACH).length}</h3><div class="achievement-grid">${Object.entries(ACH).map(([id,a])=>`<div class="achievement ${S.achievements[id]?"unlocked":""}"><b>${S.achievements[id]?a[0]:"???"} ${S.achievements[id]?a[1]:"LOCKED"}</b><small>${S.achievements[id]?a[2]:"Hidden achievement — discover the condition."}</small></div>`).join("")}</div></div>`;}
@@ -725,10 +725,17 @@ function renderProfile(){
   $("pMark").style.left=`calc(${pct(D.pA,0)} - 1px)`;
   $("pNote").innerHTML=`Among ${b.matches} survey students with the same profile, ${b.passed} passed. Estimated P(pass | profile) = <b>${pct(b.p,0)}</b> (white marker = everyone: ${pct(D.pA,0)}). <b>Your luck: ${shift>=0?"+":""}${shift.toFixed(1)} points</b> on every exam.`;
   const housingParts=D.housing.map(h=>{const pH=h.nH/D.N,pAH=h.nH?(h.nAH/h.nH):0;return `P(pass|${h.type})·P(${h.type}) = ${pct(pAH)}·${pct(pH)}`;}).join(" + ");
-  $("pFormula").innerHTML=`Conditional probability:
+  $("pFormula").innerHTML=`Set theory / events:
+Ω = all surveyed students, A = “student passed”, B = “student has this profile”.
+A ∩ B = students who passed AND have the profile; A ∪ B = students who passed OR have the profile; Bᶜ = students without the profile.
+Algebra of events:
+P(A ∪ B) = P(A) + P(B) − P(A ∩ B)
+General probability space:
+P(Ω) = 1, P(∅) = 0, and the probabilities of all discrete outcomes sum to 1.
+Conditional probability:
 P(pass | profile) = P(pass ∩ profile) / P(profile)
 = ${b.matches?`(${b.passed}/${D.N}) / (${b.matches}/${D.N}) = <b>${pct(b.passed/b.matches)}</b>`:`no exact matching group in the sample`}
-With +0.5 smoothing for very small groups → <b>${pct(b.p)}</b>
+If there is no exact matching group, the overall probability is used → <b>${pct(b.p)}</b>
 Total probability across housing groups:
 P(pass) = Σ P(pass | housing)P(housing) = ${housingParts} = <b>${pct(D.pA)}</b>`;
 }
@@ -795,6 +802,7 @@ function renderCommute(){
   $("cPoisF").innerHTML=`P(K = k) = frequency(k) / total observations
 P(K = ${k0}) = ${pct(lateProb(k0))}
 P(K ≥ 3) = ${pct(k3)}
+Σ P(K = k) = 1
 This is a discrete probability distribution because K can take separate countable values.`;
   drawPois(null);
 }
@@ -952,7 +960,7 @@ function endSession(){
 }
 
 /* =====================================================================
-   CASINO (binomial) — bets real money
+   CASINO — independent events + combinatorics
    ===================================================================== */
 const G={groups:[],p:.5,pWin:.5,mult:1,lastX:null};
 function setupGroup(){
@@ -1024,7 +1032,8 @@ function renderGroup(){
   $("casinoWinAmount").textContent="+"+money(win);
   $("casinoEV").textContent=(ev>=0?"+":"−")+money(Math.abs(ev).toFixed(1));
   $("gPlain").innerHTML=`Each student in this group passes with probability <b>${pct(G.p)}</b>. Gold bars = you win (${k} or more pass). Win chance: <b>${pct(pw)}</b>. Win and you gain <b>${money(win)}</b>; lose and you lose <b>${money(stake)}</b>.`;
-  $("gFormula").innerHTML=`Choose j passing students: C(n,j) = ${comb(n,Math.round(n/2))} for an example middle case.
+  $("gFormula").innerHTML=`Choose j passing students: C(n,j) = n! / (j!(n−j)!)
+For the example middle case, C(n,⌊n/2⌋) = ${comb(n,Math.round(n/2))}.
 For independent students: P(exactly j pass) = C(n,j) · p^j · (1−p)^(n−j)
 P(X ≥ ${k}) = Σ P(X = j), j = ${k}..${n} = <b>${pct(pw)}</b>
 Fair payout multiplier = 1/P = ×${(1/pw).toFixed(2)}; casino pays 0.9/P = ×${G.mult.toFixed(2)}
@@ -1144,9 +1153,10 @@ function detectiveBtn(){
   const {nAB,nB,nA,N}=q,a=nAB,b=nB-nAB,c=nA-nAB,d=(N-nB)-(nA-nAB);
   let f;
   if(q.kind==="AgivenB")f=`P(A | B) = P(A ∩ B) / P(B) = (${nAB}/${N}) / (${nB}/${N}) = <b>${pct(q.truth)}</b>`;
-  else if(q.kind==="AgivenNotB")f=`P(A | not B) = P(A ∩ not B) / P(not B) = (${nA-nAB}/${N}) / (${N-nB}/${N}) = <b>${pct(q.truth)}</b>`;
-  else f=`Using conditional probability and the total probability idea: P(B | A) = P(A ∩ B) / P(A)
+  else if(q.kind==="AgivenNotB")f=`P(A | Bᶜ) = P(A ∩ Bᶜ) / P(Bᶜ) = (${nA-nAB}/${N}) / (${N-nB}/${N}) = <b>${pct(q.truth)}</b>`;
+  else f=`Conditional probability: P(B | A) = P(A ∩ B) / P(A)
 = (${nAB}/${N}) / (${nA}/${N}) = <b>${pct(q.truth)}</b>`;
+  f += `\nEvent algebra from the same table: P(A ∪ B) = P(A) + P(B) − P(A ∩ B) = (${nA}+${nB}−${nAB})/${N} = <b>${pct((nA+nB-nAB)/N)}</b>`;
   const sub=q.kind==="BgivenA"?`<p class="note">Notice the flip: P(passed | factor) = ${pct(nAB/nB)} but P(factor | passed) = ${pct(q.truth)}. Different questions, different answers.</p>`:"";
   $("dReveal").innerHTML=`<div class="result ${pts>=70?"win":"lose"}"><h4>${pts>=70?"SHARP EYE":"CASE CLOSED"} · +${pts} pts</h4>You guessed ${pct(guess,0)}, the truth is <b>${pct(q.truth)}</b>.
   <table class="t"><tr><th></th><th>Passed (A)</th><th>Not passed</th><th>Total</th></tr>
@@ -1170,7 +1180,7 @@ function detectiveEnd(){
 }
 
 /* =====================================================================
-   QUEST: REGRESSION LAB — earns money
+   QUEST: FREQUENCY LAB — earns money
    ===================================================================== */
 const LAB={fake:[],baseSig:false,won:false};
 const LW=600,LH=340,LM={l:46,r:14,t:14,b:36},XR=[3,12],YR=[0,100];
@@ -1316,7 +1326,14 @@ function applyData(students,live){
   $("dot").className="dot"+(live?"":" stale");
   $("statusText").textContent=live?`Live from Google Sheets · ${D.N} responses · ${new Date().toLocaleTimeString()}`:`Using cached survey snapshot · ${D.N} responses`;
   if(firstLoad){initGame();firstLoad=false;}
-  else{setupProfile();sleepMyth();setupGroup();labSetup();if(S.started)goStep(S.step);}
+  else if(!S.started){setupProfile();sleepMyth();setupGroup();detectiveNew();labSetup();renderQuestLocks();hud();}
+  else{
+    // Do not reset an active 5-day run or quest progress when live survey data refreshes.
+    hud();
+    if(S.step==="commute")renderCommute();
+    if(S.step==="exam")renderExam();
+    if(S.step==="evening")renderEvening();
+  }
 }
 async function loadData(){
   // Always boot from the embedded snapshot first. This prevents the game from
