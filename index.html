@@ -1310,19 +1310,33 @@ async function fetchCsvText(){
   throw err||new Error("fetch failed");
 }
 let firstLoad=true;
-async function loadData(){
-  $("statusText").textContent="Connecting to the live survey…";$("dot").className="dot";
-  let students,live=false;
-  try{
-    students=buildStudents(parseCsvText(await fetchCsvText()));
-    if(students.length<5)throw new Error("too few rows");
-    live=true;
-  }catch(e){students=buildStudents(parseCsvText(FALLBACK_CSV));}
+let liveRequest=null;
+function applyData(students,live){
   computeAll(students);
   $("dot").className="dot"+(live?"":" stale");
-  $("statusText").textContent=live?`Live from Google Sheets · ${D.N} responses · ${new Date().toLocaleTimeString()}`:`Couldn't reach the live sheet, using cached snapshot (${D.N} responses)`;
+  $("statusText").textContent=live?`Live from Google Sheets · ${D.N} responses · ${new Date().toLocaleTimeString()}`:`Using cached survey snapshot · ${D.N} responses`;
   if(firstLoad){initGame();firstLoad=false;}
   else{setupProfile();sleepMyth();setupGroup();labSetup();if(S.started)goStep(S.step);}
+}
+async function loadData(){
+  // Always boot from the embedded snapshot first. This prevents the game from
+  // being blocked by Google Sheets/CORS/network problems.
+  try{
+    const cached=buildStudents(parseCsvText(FALLBACK_CSV));
+    if(cached.length>=5)applyData(cached,false);
+  }catch(e){
+    $("statusText").textContent="Survey data error — please reload the page";
+    return;
+  }
+  // Refresh live data in the background; failure leaves the working snapshot.
+  try{
+    liveRequest=fetchCsvText();
+    const text=await liveRequest;
+    const students=buildStudents(parseCsvText(text));
+    if(students.length>=5)applyData(students,true);
+  }catch(e){
+    // Keep the cached game running.
+  }
 }
 $("refresh").onclick=loadData;
 loadData();
