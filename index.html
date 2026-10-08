@@ -297,11 +297,11 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 
     <!-- step 1 -->
     <div id="stepCommute">
-      <h3>Morning commute <small>Poisson</small></h3>
-      <p class="lead">Traffic, snow, alarm clocks… every week you are late a <i>random</i> number of times. The survey says students are late about <b id="lamTxt"></b> times per week. The game converts that weekly survey number into a daily Poisson rate. Each late arrival costs <b>4 HP</b> and <b>3 exam points</b>.</p>
+      <h3>Morning commute <small>Discrete probability</small></h3>
+      <p class="lead">Traffic, snow, alarm clocks… every week you are late a <i>random</i> number of times. The survey says students are late about <b id="lamTxt"></b> times per week. The game uses the survey frequency data as a discrete probability space. Each late arrival costs <b>4 HP</b> and <b>3 exam points</b>.</p>
       <div class="plain" id="cPlain"></div>
       <div id="cPoisChart"></div>
-      <details class="math"><summary>▸ Show the math (Poisson distribution)</summary><div class="formula" id="cPoisF"></div></details>
+      <details class="math"><summary>▸ Show the math (Discrete probability)</summary><div class="formula" id="cPoisF"></div></details>
       <div class="row"><button class="btn gold" id="cRollBtn">Roll the commute 🎲</button></div>
       <div id="cPoisOut"></div>
       <button class="btn hidden" id="toExamBtn">Go to the exam →</button>
@@ -309,13 +309,13 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 
     <!-- step 2 -->
     <div id="stepExam" class="hidden">
-      <h3>Exam time <small>Normal distribution</small></h3>
+      <h3>Exam time <small>Frequency distribution</small></h3>
       <p class="lead">Your score is random, centred on your average, and most results land near the middle. <b>Pick a target score:</b> hit it and you earn points and money; miss it and the exam hurts (<b>−25 HP</b>). Higher target means a bigger prize but a smaller chance.</p>
       <div class="plain" id="cNormPlain"></div>
       <div id="cBell"></div>
       <div class="row"><label>Target score: <b id="cXv">70</b></label><input type="range" id="cX" min="30" max="100" value="70"></div>
       <div class="stats" id="cStats"></div>
-      <details class="math"><summary>▸ Show the math (Normal distribution)</summary><div class="formula" id="cNormF"></div></details>
+      <details class="math"><summary>▸ Show the math (Discrete probability)</summary><div class="formula" id="cNormF"></div></details>
       <button class="btn" id="cSitBtn">Sit the exam 📝</button>
       <div id="cResult"></div>
       <button class="btn hidden" id="toEveBtn">Go to the evening →</button>
@@ -344,7 +344,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 <section id="tab-group" class="tab hidden">
   <div class="card casino-card">
     <div class="casino-head">
-      <div><h2>🎰 Study Group Casino</h2><p class="lead">Bet your money on how many students will pass. The game uses the <b>binomial distribution</b> and real survey probabilities.</p></div>
+      <div><h2>🎰 Study Group Casino</h2><p class="lead">Bet your money on how many students will pass. The game uses <b>combinatorics and independent events</b> with real survey probabilities.</p></div>
       <div class="casino-bank">💰 YOUR MONEY <b id="casinoMoney">₸100</b></div>
     </div>
     <div class="casino-rules"><div><b>1. PICK</b><span>Choose a group.</span></div><div><b>2. SET</b><span>Set the odds and bet.</span></div><div><b>3. PULL</b><span>Pull the lever.</span></div></div>
@@ -379,7 +379,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
     <div class="people" id="gPeople"></div><div id="gResult"></div>
     <div class="casino-chart-title probability-title">📊 PROBABILITY OF EACH RESULT</div><div class="casino-chart-frame"><div id="gChart"></div></div>
     <div class="stats" id="gStats"></div>
-    <details class="math"><summary>▸ SHOW THE MATH · BINOMIAL DISTRIBUTION</summary><div class="formula" id="gFormula"></div></details>
+    <details class="math"><summary>▸ SHOW THE MATH · COMBINATORICS + INDEPENDENT EVENTS</summary><div class="formula" id="gFormula"></div></details>
   </div>
 </section>
 
@@ -404,7 +404,7 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
     <div id="labGoal" class="myth"></div>
     <svg class="chart" id="labSvg" viewBox="0 0 600 340" style="cursor:crosshair"></svg>
     <div class="stats" id="labStats"></div>
-    <details class="math"><summary>▸ Show the math (combinatorics &amp; frequency data)</summary><div class="formula" id="labFormula"></div></details>
+    <details class="math"><summary>▸ Show the math (frequency distribution)</summary><div class="formula" id="labFormula"></div></details>
     <div class="row">
       <button class="btn ghost" id="labUndo">Undo fake</button>
       <button class="btn ghost" id="labReset">Reset</button>
@@ -526,21 +526,7 @@ function buildStudents(rows){
 const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
 const std=a=>{const m=mean(a);return Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/Math.max(1,a.length-1));};
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-function erfc(x){const z=Math.abs(x),t=1/(1+.5*z);const poly=-z*z-1.26551223+t*(1.00002368+t*(.37409196+t*(.09678418+t*(-.18628806+t*(.27886807+t*(-1.13520398+t*(1.48851587+t*(-.82215223+t*.17087277))))))));const r=t*Math.exp(poly);return x>=0?r:2-r;}
-const normCdf=(x,mu,sd)=>.5*erfc(-((x-mu)/sd)/Math.SQRT2);
 function binPmf(n,k,p){if(k<0||k>n)return 0;let lc=0;for(let i=1;i<=k;i++)lc+=Math.log(n-k+i)-Math.log(i);return Math.exp(lc+k*Math.log(p)+(n-k)*Math.log(1-p));}
-function poisPmf(k,l){let p=Math.exp(-l);for(let i=1;i<=k;i++)p=p*l/i;return p;}
-function pearson(pts){
-  const n=pts.length,mx=mean(pts.map(p=>p[0])),my=mean(pts.map(p=>p[1]));
-  let sxy=0,sxx=0,syy=0;
-  pts.forEach(([x,y])=>{sxy+=(x-mx)*(y-my);sxx+=(x-mx)**2;syy+=(y-my)**2;});
-  const r=sxy/Math.sqrt(sxx*syy),b=sxy/sxx,a=my-b*mx;
-  return {n,r,a,b};
-}
-const T_TABLE=[null,12.706,4.303,3.182,2.776,2.571,2.447,2.365,2.306,2.262,2.228,2.201,2.179,2.160,2.145,2.131,2.120,2.110,2.101,2.093,2.086,2.080,2.074,2.069,2.064,2.060,2.056,2.052,2.048,2.045,2.042];
-const critT=df=>df>=1&&df<=30?T_TABLE[df]:1.96+2.4/Math.max(df,1);
-function randn(){let u=0;while(!u)u=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*Math.random());}
-function poisSample(l){const u=Math.random();let k=0,p=Math.exp(-l),c=p;while(u>c&&k<30){k++;p*=l/k;c+=p;}return k;}
 const pct=(x,d=1)=>(x*100).toFixed(d)+"%";
 const $=id=>document.getElementById(id);
 
@@ -567,7 +553,7 @@ function computeAll(st){
      pts:withScore.map(s=>[s.sleep,s.score])};
 }
 
-/* ---- Naive Bayes: odds(A | profile) = prior odds x product of likelihood ratios ---- */
+/* ---- Conditional probability model: conditional probability model for the selected profile ---- */
 function lrFactor(key,ans){
   const f=D.fac[key],fail=D.N-D.passed;
   const passYes=f.nAB,passNo=D.passed-f.nAB,failYes=f.nB-f.nAB,failNo=fail-failYes;
@@ -642,20 +628,6 @@ function barsSvg(vals,labels,cls){
   });
   return s+"</svg>";
 }
-function bellSvg(mu,sd,x,marker){
-  const W=600,H=190,L=14,R=14,T=14,B=26,w=W-L-R,h=H-T-B,k=1/(sd*Math.sqrt(2*Math.PI));
-  const X=v=>L+v/100*w,dens=v=>Math.exp(-.5*((v-mu)/sd)**2)*k,Y=d=>T+h-clamp(d/k,0,1)*h;
-  let curve="",area=`M${X(x).toFixed(1)} ${Y(0)} L${X(x).toFixed(1)} ${Y(dens(x)).toFixed(1)}`;
-  for(let v=0;v<=100;v++)curve+=(v?"L":"M")+X(v).toFixed(1)+" "+Y(dens(v)).toFixed(1);
-  for(let v=Math.ceil(x);v<=100;v++)area+=` L${X(v).toFixed(1)} ${Y(dens(v)).toFixed(1)}`;
-  area+=` L${X(100)} ${Y(0)} Z`;
-  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}"><path d="${area}" fill="rgba(77,240,194,.28)"/><path d="${curve}" fill="none" stroke="#6f80ff" stroke-width="3"/>`;
-  s+=`<line x1="${X(x)}" x2="${X(x)}" y1="${T}" y2="${H-B}" stroke="#ffd24a" stroke-width="3" stroke-dasharray="6 4"/><text x="${X(x)+5}" y="${T+10}" style="fill:#ffd24a">target ${x}</text>`;
-  if(marker!=null){const ok=marker>=x;s+=`<line x1="${X(marker)}" x2="${X(marker)}" y1="${T}" y2="${H-B}" stroke="${ok?"#4df0c2":"#ff4f8b"}" stroke-width="4"/><circle cx="${X(marker)}" cy="${Y(dens(marker))}" r="7" fill="${ok?"#4df0c2":"#ff4f8b"}"/>`;}
-  for(let v=0;v<=100;v+=25)s+=`<text x="${X(v)}" y="${H-8}" text-anchor="middle">${v}</text>`;
-  return s+"</svg>";
-}
-
 /* =====================================================================
    GAME STATE + HUD
    ===================================================================== */
@@ -700,7 +672,7 @@ function hud(){
 function logMsg(t){S.log.unshift(t);S.log=S.log.slice(0,8);$("logBox").innerHTML=S.log.map(x=>`<li>${x}</li>`).join("");}
 function gain(n){S.money+=n;S.earned+=Math.max(0,n);hud();}
 
-const ACH={labMinimalist:["🏆","ONE-POINT WONDER","Flip Regression Lab with exactly 1 fake point."],caffeine:["☕","CAFFEINE ADDICT","Buy 3 coffees in one exam week."],highRoller:["🎰","HIGH ROLLER","Win ₸500+ total in the casino."],bareSurvivor:["💀","FINAL BOSS","Finish the week with 10 HP or less."],honest:["🧠","HONEST SCHOLAR","Finish a week without using a cheat item."],broke:["💸","BROKE STUDENT","Drop to ₸10 or less."],jackpot:["⭐","STUDY JACKPOT","Get every student in your bet to pass."],survivor:["👑","SESSION SURVIVOR","Complete all 5 exam days."]};
+const ACH={labMinimalist:["🏆","ONE-POINT WONDER","Change Data Lab with exactly 1 example point."],caffeine:["☕","CAFFEINE ADDICT","Buy 3 coffees in one exam week."],highRoller:["🎰","HIGH ROLLER","Win ₸500+ total in the casino."],bareSurvivor:["💀","FINAL BOSS","Finish the week with 10 HP or less."],honest:["🧠","HONEST SCHOLAR","Finish a week without using a cheat item."],broke:["💸","BROKE STUDENT","Drop to ₸10 or less."],jackpot:["⭐","STUDY JACKPOT","Get every student in your bet to pass."],survivor:["👑","SESSION SURVIVOR","Complete all 5 exam days."]};
 function unlockAchievement(id){if(S.achievements[id])return;S.achievements[id]=true;const a=ACH[id];logMsg(`${a[0]} ACHIEVEMENT: ${a[1]}`);const old=document.getElementById("achievementToast");if(old)old.remove();const d=document.createElement("div");d.id="achievementToast";d.className="achievement-toast";d.innerHTML=`<b>🏆 ACHIEVEMENT UNLOCKED</b><span>${a[0]} ${a[1]}<br>${a[2]}</span>`;document.body.appendChild(d);setTimeout(()=>d.remove(),3600);}
 function checkAchievements(){if(S.sessionCoffees>=3)unlockAchievement("caffeine");if(S.money<=10)unlockAchievement("broke");}
 function achievementHTML(){return `<div class="achievement-panel"><h3>🏆 ACHIEVEMENTS ${Object.keys(S.achievements).length}/${Object.keys(ACH).length}</h3><div class="achievement-grid">${Object.entries(ACH).map(([id,a])=>`<div class="achievement ${S.achievements[id]?"unlocked":""}"><b>${S.achievements[id]?a[0]:"???"} ${S.achievements[id]?a[1]:"LOCKED"}</b><small>${S.achievements[id]?a[2]:"Hidden achievement — discover the condition."}</small></div>`).join("")}</div></div>`;}
@@ -848,7 +820,7 @@ function newDay(){
   goStep("commute");
 }
 
-/* ---- step 1: commute (Poisson) ---- */
+/* ---- step 1: commute (discrete probability) ---- */
 function drawPois(hit){
   const vals=[...new Set(D.lateValues)].sort((a,b)=>a-b),probs=vals.map(k=>adjustedLatePmf(k)*100),cls=vals.map(k=>k===hit?"hit":"");
   $("cPoisChart").innerHTML=barsSvg(probs,vals,cls);
@@ -965,7 +937,7 @@ function updateBell(marker){
   $("cNormPlain").innerHTML=`Your target is <b>${x}</b>. The probability comes from the survey's discrete exam-score data. Higher targets are less common in the sample.`;
   $("cNormF").innerHTML=`P(score ≥ ${x}) = number of survey scores ≥ adjusted target / total scores = <b>${pct(pOk)}</b><br>
 Expected points = target × P(score ≥ target) = <b>${(x*pOk).toFixed(1)}</b><br>
-This is a discrete probability space based on the collected frequency data, not a Normal distribution.`;
+This is a discrete probability space based on the collected frequency data.`;
   const vals=[0,20,40,60,80,100],counts=vals.map(v=>D.scoreValues.filter(s=>s>=v&&s<v+20).length),max=Math.max(...counts,1);
   $("cBell").innerHTML=barsSvg(counts.map(c=>c/max*100),["0–19","20–39","40–59","60–79","80–99","100"],[]);
   $("cStats").innerHTML=`<div class="stat"><small>Chance to hit</small><b class="g">${pct(pOk)}</b></div><div class="stat"><small>If you hit</small><b class="y">+${x} pts · +${money(Math.round(x/2))}</b></div><div class="stat"><small>If you miss</small><b class="r">−25 HP</b></div><div class="stat"><small>Average points</small><b>${(x*pOk).toFixed(1)}</b></div>`;
@@ -1064,7 +1036,7 @@ function endSession(){
 }
 
 /* =====================================================================
-   CASINO (binomial) — bets real money
+   CASINO (combinatorics + independent events) — bets real money
    ===================================================================== */
 const G={groups:[],p:.5,pWin:.5,mult:1,lastX:null};
 function setupGroup(){
@@ -1136,10 +1108,10 @@ function renderGroup(){
   $("casinoWinAmount").textContent="+"+money(win);
   $("casinoEV").textContent=(ev>=0?"+":"−")+money(Math.abs(ev).toFixed(1));
   $("gPlain").innerHTML=`Each student in this group passes with probability <b>${pct(G.p)}</b>. Gold bars = you win (${k} or more pass). Win chance: <b>${pct(pw)}</b>. Win and you gain <b>${money(win)}</b>; lose and you lose <b>${money(stake)}</b>.`;
-  $("gFormula").innerHTML=`P(X = j) = C(n, j) · p^j · (1−p)^(n−j)    n = ${n}, p = ${G.p.toFixed(3)}
+  $("gFormula").innerHTML=`C(n, j) = n! / (j! · (n−j)!)
+P(X = j) = C(n, j) · p^j · (1−p)^(n−j)    n = ${n}, p = ${G.p.toFixed(3)}
 P(X ≥ ${k}) = Σ P(X = j) for j = ${k}..${n} = <b>${pct(pw)}</b>
-Fair payout multiplier = 1/P = ×${(1/pw).toFixed(2)};  casino pays 0.9/P = ×${G.mult.toFixed(2)}
-Expected passers = n·p = ${(n*G.p).toFixed(2)},  σ = √(n·p·(1−p)) = ${Math.sqrt(n*G.p*(1-G.p)).toFixed(2)}`;
+The formula counts the possible combinations of pass/fail outcomes and uses independence between students.`;
   $("gStats").innerHTML=
     `<div class="stat"><small>Expected passers</small><b>${(n*G.p).toFixed(1)}</b></div>`+
     `<div class="stat"><small>Win chance</small><b class="g">${pct(pw)}</b></div>`+
@@ -1281,16 +1253,9 @@ function detectiveEnd(){
 }
 
 /* =====================================================================
-   QUEST: REGRESSION LAB — earns money
+   QUEST: DATA LAB — earns money
    ===================================================================== */
 const LAB={fake:[],baseSig:false,won:false};
-const LW=600,LH=340,LM={l:46,r:14,t:14,b:36},XR=[3,12],YR=[0,100];
-function labStats(){
-  const pts=D.pts.concat(LAB.fake);
-  if(pts.length<4)return null;
-  const s=pearson(pts),df=s.n-2,t=s.r*Math.sqrt(df/Math.max(1e-9,1-s.r*s.r)),tc=critT(df);
-  return {...s,df,t,tc,sig:Math.abs(t)>tc};
-}
 function renderLab(){
   const vals=D.scoreValues||[],bins=["0–19","20–39","40–59","60–79","80–99","100"],counts=[0,0,0,0,0,0];
   vals.forEach(v=>{if(v>=100)counts[5]++;else counts[Math.floor(v/20)]++;});
