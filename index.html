@@ -399,12 +399,12 @@ footer{color:var(--mute);font-size:12px;margin-top:24px;max-width:80ch}
 <!-- ================= LAB ================= -->
 <section id="tab-lab" class="tab hidden">
   <div class="card">
-    <h2>Quest: Regression Lab</h2>
-    <p class="lead">Each dot is a real student: hours of sleep (across) vs exam score (up). The yellow line is the best straight-line fit. Plant up to 5 <b>fake students</b> by clicking the chart and try to flip the statistical verdict. Succeed and earn <b>₸100</b>.</p>
+    <h2>Quest: Data Lab</h2>
+    <p class="lead">The chart shows the collected survey data as a frequency distribution. Click up to 5 times to add example values and see how the distribution changes. This demonstrates data collection, preparation and description. Succeed and earn <b>₸100</b>.</p>
     <div id="labGoal" class="myth"></div>
     <svg class="chart" id="labSvg" viewBox="0 0 600 340" style="cursor:crosshair"></svg>
     <div class="stats" id="labStats"></div>
-    <details class="math"><summary>▸ Show the math (correlation &amp; t-test)</summary><div class="formula" id="labFormula"></div></details>
+    <details class="math"><summary>▸ Show the math (combinatorics &amp; frequency data)</summary><div class="formula" id="labFormula"></div></details>
     <div class="row">
       <button class="btn ghost" id="labUndo">Undo fake</button>
       <button class="btn ghost" id="labReset">Reset</button>
@@ -562,6 +562,8 @@ function computeAll(st){
   D={N,passed,pA:clamp(passed/N,.02,.98),fac,housing,
      scoreMu:sc.length>=3?mean(sc):70,scoreSd:Math.max(1,sc.length>=3?std(sc):12),scoreN:sc.length,
      lateMean:Math.max(.1,mean(st.map(s=>s.late))),
+     lateValues:st.map(s=>Math.max(0,Math.round(s.late))),
+     scoreValues:sc.map(v=>clamp(Math.round(v),0,100)),
      pts:withScore.map(s=>[s.sleep,s.score])};
 }
 
@@ -582,6 +584,48 @@ function bayesProfile(P){
   const lrs=[["Phone",lrFactor("phone",P.phone)],["Job",lrFactor("job",P.job)],["Coffee",lrFactor("coffee",P.coffee)],["Housing",lrHousing(P.housing)]];
   let odds=prior;lrs.forEach(x=>odds*=x[1]);
   return {p:odds/(1+odds),prior,lrs,odds};
+}
+
+/* =====================================================================
+   COURSE-ALIGNED DISCRETE PROBABILITY HELPERS
+   ===================================================================== */
+function freqMap(values){
+  const m={}; values.forEach(v=>m[v]=(m[v]||0)+1); return m;
+}
+function empiricalPmf(values,k){
+  if(!values.length)return 0;
+  return (freqMap(values)[k]||0)/values.length;
+}
+function sampleFromEmpirical(values){
+  if(!values.length)return 0;
+  return values[Math.floor(Math.random()*values.length)];
+}
+function adjustedLatePmf(k){
+  const base=empiricalPmf(D.lateValues,k);
+  const p0=empiricalPmf(D.lateValues,0);
+  if(!S.items.alarm)return base;
+  if(k===0)return p0+(1-p0)*0.5;
+  return base*0.5;
+}
+function sampleLate(){
+  const vals=[...new Set(D.lateValues)].sort((a,b)=>a-b);
+  const weights=vals.map(k=>adjustedLatePmf(k));
+  const total=weights.reduce((a,b)=>a+b,0)||1;
+  let r=Math.random()*total;
+  for(let i=0;i<vals.length;i++){r-=weights[i];if(r<=0)return vals[i];}
+  return vals[vals.length-1]||0;
+}
+function scoreAtLeast(x){
+  const shift=S.luckShift+(S.items.tutor?5:0)-3*S.k-computeMu().fatigue;
+  const rawTarget=x-shift;
+  const vals=D.scoreValues||[];
+  if(!vals.length)return 0;
+  return vals.filter(v=>v>=rawTarget).length/vals.length;
+}
+function sampleScore(){
+  const base=sampleFromEmpirical(D.scoreValues||[70]);
+  const shift=S.luckShift+(S.items.tutor?5:0)-3*S.k-computeMu().fatigue;
+  return base+shift;
 }
 
 /* =====================================================================
@@ -756,8 +800,9 @@ odds = ${b.odds.toFixed(2)}  →  p = odds/(1+odds) = <b>${pct(b.p)}</b>
 (likelihood ratio LR = P(trait | passed) / P(trait | not passed), with +0.5 smoothing)`;
 }
 function sleepMyth(){
-  const r=pearson(D.pts),df=r.n-2,t=r.r*Math.sqrt(df/(1-r.r*r.r)),sig=Math.abs(t)>critT(df);
-  $("sleepMyth").innerHTML=`💡 <b>Why can't you "just sleep more" to score higher?</b> In this survey sleep and exam score have r = ${r.r.toFixed(2)} (n = ${r.n}), ${sig?"a statistically significant link":"not statistically significant"}. Sleeping in this game restores <i>health</i>, not exam scores, because the data doesn't support more. Test the claim yourself in <b>Quest: Lab</b>.`;
+  const vals=D.scoreValues||[];
+  const low=vals.filter(v=>v<60).length,mid=vals.filter(v=>v>=60&&v<80).length,high=vals.filter(v=>v>=80).length;
+  $("sleepMyth").innerHTML=`📊 <b>Data description:</b> the survey contains ${D.N} students. Exam scores are grouped into three ranges: <b>below 60</b> (${low}), <b>60–79</b> (${mid}), and <b>80–100</b> (${high}). This is a frequency distribution: it shows how often each result appears in the collected data.`;
 }
 
 /* =====================================================================
@@ -805,17 +850,18 @@ function newDay(){
 
 /* ---- step 1: commute (Poisson) ---- */
 function drawPois(hit){
-  const lam=lamEff(),vals=[],labels=[],cls=[];
-  for(let k=0;k<=8;k++){vals.push(poisPmf(k,lam)*100);labels.push(k);cls.push(hit===k?"hit":"");}
-  $("cPoisChart").innerHTML=barsSvg(vals,labels,cls);
+  const vals=[...new Set(D.lateValues)].sort((a,b)=>a-b),probs=vals.map(k=>adjustedLatePmf(k)*100),cls=vals.map(k=>k===hit?"hit":"");
+  $("cPoisChart").innerHTML=barsSvg(probs,vals,cls);
 }
 function renderCommute(){
-  const lam=lamEff();
+  const vals=[...new Set(D.lateValues)].sort((a,b)=>a-b);
+  const p0=adjustedLatePmf(0);
+  const p3=vals.filter(k=>k>=3).reduce((a,k)=>a+adjustedLatePmf(k),0);
   $("lamTxt").textContent=D.lateMean.toFixed(2);
-  $("cPlain").innerHTML=`Each bar is the chance of being late that many times today. The daily rate is <b>λ = ${lam.toFixed(2)}</b>${S.items.alarm?" after the 🔔 alarm clock halves it":""}. Chance of <b>zero</b> lates: <b>${pct(poisPmf(0,lam))}</b>. Chance of <b>3 or more</b>: <b>${pct(1-poisPmf(0,lam)-poisPmf(1,lam)-poisPmf(2,lam))}</b>.`;
-  $("cPoisF").innerHTML=`P(K = k) = λ^k · e^(−λ) / k!
-λ = ${lam.toFixed(2)} per day = ${D.lateMean.toFixed(2)} / 5${S.items.alarm?" × 0.5 for the alarm clock":""}
-P(K = 0) = e^(−${lam.toFixed(2)}) = ${pct(poisPmf(0,lam))}      mean = variance = λ`;
+  $("cPlain").innerHTML=`Each bar shows the <b>observed frequency</b> of that number of lates in the survey. This is a discrete probability space: every possible value has its own probability. ${S.items.alarm?"The 🔔 alarm redistributes half of the non-zero probability to zero lates.":""}`;
+  $("cPoisF").innerHTML=`P(K = k) = frequency of k / total responses<br>
+P(K = 0) = ${pct(p0)}${p3?` · P(K ≥ 3) = ${pct(p3)}`:""}<br>
+Sample space: K = {${vals.join(", ")}}. The probabilities of all possible values add up to 1.`;
   drawPois(null);
 }
 function randomDailyEvent(){
@@ -892,84 +938,47 @@ function maybeBadDecision(){
 }
 
 function rollCommute(){
-  if(S.items.skipCard>0){S.cheatsUsed=true;
-    S.items.skipCard--;
-    S.k=0;
-    drawPois(0);
-    $("cRollBtn").disabled=true;
-    $("cPoisOut").innerHTML=`<div class="result win"><h4>FAKE ID WORKED 🪪</h4>Security looked the other way. <b>0 lates</b> today.</div>`;
-    logMsg(`Day ${S.day}: Fake Student ID used — zero commute lates.`);
-    $("toExamBtn").classList.remove("hidden");
-    hud();
-    return;
-  }
-  const lam=lamEff(),k=poisSample(lam);
-  S.k=k;drawPois(k);$("cRollBtn").disabled=true;
-  const event=applyDailyEvent();
-  const totalK=S.k;
-  drawPois(totalK);
-  $("cPoisOut").innerHTML=`<div class="result ${totalK===0?"win":"lose"}"><h4>${totalK===0?"ON TIME TODAY!":"LATE ×"+totalK}</h4>Base commute outcome had a <b>${pct(poisPmf(k,lam))}</b> chance. ${totalK?`Total penalty: <b>−${4*totalK} HP</b> and <b>−${3*totalK} exam points</b>.`:"No penalty."}</div>`;
+  if(S.items.skipCard>0){S.cheatsUsed=true;S.items.skipCard--;S.k=0;drawPois(0);$("cRollBtn").disabled=true;$("cPoisOut").innerHTML=`<div class="result win"><h4>FAKE ID WORKED 🪪</h4>Security looked the other way. <b>0 lates</b> today.</div>`;logMsg(`Day ${S.day}: Fake Student ID used — zero commute lates.`);$("toExamBtn").classList.remove("hidden");hud();return;}
+  const k=sampleLate();S.k=k;drawPois(k);$("cRollBtn").disabled=true;
+  const event=applyDailyEvent();const totalK=S.k;drawPois(totalK);
+  const p=adjustedLatePmf(k);
+  $("cPoisOut").innerHTML=`<div class="result ${totalK===0?"win":"lose"}"><h4>${totalK===0?"ON TIME TODAY!":"LATE ×"+totalK}</h4>Observed survey probability for <b>${k}</b> lates: <b>${pct(p)}</b>. ${totalK?`Total penalty: <b>−${4*totalK} HP</b> and <b>−${3*totalK} exam points</b>.`:"No penalty."}</div>`;
   if(event)showRandomEventPopup(event);
   if(totalK&&damage(4*totalK,`You were late ${totalK} time${totalK===1?"":"s"} today and the stress knocked you out.`))return;
-  if(totalK)S.pts=Math.max(0,S.pts-3*totalK);
-  hud();
-  if(maybeBadDecision())return;
-  $("toExamBtn").classList.remove("hidden");
-  hud();
+  if(totalK)S.pts=Math.max(0,S.pts-3*totalK);hud();if(maybeBadDecision())return;$("toExamBtn").classList.remove("hidden");hud();
 }
 
-/* ---- step 2: exam (Normal) ---- */
+/* ---- step 2: exam (discrete probability space) ---- */
 function computeMu(){
   const fatigue=(MAXHP-S.hp)/10;
   return {mu:D.scoreMu+S.luckShift+(S.items.tutor?5:0)-3*S.k-fatigue,fatigue};
 }
 function bestTarget(mu){
   let bx=30,be=-1;
-  for(let x=30;x<=100;x++){const e=x*(1-normCdf(x,mu,D.scoreSd));if(e>be){be=e;bx=x;}}
+  for(let x=30;x<=100;x++){const p=scoreAtLeast(x),e=x*p;if(e>be){be=e;bx=x;}}
   return {x:bx,ev:be};
 }
-function renderExam(){
-  const m=computeMu();S.muEff=m.mu;
-  $("cX").value=clamp(Math.round(m.mu),30,100);
-  updateBell();
-}
+function renderExam(){const m=computeMu();S.muEff=m.mu;$("cX").value=clamp(Math.round(m.mu),30,100);updateBell();}
 function updateBell(marker){
-  const x=+$("cX").value,sd=D.scoreSd,mu=S.muEff,pOk=1-normCdf(x,mu,sd),m=computeMu();
+  const x=+$(("cX")).value,m=computeMu(),pOk=scoreAtLeast(x),best=bestTarget(m.mu);
   $("cXv").textContent=x;
-  $("cNormPlain").innerHTML=`Your average score today is <b>${mu.toFixed(0)}</b> (survey average ${D.scoreMu.toFixed(0)}, ${S.luckShift>=0?"+":"−"}${Math.abs(S.luckShift).toFixed(1)} luck${S.items.tutor?", +5 tutor":""}${S.k?`, −${3*S.k} lates`:""}${m.fatigue>0?`, −${m.fatigue.toFixed(1)} tiredness`:""}). The green area is where you hit your target.`;
-  $("cNormF").innerHTML=`score ~ Normal(μ, σ)   μ = ${mu.toFixed(1)}, σ = ${sd.toFixed(1)}
-P(score ≥ ${x}) = 1 − Φ((${x} − ${mu.toFixed(1)}) / ${sd.toFixed(1)}) = <b>${pct(pOk)}</b>
-Tiredness = (100 − HP)/10 = ${m.fatigue.toFixed(1)} pts.   Expected points = target × P = ${(x*pOk).toFixed(1)}`;
-  $("cBell").innerHTML=bellSvg(mu,sd,x,marker);
-  $("cStats").innerHTML=
-    `<div class="stat"><small>Chance to hit</small><b class="g">${pct(pOk)}</b></div>`+
-    `<div class="stat"><small>If you hit</small><b class="y">+${x} pts · +${money(Math.round(x/2))}</b></div>`+
-    `<div class="stat"><small>If you miss</small><b class="r">−25 HP</b></div>`+
-    `<div class="stat"><small>Average points (target × chance)</small><b>${(x*pOk).toFixed(1)}</b></div>`;
+  $("cNormPlain").innerHTML=`Your target is <b>${x}</b>. The probability comes from the survey's discrete exam-score data. Higher targets are less common in the sample.`;
+  $("cNormF").innerHTML=`P(score ≥ ${x}) = number of survey scores ≥ adjusted target / total scores = <b>${pct(pOk)}</b><br>
+Expected points = target × P(score ≥ target) = <b>${(x*pOk).toFixed(1)}</b><br>
+This is a discrete probability space based on the collected frequency data, not a Normal distribution.`;
+  const vals=[0,20,40,60,80,100],counts=vals.map(v=>D.scoreValues.filter(s=>s>=v&&s<v+20).length),max=Math.max(...counts,1);
+  $("cBell").innerHTML=barsSvg(counts.map(c=>c/max*100),["0–19","20–39","40–59","60–79","80–99","100"],[]);
+  $("cStats").innerHTML=`<div class="stat"><small>Chance to hit</small><b class="g">${pct(pOk)}</b></div><div class="stat"><small>If you hit</small><b class="y">+${x} pts · +${money(Math.round(x/2))}</b></div><div class="stat"><small>If you miss</small><b class="r">−25 HP</b></div><div class="stat"><small>Average points</small><b>${(x*pOk).toFixed(1)}</b></div>`;
 }
 function sitExam(){
-  const x=+$("cX").value,sd=D.scoreSd;
-  const usedEarpiece=S.items.earpiece>0;
-  const usedAnswerKey=!usedEarpiece && S.items.answerKey>0;
-  let raw=S.muEff+sd*randn();
-  if(usedEarpiece){S.cheatsUsed=true;raw=Math.max(raw,x);S.items.earpiece--;}
-  else if(usedAnswerKey){S.cheatsUsed=true;raw+=15;S.items.answerKey--;}
-  const score=clamp(Math.round(raw),0,100),ok=raw>=x;
-  const pOk=1-normCdf(x,S.muEff,sd),best=bestTarget(S.muEff);
-  S.myEV+=x*pOk;S.bestEV+=best.ev;
-  $("cSitBtn").disabled=true;$("cX").disabled=true;S.examDone=true;
-  updateBell(clamp(raw,0,100));
-  const z=(raw-S.muEff)/sd;
-  let extra="";
-  if(ok){S.pts+=x;gain(Math.round(x/2));logMsg(`Day ${S.day}: scored ${score}, hit ${x}. +${x} pts, +${money(Math.round(x/2))}.`);}
-  else{logMsg(`Day ${S.day}: scored ${score}, missed ${x}. −25 HP.`);}
+  const x=+$(("cX")).value;const usedEarpiece=S.items.earpiece>0;const usedAnswerKey=!usedEarpiece&&S.items.answerKey>0;
+  let raw=sampleScore();if(usedEarpiece){S.cheatsUsed=true;raw=Math.max(raw,x);S.items.earpiece--;}else if(usedAnswerKey){S.cheatsUsed=true;raw+=15;S.items.answerKey--;}
+  const score=clamp(Math.round(raw),0,100),ok=raw>=x,pOk=scoreAtLeast(x),best=bestTarget(S.muEff);S.myEV+=x*pOk;S.bestEV+=best.ev;
+  $("cSitBtn").disabled=true;$("cX").disabled=true;S.examDone=true;updateBell(score);
+  if(ok){S.pts+=x;gain(Math.round(x/2));logMsg(`Day ${S.day}: scored ${score}, hit ${x}. +${x} pts, +${money(Math.round(x/2))}.`);}else logMsg(`Day ${S.day}: scored ${score}, missed ${x}. −25 HP.`);
   const cheatNote=usedEarpiece?" 🎧 Earpiece cheat activated — guaranteed hit!":usedAnswerKey?" 📝 Answer Key activated — +15 raw points!":"";
-  $("cResult").innerHTML=`<div class="result ${ok?"win":"lose"}"><h4>${ok?"TARGET HIT!  +"+x+" pts  +"+money(Math.round(x/2)):"MISSED!  −25 HP"}${cheatNote}</h4>
-    You scored <b>${score}</b> (target ${x}), which is ${Math.abs(z).toFixed(2)} standard deviations ${z>=0?"above":"below"} your average.<br>
-    <span class="note">Best target today: ${best.x} (average ${best.ev.toFixed(1)} pts). Yours: ${(x*pOk).toFixed(1)}.</span></div>`;
-  hud();
-  if(!ok&&damage(25,`You failed the exam (${score} vs target ${x}) and collapsed from exhaustion.`))return;
-  $("toEveBtn").classList.remove("hidden");
+  $("cResult").innerHTML=`<div class="result ${ok?"win":"lose"}"><h4>${ok?"TARGET HIT!  +"+x+" pts  +"+money(Math.round(x/2)):"MISSED!  −25 HP"}${cheatNote}</h4>You scored <b>${score}</b> (target ${x}).<br><span class="note">Best target today: ${best.x} (expected ${best.ev.toFixed(1)} points). Yours: ${(x*pOk).toFixed(1)}.</span></div>`;
+  hud();if(!ok&&damage(25,`You failed the exam (${score} vs target ${x}) and collapsed from exhaustion.`))return;$("toEveBtn").classList.remove("hidden");
 }
 
 /* ---- step 3: evening (rest, work, shop) ---- */
@@ -1283,84 +1292,30 @@ function labStats(){
   return {...s,df,t,tc,sig:Math.abs(t)>tc};
 }
 function renderLab(){
-  const St=labStats();
-  const X=v=>LM.l+(v-XR[0])/(XR[1]-XR[0])*(LW-LM.l-LM.r),Y=v=>LH-LM.b-(v-YR[0])/(YR[1]-YR[0])*(LH-LM.t-LM.b);
-  let s="";
-  for(let v=XR[0];v<=XR[1];v++)s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${LM.t}" y2="${LH-LM.b}" stroke="rgba(255,255,255,.06)"/><text x="${X(v)}" y="${LH-LM.b+16}" text-anchor="middle">${v}</text>`;
-  for(let v=0;v<=100;v+=20)s+=`<line x1="${LM.l}" x2="${LW-LM.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,.06)"/><text x="${LM.l-6}" y="${Y(v)+4}" text-anchor="end">${v}</text>`;
-  s+=`<text x="${LW/2}" y="${LH-4}" text-anchor="middle">Sleep, hours</text><text transform="rotate(-90 12 ${LH/2})" x="12" y="${LH/2}" text-anchor="middle">Exam score, %</text>`;
-  if(St)s+=`<line x1="${X(XR[0])}" x2="${X(XR[1])}" y1="${Y(clamp(St.a+St.b*XR[0],-30,130))}" y2="${Y(clamp(St.a+St.b*XR[1],-30,130))}" stroke="#ffd24a" stroke-width="3"/>`;
-  D.pts.forEach(p=>s+=`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="6" fill="rgba(111,128,255,.85)" stroke="#fff" stroke-width="1"/>`);
-  LAB.fake.forEach(p=>s+=`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="7" fill="#ff4f8b" stroke="#fff" stroke-width="2"/>`);
-  $("labSvg").innerHTML=s;
-  if(!St){$("labStats").innerHTML="";return;}
-  $("labStats").innerHTML=
-    `<div class="stat"><small>Correlation r (−1…+1)</small><b>${St.r.toFixed(3)}</b></div>`+
-    `<div class="stat"><small>Slope (points per extra hour)</small><b>${St.b.toFixed(2)}</b></div>`+
-    `<div class="stat"><small>t = ${St.t.toFixed(2)} vs needed ±${St.tc.toFixed(2)}</small><b class="${St.sig?"g":"r"}">${St.sig?"SIGNIFICANT":"not significant"}</b></div>`;
-  $("labFormula").innerHTML=`r = Σ(x−x̄)(y−ȳ) / √(Σ(x−x̄)² · Σ(y−ȳ)²) = ${St.r.toFixed(3)}
-t = r · √(df / (1 − r²)) = ${St.r.toFixed(3)} · √(${St.df} / ${(1-St.r*St.r).toFixed(3)}) = ${St.t.toFixed(2)}
-Critical t (df = ${St.df}, α = 0.05) = ${St.tc.toFixed(2)}   →   |t| ${St.sig?">":"≤"} critical ⇒ ${St.sig?"reject H₀: ρ = 0 (link is significant)":"cannot reject H₀: ρ = 0 (no proven link)"}`;
-  $("labCount").textContent=`Fake students: ${LAB.fake.length} / 5  (sample = ${D.pts.length} real + ${LAB.fake.length} fake)`;
-  if(!LAB.won&&LAB.fake.length>0&&St.sig!==LAB.baseSig){
-    LAB.won=true;
-    const n=LAB.fake.length;
-    const bonus=(5-n)*25;
-    const achievementBonus=n===1?50:0;
-    const totalReward=100+bonus+achievementBonus;
-    gain(totalReward);
-    if(n===1){S.achievements.labMinimalist=true;unlockAchievement("labMinimalist");}
-    if(S.started)S.quests.lab=true;
-    renderQuestLocks();
-
-    const bonusText=bonus>0
-      ? `<div class="note" style="margin-top:8px">🎯 FEWER POINTS BONUS: +${money(bonus)} · ${n}/5 fake students</div>`
-      : `<div class="note" style="margin-top:8px">Standard reward · all 5 fake-student slots used</div>`;
-    const achievementText=n===1
-      ? `<div class="myth" style="margin-top:10px">🏆 <b>HIDDEN ACHIEVEMENT UNLOCKED</b><br><span style="font-family:'Press Start 2P',monospace;font-size:9px">ONE-POINT WONDER</span><br><span class="note">You flipped the verdict with exactly one fake student. +${money(achievementBonus)} secret bonus.</span></div>`
-      : "";
-
-    $("labResult").innerHTML=`<div class="result win">
-      <h4>P-VALUE HACKED! +${money(totalReward)}</h4>
-      With only <b>${n}</b> fake student${n>1?"s":""} (${pct(n/(D.pts.length+n),0)} of the sample) the verdict flipped from "${LAB.baseSig?"significant":"not significant"}" to "${St.sig?"significant":"not significant"}".
-      <br><span class="note">Base reward: ${money(100)} · efficiency bonus: ${money(bonus)}${achievementBonus?` · secret achievement: ${money(achievementBonus)}`:""}</span>
-      ${bonusText}${achievementText}
-      <br><span class="note">Small samples are fragile: a few made-up or unusual points can rewrite the conclusion.</span>
-    </div>`;
-  }
+  const vals=D.scoreValues||[],bins=["0–19","20–39","40–59","60–79","80–99","100"],counts=[0,0,0,0,0,0];
+  vals.forEach(v=>{if(v>=100)counts[5]++;else counts[Math.floor(v/20)]++;});
+  LAB.fake.forEach(p=>{const v=p[1];if(v>=100)counts[5]++;else counts[Math.max(0,Math.min(4,Math.floor(v/20)))]++;});
+  const total=counts.reduce((a,b)=>a+b,0)||1,max=Math.max(...counts,1);
+  $("labSvg").innerHTML=barsSvg(counts.map(c=>c/max*100),bins,[]);
+  const mode=counts.indexOf(Math.max(...counts));
+  $("labStats").innerHTML=`<div class="stat"><small>Observations</small><b>${total}</b></div><div class="stat"><small>Most frequent range</small><b>${bins[mode]}</b></div><div class="stat"><small>Highest frequency</small><b>${counts[mode]}</b></div>`;
+  $("labFormula").innerHTML=`Relative frequency = frequency / total observations<br>Example: ${counts[mode]} / ${total} = <b>${pct(counts[mode]/total)}</b><br>Data are collected from the student survey, cleaned, grouped into ranges, and then shown as a frequency distribution.`;
+  $("labCount").textContent=`Example points: ${LAB.fake.length} / 5 · sample = ${D.scoreValues.length} real + ${LAB.fake.length} example`;
+  if(!LAB.won&&LAB.fake.length>=1){LAB.won=true;gain(100);if(S.started)S.quests.lab=true;renderQuestLocks();$("labResult").innerHTML=`<div class="result win"><h4>DATA DESCRIBED! +₸100</h4>You changed the frequency distribution with ${LAB.fake.length} example value${LAB.fake.length>1?"s":""}. This demonstrates how prepared data can be grouped and visualized.</div>`;}
 }
+
 function labClick(e){
   if(!S.started||S.quests.lab||LAB.fake.length>=5)return;
-  const svg=$("labSvg");
-  // Convert the mouse position to the SVG's real viewBox coordinates.
-  // This is important because the responsive chart can be displayed at a
-  // different aspect ratio/size than its 600x340 internal coordinate system.
-  const pt=svg.createSVGPoint();
-  pt.x=e.clientX; pt.y=e.clientY;
-  const svgPt=pt.matrixTransform(svg.getScreenCTM().inverse());
-  const px=svgPt.x,py=svgPt.y;
-  const x=XR[0]+(px-LM.l)/(LW-LM.l-LM.r)*(XR[1]-XR[0]);
-  const y=YR[0]+(LH-LM.b-py)/(LH-LM.t-LM.b)*(YR[1]-YR[0]);
-  if(x<XR[0]||x>XR[1]||y<YR[0]||y>YR[1])return;
-  LAB.fake.push([+x.toFixed(1),Math.round(y)]);
-  renderLab();
+  const rect=$("labSvg").getBoundingClientRect();
+  const y=Math.max(0,Math.min(100,Math.round(100-(e.clientY-rect.top)/rect.height*100)));
+  LAB.fake.push([LAB.fake.length,y]);renderLab();
 }
+
 function labSetup(){
   LAB.fake=[];LAB.won=false;
-  if(!S.started){
-    $("labGoal").innerHTML=`🎯 <b>Quest locked.</b> Start an exam week to unlock Regression Lab.`;
-    $("labResult").innerHTML=`<div class="result"><h4>QUEST LOCKED</h4>Regression Lab can be completed once during each 5-day exam week.</div>`;
-    renderLab();
-    return;
-  }
-  if(S.quests.lab){
-    $("labGoal").innerHTML=`🎯 <b>Quest complete.</b> Regression Lab can only be completed once per 5-day exam week.`;
-    $("labResult").innerHTML=`<div class="result win"><h4>QUEST COMPLETE ✓</h4>Come back next round to hack the p-value again.</div>`;
-    return;
-  }
-  const base=pearson(D.pts),df=base.n-2,t=base.r*Math.sqrt(df/(1-base.r*base.r));
-  LAB.baseSig=Math.abs(t)>critT(df);$("labResult").innerHTML="";
-  $("labGoal").innerHTML=`🎯 <b>Mission:</b> the real data is currently <b>${LAB.baseSig?"statistically significant":"not significant"}</b>. Click the chart to plant up to 5 fake students and make it <b>${LAB.baseSig?"not significant":"significant"}</b>. Hint: ${LAB.baseSig?"place points that break the trend.":"place points that form a clean diagonal line."} <b>Fewer fake points = a bigger reward.</b>`;
+  if(!S.started){$("labGoal").innerHTML=`🎯 <b>Quest locked.</b> Start an exam week to unlock Data Lab.`;$("labResult").innerHTML=`<div class="result"><h4>QUEST LOCKED</h4>Data Lab can be completed once during each 5-day exam week.</div>`;renderLab();return;}
+  if(S.quests.lab){$("labGoal").innerHTML=`🎯 <b>Quest complete.</b> Data Lab can only be completed once per 5-day exam week.`;$("labResult").innerHTML=`<div class="result win"><h4>QUEST COMPLETE ✓</h4>Come back next round to explore the data again.</div>`;return;}
+  $("labGoal").innerHTML=`🎯 <b>Mission:</b> describe the survey data using a frequency distribution. Add up to 5 example observations and watch the frequencies change.`;
   renderLab();
 }
 
